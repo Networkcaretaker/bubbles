@@ -1,0 +1,16 @@
+{
+  "name": "Bubbles LIMS",
+  "short_name": "Bubbles",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#22c55e",
+  "description": "Bubbles - Laundry Information Management System",
+  "icons": [
+    {
+      "src": "/icons/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
