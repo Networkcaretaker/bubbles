@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../services/firebase';
+import { auth } from '../services/firebase/config';
 import { useAuthStore } from '../stores/authStore';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(user);
       setLoading(false);
       
-      if (user) {
+      /*if (user) {
         console.log('User signed in:', user.email);
         user.getIdToken().then((token) => {
           // Fix: Actually use the variable so linter is happy
@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
       } else {
         console.log('User signed out');
-      }
+      }*/
     });
 
     // Cleanup subscription on unmount

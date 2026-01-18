@@ -15,8 +15,8 @@ export function AppShell() {
         <div className="flex flex-1 flex-col md:pl-64">
           <main className="flex-1">
             {/* Add padding to the bottom to account for the mobile navigation bar's height (h-16 = 4rem) */}
-            <div className="py-6 pb-24 md:pb-6">
-              <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
+            <div className="">
+              <div className="mx-auto max-w-8xl">
                 <Outlet />
               </div>
             </div>

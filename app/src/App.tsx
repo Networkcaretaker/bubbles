@@ -1,9 +1,13 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './stores/authStore';
-import Login from './pages/Login';
+import Login from './views/Login';
 import BubbleAnimation from './components/Background';
 import { AppShell } from './components/layout/AppShell';
+import Dashboard from './views/Dashboard';
+import Settings from './views/Settings';
+import Clients from './views/Clients';
+import Jobs from './views/Jobs';
 
 // ... ProtectedRoute component ...
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -44,8 +48,11 @@ function App() {
                 </ProtectedRoute>
               }
             >
-              <Route index element={<h1 className="text-2xl font-bold text-blue-300">Dashboard</h1>} />
-              <Route path="settings" element={<h1 className="text-2xl font-bold text-blue-300">Settings</h1>} />
+              <Route index element={<Dashboard />} />
+              <Route path="jobs" element={<Jobs />} />
+              <Route path="clients" element={<Clients />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="settings/users" element={<h1 className="text-2xl font-bold text-cyan-500">Users</h1>} />
             </Route>
             
             <Route path="*" element={<Navigate to="/" replace />} />
