@@ -6,10 +6,11 @@ import {
   deleteDoc,
   doc,
   updateDoc,
-  addDoc,
+  setDoc,
   query, 
   orderBy
 } from '@firebase/firestore';
+import { getAuth, createUserWithEmailAndPassword, deleteUser as deleteAuthUser } from 'firebase/auth';
 
 import type { UserDetails } from '../../types/users';
 
@@ -70,24 +71,51 @@ export const userService = {
     }
   },
 
-  async addUser(userData: Omit<UserDetails, 'uid'>): Promise<UserDetails> {
+  async addUser(userData: Omit<UserDetails, 'uid'> & { password: string }): Promise<UserDetails> {
+    const auth = getAuth();
+    let authUser;
+    
     try {
-      console.log('Adding new user:', userData);
+      console.log('Creating new user with authentication:', userData.email);
       
-      // Use addDoc to auto-generate an ID, or setDoc if you want to specify the uid
-      const docRef = await addDoc(collection(db, 'users'), {
+      // Create the user in Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        userData.email,
+        userData.password
+      );
+      authUser = userCredential.user;
+      
+      // Create the user document in Firestore using the auth UID as document ID
+      await setDoc(doc(db, 'users', authUser.uid), {
+        uid: authUser.uid,
         name: userData.name,
         email: userData.email,
         role: userData.role
       });
       
+      console.log('User created successfully with uid:', authUser.uid);
+      
       return {
-        uid: docRef.id,
-        ...userData
+        uid: authUser.uid,
+        name: userData.name,
+        email: userData.email,
+        role: userData.role
       };
       
     } catch (error) {
       console.error('Firebase error adding user:', error);
+      
+      // If Firestore creation failed but auth user was created, clean up the auth user
+      if (authUser) {
+        try {
+          await deleteAuthUser(authUser);
+          console.log('Cleaned up auth user after Firestore error');
+        } catch (cleanupError) {
+          console.error('Failed to cleanup auth user:', cleanupError);
+        }
+      }
+      
       const message = error instanceof Error ? error.message : 'Unknown error';
       throw new Error(`Failed to add user: ${message}`);
     }
@@ -133,8 +161,14 @@ export const userService = {
         throw new Error(`User with uid ${uid} not found`);
       }
       
+      // Delete from Firestore
       await deleteDoc(userRef);
-      console.log(`User ${uid} deleted successfully`);
+      
+      // Note: Deleting from Firebase Auth requires admin SDK or the user to be signed in
+      // For now, we only delete from Firestore
+      // You may want to use Firebase Admin SDK on your backend to also delete from Auth
+      console.log(`User ${uid} deleted from Firestore successfully`);
+      console.warn('Note: User still exists in Firebase Authentication. Consider implementing admin deletion.');
       
     } catch (error) {
       console.error(`Firebase error deleting user ${uid}:`, error);

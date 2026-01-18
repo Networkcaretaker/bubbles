@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Settings } from 'lucide-react';
+import UserList from '../components/settings/users/UserList';
 
 // A placeholder for the future General settings component
 function GeneralSettingsPlaceholder() {
@@ -11,6 +12,7 @@ function GeneralSettingsPlaceholder() {
     </div>
   );
 }
+/*
 function UserSettingsPlaceholder() {
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
@@ -19,7 +21,7 @@ function UserSettingsPlaceholder() {
     </div>
   );
 }
-
+*/
 export default function SettingsPage() {
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<'general' | 'users'>(() => {
@@ -72,7 +74,7 @@ export default function SettingsPage() {
         {/* Tab Content */}
         <div>
           {activeTab === 'general' && <GeneralSettingsPlaceholder />}
-          {activeTab === 'users' && <UserSettingsPlaceholder />}
+          {activeTab === 'users' && <UserList />}
         </div>
       </div>
     </div>
