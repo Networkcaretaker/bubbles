@@ -6,8 +6,8 @@ import BubbleAnimation from './components/Background';
 import { AppShell } from './components/layout/AppShell';
 import Dashboard from './views/Dashboard';
 import Settings from './views/Settings';
-import Clients from './views/Clients';
-import Jobs from './views/Jobs';
+import Users from './views/Users';
+import Template from './views/Template';
 
 // ... ProtectedRoute component ...
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -49,8 +49,8 @@ function App() {
               }
             >
               <Route index element={<Dashboard />} />
-              <Route path="jobs" element={<Jobs />} />
-              <Route path="clients" element={<Clients />} />
+              <Route path="template" element={<Template />} />
+              <Route path="users" element={<Users />} />
               <Route path="settings" element={<Settings />} />
               <Route path="settings/users" element={<h1 className="text-2xl font-bold text-cyan-500">Users</h1>} />
             </Route>

@@ -130,13 +130,13 @@ export interface User {
   
   // Role & Status
   role: UserRole;
-  status: UserStatus;
+  status?: UserStatus;
   
   // Permissions
-  permissions: UserPermissions;
+  permissions?: UserPermissions;
   
   // Preferences
-  preferences: UserPreferences;
+  preferences?: UserPreferences;
   
   // Employment Details
   employeeId?: string;
@@ -162,7 +162,7 @@ export interface User {
   assignedVehicleId?: string;
   
   // Activity & Performance
-  activity: UserActivity;
+  activity?: UserActivity;
   
   // Schedule
   workingHours?: {
@@ -174,11 +174,11 @@ export interface User {
     saturday?: { start: string; end: string };
     sunday?: { start: string; end: string };
   };
-  isAvailable: boolean;
+  isAvailable?: boolean;
   currentScheduleId?: string;
   
   // Security
-  twoFactorEnabled: boolean;
+  twoFactorEnabled?: boolean;
   passwordLastChanged?: string;
   
   // Notes
@@ -192,7 +192,7 @@ export interface User {
   lastModifiedBy?: string;
   
   // Soft Delete
-  isDeleted: boolean;
+  isDeleted?: boolean;
   deletedAt?: string;
   deletedBy?: string;
 }

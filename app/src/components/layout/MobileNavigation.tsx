@@ -6,8 +6,8 @@ import { auth } from '../../services/firebase/config';
 // to avoid duplication with the main Sidebar component.
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'Jobs', href: '/jobs', icon: WashingMachine },
-  { name: 'Clients', href: '/clients', icon: Users },
+  { name: 'Template', href: '/template', icon: WashingMachine },
+  { name: 'Staff', href: '/users', icon: Users },
   { name: 'Settings', href: '/settings', icon: Settings },
 ];
 
