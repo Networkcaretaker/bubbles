@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { userService } from '../../../services/firebase/users';
-import type { UserDetails } from '../../../types/users';
+import type { AuthUser } from '../../../types/user_interface';
 import UserForm from './UserForm';
 import UserCard from './UserCard';
 
 export default function UserList() {
-  const [users, setUsers] = useState<UserDetails[]>([]);
+  const [users, setUsers] = useState<AuthUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [editingUser, setEditingUser] = useState<UserDetails | null>(null);
+  const [editingUser, setEditingUser] = useState<AuthUser | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function UserList() {
     }
   };
 
-  const handleAddUser = async (userData: Omit<UserDetails, 'uid'> & { password?: string }) => {
+  const handleAddUser = async (userData: Omit<AuthUser, 'uid'> & { password?: string }) => {
     try {
       setError(null);
       if (!userData.password) {
@@ -44,7 +44,7 @@ export default function UserList() {
     }
   };
 
-  const handleUpdateUser = async (uid: string, userData: Partial<Omit<UserDetails, 'uid'>> & { password?: string }) => {
+  const handleUpdateUser = async (uid: string, userData: Partial<Omit<AuthUser, 'uid'>> & { password?: string }) => {
     try {
       setError(null);
       // Remove password field for updates as we're not handling password changes yet
@@ -83,12 +83,12 @@ export default function UserList() {
   }
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+    <div className="">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-        <h2 className="text-lg font-medium text-gray-900">User Management</h2>
+        <div />
         <button
           onClick={() => setShowAddForm(!showAddForm)}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors w-full sm:w-auto"
+          className="px-4 py-2 bg-gradient-to-t from-cyan-700 to-cyan-500 text-white rounded hover:from-cyan-600 hover:to-cyan-400 transition-colors w-full sm:w-auto"
         >
           {showAddForm ? 'Cancel' : 'Add User'}
         </button>
@@ -101,8 +101,17 @@ export default function UserList() {
       )}
 
       {showAddForm && (
-        <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <h3 className="text-md font-medium text-gray-900 mb-4">Add New User</h3>
+        <div className="mb-6 p-4 rounded-lg border border-cyan-500 bg-gradient-to-r from-blue-900/80 to-blue-500/90">
+          <div className="flex gap-2 items-center mb-4">
+            <div className= {`rounded-full h-12 w-12 flex items-center justify-center bg-cyan-200 text-cyan-600`}>
+              <span className= {`font-light text-2xl`}>
+                N
+              </span>
+            </div>
+            <div>
+              <h3 className="text-xl font-medium text-cyan-500">New User</h3>
+            </div>
+          </div>
           <UserForm
             onSubmit={handleAddUser}
             onCancel={() => setShowAddForm(false)}

@@ -110,6 +110,13 @@ export interface EmergencyContact {
   phone: string;
   alternativePhone?: string;
 }
+export interface AuthUser {
+  uid: string;
+  name: string;
+  email: string;
+  phone?: string;
+  role: UserRole;
+}
 
 export interface User {
   // Firebase Auth
@@ -186,8 +193,8 @@ export interface User {
   tags?: string[];
   
   // Timestamps
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
   createdBy?: string;
   lastModifiedBy?: string;
   

@@ -1,8 +1,8 @@
 import { Users } from 'lucide-react';
+import StaffList from '../components/staff/StaffList';
 import { PageLayout, PageStyle } from '../components/ui/Theme';
-import { ContentPlaceholder } from '../components/dev/ContentPlaceholder';
 
-const PAGE_TITLE = "Clients"
+const PAGE_TITLE = "Laundry Staff"
 const PAGE_ICON = Users
 const LAYOUT = PageLayout
 const STYLE = PageStyle
@@ -17,7 +17,7 @@ export default function View() {
         </div>
       </div>
       <div className={`${LAYOUT.content}`}>
-        <ContentPlaceholder title={PAGE_TITLE}/>
+        <StaffList />
       </div>
     </div>
   );

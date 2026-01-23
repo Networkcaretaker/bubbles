@@ -11,18 +11,8 @@ import {
   orderBy
 } from '@firebase/firestore';
 import { getAuth, createUserWithEmailAndPassword, deleteUser as deleteAuthUser } from 'firebase/auth';
+import type { AuthUser } from '../types/user_interface';
 
-import type { UserDetails } from '../types/users';
-
-/* UserDetails type interface from /types/users:
-export type roles = 'owner' | 'manager' | 'operator' | 'driver' | 'developer'
-export interface UserDetails {
-    uid: string;
-    name: string;
-    email: string;
-    role: roles;
-}
-*/
 export const userService = {
   async getAllUsers() {
     try {
@@ -38,7 +28,7 @@ export const userService = {
       const users = snapshot.docs.map(doc => ({
         uid: doc.id,
         ...doc.data()
-      })) as UserDetails[];
+      })) as AuthUser[];
   
       return users;
       
@@ -49,7 +39,7 @@ export const userService = {
     }
   },
 
-  async getUser(uid: string): Promise<UserDetails> {
+  async getUser(uid: string): Promise<AuthUser> {
     try {
       console.log(`Fetching user with uid: ${uid}`);
       
@@ -62,7 +52,7 @@ export const userService = {
       return {
         uid: userDoc.id,
         ...userDoc.data()
-      } as UserDetails;
+      } as AuthUser;
       
     } catch (error) {
       console.error(`Firebase error fetching user ${uid}:`, error);
@@ -71,7 +61,7 @@ export const userService = {
     }
   },
 
-  async addUser(userData: Omit<UserDetails, 'uid'> & { password: string }): Promise<UserDetails> {
+  async addUser(userData: Omit<AuthUser, 'uid'> & { password: string }): Promise<AuthUser> {
     const auth = getAuth();
     let authUser;
     
@@ -121,7 +111,7 @@ export const userService = {
     }
   },
 
-  async updateUser(uid: string, userData: Partial<Omit<UserDetails, 'uid'>>): Promise<UserDetails> {
+  async updateUser(uid: string, userData: Partial<Omit<AuthUser, 'uid'>>): Promise<AuthUser> {
     try {
       console.log(`Updating user ${uid}:`, userData);
       
@@ -140,7 +130,7 @@ export const userService = {
       return {
         uid: updatedDoc.id,
         ...updatedDoc.data()
-      } as UserDetails;
+      } as AuthUser;
       
     } catch (error) {
       console.error(`Firebase error updating user ${uid}:`, error);
