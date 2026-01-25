@@ -1,14 +1,16 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Settings, LogOut, WashingMachine, Users } from 'lucide-react';
+import { LayoutDashboard, LogOut, Users } from 'lucide-react';
 import { auth } from '../../services/firebase/config';
 
 // In a larger app, you might want to move this to a shared configuration file
 // to avoid duplication with the main Sidebar component.
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'Jobs', href: '/jobs', icon: WashingMachine },
   { name: 'Staff', href: '/staff', icon: Users },
-  { name: 'Settings', href: '/settings', icon: Settings },
+  { name: 'Clients', href: '/clients', icon: Users },
+  { name: 'Contacts', href: '/contacts', icon: Users },
+  //{ name: 'Jobs', href: '/jobs', icon: WashingMachine },
+  //{ name: 'Settings', href: '/settings', icon: Settings },
 ];
 
 export function MobileNavigation() {

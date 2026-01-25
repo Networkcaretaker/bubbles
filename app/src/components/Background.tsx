@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { ReactElement } from 'react';
+import { Theme } from './ui/Theme'
 
 // Define interface for bubble properties
 interface Bubble {
@@ -105,7 +106,7 @@ export default function BubbleAnimation(): ReactElement {
   }, []);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-gradient-to-b from-blue-900 to-blue-950">
+    <div className={`${Theme.background.dark}`}>
       {bubbles.map((bubble) => (
         <div
           key={bubble.id}

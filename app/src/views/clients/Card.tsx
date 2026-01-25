@@ -70,12 +70,12 @@ export default function Card({
           
           <div className={`${CARD.list_content}`}>
             <div className={`${CARD.icon_list}`}>
-              <Mail className="w-4 h-4" />
-              <p>{client.email}</p>
-            </div>
-            <div className={`${CARD.icon_list}`}>
               <PhoneIcon className="w-4 h-4" />
               <p>{client.phone}</p>
+            </div>
+            <div className={`${CARD.icon_list}`}>
+              <Mail className="w-4 h-4" />
+              <p>{client.email}</p>
             </div>
             <div className={`${CARD.icon_list}`}>
               <MapPin className="w-4 h-4" />
