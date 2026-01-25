@@ -1,63 +1,63 @@
 import { useState, useEffect } from 'react';
 import { UserPlus } from 'lucide-react';
-import { clientService } from '../../services/client_service';
-import type { Client } from '../../types/client_interface';
+import { contactService } from '../../services/contact_service';
+import type { Contact } from '../../types/contact_interface';
 import Card from './Card';
 import Form from './Form';
 import { Theme } from '../../components/ui/Theme';
 
 export default function List() {
-  const [clients, setClients] = useState<Client[]>([]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [viewingClient, setViewingClient] = useState<Client | null>(null);
-  const [editingClient, setEditingClient] = useState<Client | null>(null);
+  const [viewingContact, setViewingContact] = useState<Contact | null>(null);
+  const [editingContact, setEditingContact] = useState<Contact | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
 
   useEffect(() => {
-    loadClients();
+    loadContacts();
   }, []);
 
-  const loadClients = async () => {
+  const loadContacts = async () => {
     try {
       setLoading(true);
       setError(null);
-      const fetchedClients = await clientService.getAllClients();
-      setClients(fetchedClients);
+      const fetchedContacts = await contactService.getAllContacts();
+      setContacts(fetchedContacts);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to load clients';
+      const message = err instanceof Error ? err.message : 'Failed to load contacts';
       setError(message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleAddClient = async (clientData: Omit<Client, 'id'>) => {
+  const handleAddContact = async (contactData: Omit<Contact, 'id'>) => {
     try {
       setError(null);
-      await clientService.addClient(clientData);
-      await loadClients();
+      await contactService.addContact(contactData);
+      await loadContacts();
       setShowAddForm(false);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to add client';
+      const message = err instanceof Error ? err.message : 'Failed to add contact';
       setError(message);
     }
   };
 
-  const handleUpdateClient = async (id: string, clientData: Partial<Omit<Client, 'id'>>) => {
+  const handleUpdateContact = async (id: string, contactData: Partial<Omit<Contact, 'id'>>) => {
     try {
       setError(null);
       const updateData = {
-        ...clientData,
+        ...contactData,
         timestamp: {
           updatedAt: new Date().toISOString(),
         }
       };
-      await clientService.updateClient(id, updateData);
-      await loadClients();
-      setEditingClient(null);
+      await contactService.updateContact(id, updateData);
+      await loadContacts();
+      setEditingContact(null);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to update client';
+      const message = err instanceof Error ? err.message : 'Failed to update contact';
       setError(message);
     }
   };
@@ -87,7 +87,7 @@ export default function List() {
             className={`${Theme.button.outline}`}
           >
             <UserPlus className="w-5 h-5" />
-            <span>Add Client</span> 
+            <span>Add Contact</span> 
           </button>
         </div>
       }
@@ -101,31 +101,31 @@ export default function List() {
               </span>
             </div>
             <div>
-              <h3 className="text-xl font-medium text-cyan-500">New Client</h3>
+              <h3 className="text-xl font-medium text-cyan-500">New Contact</h3>
             </div>
           </div>
           <Form
-            onSubmit={handleAddClient}
+            onSubmit={handleAddContact}
             onCancel={() => setShowAddForm(false)}
           />
         </div>
       )}
 
-      {clients.length === 0 ? (
-        <p className={`${Theme.system.notice}`}>No clients found. Add your first client to get started.</p>
+      {contacts.length === 0 ? (
+        <p className={`${Theme.system.notice}`}>No contacts found. Add your first contact to get started.</p>
       ) : (
         <div className="space-y-2">
-          {clients.map((client) => (
+          {contacts.map((contact) => (
             <Card
-              key={client.id}
-              client={client}
-              isViewing={viewingClient?.id === client.id}
-              onView={() => setViewingClient(client)}
-              onCancelView={() => setViewingClient(null)}
-              isEditing={editingClient?.id === client.id}
-              onEdit={() => setEditingClient(client)}
-              onUpdate={(clientData) => handleUpdateClient(client.id, clientData)}
-              onCancelEdit={() => setEditingClient(null)}
+              key={contact.id}
+              contact={contact}
+              isViewing={viewingContact?.id === contact.id}
+              onView={() => setViewingContact(contact)}
+              onCancelView={() => setViewingContact(null)}
+              isEditing={editingContact?.id === contact.id}
+              onEdit={() => setEditingContact(contact)}
+              onUpdate={(contactData) => handleUpdateContact(contact.id, contactData)}
+              onCancelEdit={() => setEditingContact(null)}
             />
           ))}
         </div>

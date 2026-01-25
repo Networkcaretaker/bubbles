@@ -41,8 +41,8 @@ export default function Card({
             </div>
             <div>
               {isViewing 
-                ? <h3 className={`${CARD.selected_name}`}>{user.name}</h3>
-                : <h3 className={`${CARD.name}`}>{user.name}</h3>
+                ? <h3 className={`${CARD.selected_name}`} onClick={onCancelView}>{user.name}</h3>
+                : <h3 className={`${CARD.name}`} onClick={onView}>{user.name}</h3>
               }
               <span className={`${CARD.tags} ${getRoleBadgeColor(user.role)}`}>
                 {user.role.charAt(0).toUpperCase() + user.role.slice(1)}

@@ -1,9 +1,8 @@
 import { Users } from 'lucide-react';
 import { Theme } from '../../components/ui/Theme';
-// import List from './List';
-import { ContentPlaceholder } from '../../components/dev/ContentPlaceholder';
+import List from './List';
 
-const PAGE_TITLE = "Template Page"
+const PAGE_TITLE = "Contacts"
 const PAGE_ICON = Users
 
 export default function View() {
@@ -16,7 +15,7 @@ export default function View() {
         </div>
       </div>
       <div className={`${Theme.view.content}`}>
-        <ContentPlaceholder title={PAGE_TITLE}/>
+        <List />
       </div>
     </div>
   );

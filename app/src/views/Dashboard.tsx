@@ -1,27 +1,21 @@
-//import { useState } from 'react';
 import { LayoutDashboard } from 'lucide-react';
+import { Theme } from '../components/ui/Theme';
+import { ContentPlaceholder } from '../components/dev/ContentPlaceholder';
 
-function DashboardPlaceholder() {
+const PAGE_TITLE = "Dashboard"
+const PAGE_ICON = LayoutDashboard
+
+export default function View() {
   return (
-    <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-      <h2 className="text-lg font-medium text-gray-900 mb-4">Admin Dashboard</h2>
-      <p className="text-gray-500">General dashboard widgets will be managed here in the future.</p>
-    </div>
-  );
-}
-
-export default function Dashboard() {
-     return (
-    <div className="max-w-8xl mx-auto">
-      <div className="bg-blue-800/40 p-4">
-       <div className="flex items-center gap-2 ">
-            <LayoutDashboard className="h-6 w-6 text-cyan-400" />
-            <h1 className="text-2xl font-bold text-cyan-500 uppercase">Dashboard</h1>
+    <div className={`${Theme.view.page}`}>
+      <div className={`${Theme.view.header}`}>
+        <div className={`${Theme.view.title}`}>
+          <PAGE_ICON className="w-6 h-6" />
+          <h1>{PAGE_TITLE}</h1>
         </div>
       </div>
-
-      <div className="p-4">
-        <DashboardPlaceholder />
+      <div className={`${Theme.view.content}`}>
+        <ContentPlaceholder title={PAGE_TITLE} />
       </div>
     </div>
   );

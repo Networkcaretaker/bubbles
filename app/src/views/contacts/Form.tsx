@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import type { Client } from '../../types/client_interface';
+import type { Contact } from '../../types/contact_interface';
 import { Theme } from '../../components/ui/Theme';
 
 interface FormProps {
-  initialData?: Partial<Omit<Client, 'id'>>;
-  onSubmit: (data: Omit<Client, 'id'>) => Promise<void>;
+  initialData?: Partial<Omit<Contact, 'id'>>;
+  onSubmit: (data: Omit<Contact, 'id'>) => Promise<void>;
   onCancel: () => void;
   submitLabel?: string;
 }
@@ -14,13 +14,12 @@ export default function Form({
   onSubmit, 
   onCancel,
   submitLabel = 'Save',
-
 }: FormProps) {
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
     email: initialData?.email || '',
     phone: initialData?.phone || '',
-    clientType: initialData?.clientType || 'residential' as const,
+    contactType: initialData?.contactType || 'primary' as const,
     address: {
       street: initialData?.address?.street || '',
       city: initialData?.address?.city || '',
@@ -94,26 +93,23 @@ export default function Form({
       </div>
 
       <div>
-        <label htmlFor="clientType" className={`${Theme.form.label}`}>
-          Client Type *
+        <label htmlFor="contactType" className={`${Theme.form.label}`}>
+          Contact Type *
         </label>
         <select
-          id="clientType"
-          value={formData.clientType}
-          onChange={(e) => setFormData({ ...formData, clientType: e.target.value as Client['clientType'] })}
+          id="contactType"
+          value={formData.contactType}
+          onChange={(e) => setFormData({ ...formData, contactType: e.target.value as Contact['contactType'] })}
           className={`${Theme.form.input}`}
           required
         >
-          <option value="Property Management">Property Management</option>
-          <option value="Yacht Charters">Yacht Charters</option>
-          <option value="Yacht Maintainence">Yacht Maintainence</option>
-          <option value="Golf Club">Golf Club</option>
-          <option value="yacht">Yacht</option>
-          <option value="villa">Villa</option>
-          <option value="hotel">Hotel</option>
-          <option value="restaurant">Restaurant</option>
-          <option value="residential">Residential</option>
-          <option value="corporate">Corporate</option>
+          <option value="primary">Primary</option>
+          <option value="billing">Billing</option>
+          <option value="operations">Operations</option>
+          <option value="captain">Captain</option>
+          <option value="stewardess">Stewardess</option>
+          <option value="property_manager">Property Manager</option>
+          <option value="owner">Owner</option>
           <option value="other">Other</option>
         </select>
       </div>

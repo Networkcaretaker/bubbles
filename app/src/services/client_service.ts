@@ -10,165 +10,134 @@ import {
   query, 
   orderBy
 } from '@firebase/firestore';
-import { getAuth, createUserWithEmailAndPassword, deleteUser as deleteAuthUser } from 'firebase/auth';
-import type { AuthUser } from '../types/user_interface';
-import { getDefaultPermissions } from '../functions/user_functions'
+import type { Client } from '../types/client_interface';
 
-export const userService = {
-  async getAllUsers() {
+export const clientService = {
+  async getAllClients(): Promise<Client[]> {
     try {
-      console.log('Fetching all users for search...');
+      console.log('Fetching all clients...');
       
       const q = query(
-        collection(db, 'users'),
-        orderBy('uid')  // Keep some ordering for consistency
+        collection(db, 'clients'),
+        orderBy('name')
       );
   
       const snapshot = await getDocs(q);
       
-      const users = snapshot.docs.map(doc => ({
-        uid: doc.id,
+      const clients = snapshot.docs.map(doc => ({
+        id: doc.id,
         ...doc.data()
-      })) as AuthUser[];
+      })) as Client[];
   
-      return users;
+      return clients;
       
     } catch (error) {
-      console.error('Firebase error fetching all users:', error);
+      console.error('Firebase error fetching all clients:', error);
       const message = error instanceof Error ? error.message : 'Unknown error';
-      throw new Error(`Failed to fetch all users: ${message}`);
+      throw new Error(`Failed to fetch all clients: ${message}`);
     }
   },
 
-  async getUser(uid: string): Promise<AuthUser> {
+  async getClient(id: string): Promise<Client> {
     try {
-      console.log(`Fetching user with uid: ${uid}`);
+      console.log(`Fetching client with id: ${id}`);
       
-      const userDoc = await getDoc(doc(db, 'users', uid));
+      const clientDoc = await getDoc(doc(db, 'clients', id));
       
-      if (!userDoc.exists()) {
-        throw new Error(`User with uid ${uid} not found`);
+      if (!clientDoc.exists()) {
+        throw new Error(`Client with id ${id} not found`);
       }
       
       return {
-        uid: userDoc.id,
-        ...userDoc.data()
-      } as AuthUser;
+        id: clientDoc.id,
+        ...clientDoc.data()
+      } as Client;
       
     } catch (error) {
-      console.error(`Firebase error fetching user ${uid}:`, error);
+      console.error(`Firebase error fetching client ${id}:`, error);
       const message = error instanceof Error ? error.message : 'Unknown error';
-      throw new Error(`Failed to fetch user: ${message}`);
+      throw new Error(`Failed to fetch client: ${message}`);
     }
   },
 
-  async addUser(userData: Omit<AuthUser, 'uid'> & { password: string }): Promise<AuthUser> {
-    const auth = getAuth();
-    let authUser;
-    
+  async addClient(clientData: Omit<Client, 'id'>): Promise<Client> {
     try {
-      console.log('Creating new user with authentication:', userData.email);
+      console.log('Creating new client:', clientData.name);
       
-      // Create the user in Firebase Authentication
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        userData.email,
-        userData.password
-      );
-      authUser = userCredential.user;
+      const clientRef = doc(collection(db, 'clients'));
       const now = new Date().toISOString();
 
-      const userModel = {
-        uid: authUser.uid,
-        name: userData.name,
-        email: userData.email,
-        phone: userData.phone,
-        role: userData.role,
-        permissions: getDefaultPermissions(userData.role),
+      const clientModel: Client = {
+        id: clientRef.id,
+        name: clientData.name,
+        email: clientData.email,
+        phone: clientData.phone,
+        address: clientData.address,
+        clientType: clientData.clientType,
         timestamp: {
           createdAt: now,
           updatedAt: now
         }
-      }
+      };
       
-      // Create the user document in Firestore using the auth UID as document ID
-      await setDoc(doc(db, 'users', authUser.uid), userModel);
+      await setDoc(clientRef, clientModel);
       
-      console.log('User created successfully with uid:', authUser.uid);
+      console.log('Client created successfully with id:', clientRef.id);
       
-      return userModel;
+      return clientModel;
       
     } catch (error) {
-      console.error('Firebase error adding user:', error);
-      
-      // If Firestore creation failed but auth user was created, clean up the auth user
-      if (authUser) {
-        try {
-          await deleteAuthUser(authUser);
-          console.log('Cleaned up auth user after Firestore error');
-        } catch (cleanupError) {
-          console.error('Failed to cleanup auth user:', cleanupError);
-        }
-      }
-      
+      console.error('Firebase error adding client:', error);
       const message = error instanceof Error ? error.message : 'Unknown error';
-      throw new Error(`Failed to add user: ${message}`);
+      throw new Error(`Failed to add client: ${message}`);
     }
   },
 
-  async updateUser(uid: string, userData: Partial<Omit<AuthUser, 'uid'>>): Promise<AuthUser> {
+  async updateClient(id: string, clientData: Partial<Omit<Client, 'id'>>): Promise<Client> {
     try {
-      console.log(`Updating user ${uid}:`, userData);
+      console.log(`Updating client ${id}:`, clientData);
       
-      const userRef = doc(db, 'users', uid);
+      const clientRef = doc(db, 'clients', id);
       
-      // Check if user exists first
-      const userDoc = await getDoc(userRef);
-      if (!userDoc.exists()) {
-        throw new Error(`User with uid ${uid} not found`);
+      const clientDoc = await getDoc(clientRef);
+      if (!clientDoc.exists()) {
+        throw new Error(`Client with id ${id} not found`);
       }
       
-      await updateDoc(userRef, userData);
+      await updateDoc(clientRef, clientData);
       
-      // Fetch and return the updated user
-      const updatedDoc = await getDoc(userRef);
+      const updatedDoc = await getDoc(clientRef);
       return {
-        uid: updatedDoc.id,
+        id: updatedDoc.id,
         ...updatedDoc.data()
-      } as AuthUser;
+      } as Client;
       
     } catch (error) {
-      console.error(`Firebase error updating user ${uid}:`, error);
+      console.error(`Firebase error updating client ${id}:`, error);
       const message = error instanceof Error ? error.message : 'Unknown error';
-      throw new Error(`Failed to update user: ${message}`);
+      throw new Error(`Failed to update client: ${message}`);
     }
   },
 
-  async deleteUser(uid: string): Promise<void> {
+  async deleteClient(id: string): Promise<void> {
     try {
-      console.log(`Deleting user with uid: ${uid}`);
+      console.log(`Deleting client with id: ${id}`);
       
-      const userRef = doc(db, 'users', uid);
+      const clientRef = doc(db, 'clients', id);
       
-      // Check if user exists first
-      const userDoc = await getDoc(userRef);
-      if (!userDoc.exists()) {
-        throw new Error(`User with uid ${uid} not found`);
+      const clientDoc = await getDoc(clientRef);
+      if (!clientDoc.exists()) {
+        throw new Error(`Client with id ${id} not found`);
       }
       
-      // Delete from Firestore
-      await deleteDoc(userRef);
+      await deleteDoc(clientRef);
       
-      // Note: Deleting from Firebase Auth requires admin SDK or the user to be signed in
-      // For now, we only delete from Firestore
-      // You may want to use Firebase Admin SDK on your backend to also delete from Auth
-      console.log(`User ${uid} deleted from Firestore successfully`);
-      console.warn('Note: User still exists in Firebase Authentication. Consider implementing admin deletion.');
+      console.log(`Client ${id} deleted successfully`);
       
     } catch (error) {
-      console.error(`Firebase error deleting user ${uid}:`, error);
+      console.error(`Firebase error deleting client ${id}:`, error);
       const message = error instanceof Error ? error.message : 'Unknown error';
-      throw new Error(`Failed to delete user: ${message}`);
+      throw new Error(`Failed to delete client: ${message}`);
     }
   }
 };

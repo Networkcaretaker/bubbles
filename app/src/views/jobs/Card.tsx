@@ -1,40 +1,51 @@
-import { Mail, PhoneIcon, Pencil, MapPin } from 'lucide-react';
+import { Mail, PhoneIcon, Pencil } from 'lucide-react';
 import { WhatsApp } from '../../components/ui/IconSets'; 
-import type { Client } from '../../types/client_interface';
+import type { AuthUser } from '../../types/user_interface';
 import { CARD, CONTACT, Theme } from '../../components/ui/Theme';
 import Form from './Form';
-import { ProfileInitial } from '../../functions/user_functions';
 
 interface CardProps {
-  client: Client;
+  user: AuthUser;
   isViewing: boolean;
   onView: () => void;
   onCancelView: () => void;
   isEditing: boolean;
   onEdit: () => void;
-  onUpdate: (data: Partial<Omit<Client, 'id'>>) => Promise<void>;
+  //onDelete: () => void;
+  onUpdate: (data: Partial<Omit<AuthUser, 'uid'>>) => Promise<void>;
   onCancelEdit: () => void;
 }
 
 export default function Card({
-  client,
+  user,
   isViewing,
   onView,
   onCancelView,
   isEditing,
   onEdit,
+  //onDelete,
   onUpdate,
   onCancelEdit,
 }: CardProps) {
-  const formatAddress = () => {
-    const parts = [
-      client.address.street,
-      client.address.city,
-      client.address.region,
-      client.address.postalCode,
-      client.address.country
-    ].filter(Boolean);
-    return parts.join(', ') || 'No address provided';
+
+  const getRoleBadgeColor = (role: AuthUser['role']) => {
+    const colors = {
+      owner: 'bg-purple-100 text-purple-800',
+      manager: 'bg-blue-100 text-blue-800',
+      operator: 'bg-green-100 text-green-800',
+      driver: 'bg-yellow-100 text-yellow-800',
+      developer: 'bg-gray-100 text-gray-800',
+    };
+    return colors[role];
+  };
+
+  const ProfileInitial = (name: AuthUser['name'], role: AuthUser['role']) => {
+    const firstNameInitial = name[0];
+    return (
+      <div className= {`${CONTACT.profile_initial} ${getRoleBadgeColor(role)}`}>
+        {firstNameInitial}
+      </div>
+    );
   };
 
   return (
@@ -44,17 +55,15 @@ export default function Card({
           {/* Profile Badge */}
           <div className={`${CARD.icon_list}`}>
             <div>
-              <div className={`${CONTACT.profile_initial} bg-gray-100 text-gray-800`}>
-                {ProfileInitial(client.name)}
-              </div>
+              {ProfileInitial(user.name, user.role)}
             </div>
             <div>
               {isViewing 
-                ? <h3 className={`${CARD.selected_name}`}>{client.name} </h3>
-                : <h3 className={`${CARD.name}`}>{client.name}</h3>
+                ? <h3 className={`${CARD.selected_name}`}>{user.name}</h3>
+                : <h3 className={`${CARD.name}`}>{user.name}</h3>
               }
-              <span className={`${CARD.tags} bg-gray-100 text-gray-800`}>
-                {client.clientType.charAt(0).toUpperCase() + client.clientType.slice(1)}
+              <span className={`${CARD.tags} ${getRoleBadgeColor(user.role)}`}>
+                {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
               </span>
             </div>
           </div>
@@ -66,20 +75,16 @@ export default function Card({
       </div>
 
       {isViewing &&
-        <div>
+        <div className="">
           
           <div className={`${CARD.list_content}`}>
             <div className={`${CARD.icon_list}`}>
               <Mail className="w-4 h-4" />
-              <p>{client.email}</p>
+              <p>{user.email}</p>
             </div>
             <div className={`${CARD.icon_list}`}>
               <PhoneIcon className="w-4 h-4" />
-              <p>{client.phone}</p>
-            </div>
-            <div className={`${CARD.icon_list}`}>
-              <MapPin className="w-4 h-4" />
-              <p className="text-sm">{formatAddress()}</p>
+              <p>{user.phone}</p>
             </div>
           </div>
 
@@ -100,27 +105,27 @@ export default function Card({
               <button
                 onClick={onEdit}
                 className={`${Theme.button.solid}`}
-                title="Edit Client"
+                title="Edit User"
               >
                 <Pencil className="w-5 h-5" />
-                <span>Edit Client</span>
+                <span>Edit User</span>
               </button>
             }
           </div>
 
           {isEditing &&
-            <div>
+            <div >
               <Form
                 initialData={{
-                  name: client.name,
-                  email: client.email,
-                  phone: client.phone,
-                  clientType: client.clientType,
-                  address: client.address,
+                  name: user.name,
+                  email: user.email,
+                  phone: user.phone,
+                  role: user.role,
                 }}
                 onSubmit={onUpdate}
                 onCancel={onCancelEdit}
                 submitLabel="Update"
+                isEditMode={true}
               />
             </div>
           }

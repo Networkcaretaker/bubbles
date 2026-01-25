@@ -1,26 +1,26 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 //import { Settings } from 'lucide-react';
-//import { PageLayout, PageStyle } from '../ui/Theme';
+import { CARD } from '../ui/Theme';
 
 //const PAGE_TITLE = "Settings"
 //const LAYOUT = PageLayout
-//const STYLE = PageStyle
+const STYLE = CARD
 
 // A placeholder for the future General settings component
 function GeneralSettingsPlaceholder() {
   return (
-    <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-      <h2 className="text-lg font-medium text-gray-900 mb-4">General Settings</h2>
-      <p className="text-gray-500">General application settings will be managed here in the future.</p>
+    <div className={`${STYLE.card} space-y-4`}>
+      <h2 className={`${STYLE.selected_name}`}>General Settings</h2>
+      <p className={`${STYLE.name}`}>General application settings will be managed here in the future.</p>
     </div>
   );
 }
 function UserSettingsPlaceholder() {
   return (
-    <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-      <h2 className="text-lg font-medium text-gray-900 mb-4">User Settings</h2>
-      <p className="text-gray-500">User settings will be managed here in the future.</p>
+    <div className={`${STYLE.card} space-y-4`}>
+      <h2 className={`${STYLE.selected_name}`}>User Settings</h2>
+      <p className={`${STYLE.name}`}>User settings will be managed here in the future.</p>
     </div>
   );
 }

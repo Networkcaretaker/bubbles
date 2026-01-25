@@ -1,10 +1,10 @@
-import { Users } from 'lucide-react';
+import { WashingMachine } from 'lucide-react';
 import { Theme } from '../../components/ui/Theme';
 // import List from './List';
 import { ContentPlaceholder } from '../../components/dev/ContentPlaceholder';
 
-const PAGE_TITLE = "Template Page"
-const PAGE_ICON = Users
+const PAGE_TITLE = "Laundry Jobs"
+const PAGE_ICON = WashingMachine
 
 export default function View() {
   return (

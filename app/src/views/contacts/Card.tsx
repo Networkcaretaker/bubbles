@@ -1,23 +1,23 @@
 import { Mail, PhoneIcon, Pencil, MapPin } from 'lucide-react';
 import { WhatsApp } from '../../components/ui/IconSets'; 
-import type { Client } from '../../types/client_interface';
+import type { Contact } from '../../types/contact_interface';
 import { CARD, CONTACT, Theme } from '../../components/ui/Theme';
 import Form from './Form';
 import { ProfileInitial } from '../../functions/user_functions';
 
 interface CardProps {
-  client: Client;
+  contact: Contact;
   isViewing: boolean;
   onView: () => void;
   onCancelView: () => void;
   isEditing: boolean;
   onEdit: () => void;
-  onUpdate: (data: Partial<Omit<Client, 'id'>>) => Promise<void>;
+  onUpdate: (data: Partial<Omit<Contact, 'id'>>) => Promise<void>;
   onCancelEdit: () => void;
 }
 
 export default function Card({
-  client,
+  contact,
   isViewing,
   onView,
   onCancelView,
@@ -28,13 +28,19 @@ export default function Card({
 }: CardProps) {
   const formatAddress = () => {
     const parts = [
-      client.address.street,
-      client.address.city,
-      client.address.region,
-      client.address.postalCode,
-      client.address.country
+      contact.address.street,
+      contact.address.city,
+      contact.address.region,
+      contact.address.postalCode,
+      contact.address.country
     ].filter(Boolean);
     return parts.join(', ') || 'No address provided';
+  };
+
+  const formatContactType = (type: string) => {
+    return type.split('_').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
   };
 
   return (
@@ -45,16 +51,16 @@ export default function Card({
           <div className={`${CARD.icon_list}`}>
             <div>
               <div className={`${CONTACT.profile_initial} bg-gray-100 text-gray-800`}>
-                {ProfileInitial(client.name)}
+                {ProfileInitial(contact.name)}
               </div>
             </div>
             <div>
               {isViewing 
-                ? <h3 className={`${CARD.selected_name}`}>{client.name} </h3>
-                : <h3 className={`${CARD.name}`}>{client.name}</h3>
+                ? <h3 className={`${CARD.selected_name}`}>{contact.name}</h3>
+                : <h3 className={`${CARD.name}`}>{contact.name}</h3>
               }
               <span className={`${CARD.tags} bg-gray-100 text-gray-800`}>
-                {client.clientType.charAt(0).toUpperCase() + client.clientType.slice(1)}
+                {formatContactType(contact.contactType)}
               </span>
             </div>
           </div>
@@ -71,11 +77,11 @@ export default function Card({
           <div className={`${CARD.list_content}`}>
             <div className={`${CARD.icon_list}`}>
               <Mail className="w-4 h-4" />
-              <p>{client.email}</p>
+              <p>{contact.email}</p>
             </div>
             <div className={`${CARD.icon_list}`}>
               <PhoneIcon className="w-4 h-4" />
-              <p>{client.phone}</p>
+              <p>{contact.phone}</p>
             </div>
             <div className={`${CARD.icon_list}`}>
               <MapPin className="w-4 h-4" />
@@ -100,10 +106,10 @@ export default function Card({
               <button
                 onClick={onEdit}
                 className={`${Theme.button.solid}`}
-                title="Edit Client"
+                title="Edit Contact"
               >
                 <Pencil className="w-5 h-5" />
-                <span>Edit Client</span>
+                <span>Edit Contact</span>
               </button>
             }
           </div>
@@ -112,11 +118,11 @@ export default function Card({
             <div>
               <Form
                 initialData={{
-                  name: client.name,
-                  email: client.email,
-                  phone: client.phone,
-                  clientType: client.clientType,
-                  address: client.address,
+                  name: contact.name,
+                  email: contact.email,
+                  phone: contact.phone,
+                  contactType: contact.contactType,
+                  address: contact.address,
                 }}
                 onSubmit={onUpdate}
                 onCancel={onCancelEdit}

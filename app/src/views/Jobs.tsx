@@ -1,22 +1,20 @@
 import { WashingMachine } from 'lucide-react';
-import { PageLayout, PageStyle } from '../components/ui/Theme';
+import { Theme } from '../components/ui/Theme';
 import { ContentPlaceholder } from '../components/dev/ContentPlaceholder';
 
 const PAGE_TITLE = "Laundry Jobs"
 const PAGE_ICON = WashingMachine
-const LAYOUT = PageLayout
-const STYLE = PageStyle
 
 export default function View() {
   return (
-    <div className={`${LAYOUT.page}`}>
-      <div className={`${LAYOUT.header} ${STYLE.header}`}>
-        <div className={`${LAYOUT.title}`}>
-          <PAGE_ICON className={`${STYLE.title_icon}`} />
-          <h1 className={`${STYLE.title_text}`}>{PAGE_TITLE}</h1>
+    <div className={`${Theme.view.page}`}>
+      <div className={`${Theme.view.header}`}>
+        <div className={`${Theme.view.title}`}>
+          <PAGE_ICON className="w-6 h-6" />
+          <h1>{PAGE_TITLE}</h1>
         </div>
       </div>
-      <div className={`${LAYOUT.content}`}>
+      <div className={`${Theme.view.content}`}>
         <ContentPlaceholder title={PAGE_TITLE} />
       </div>
     </div>

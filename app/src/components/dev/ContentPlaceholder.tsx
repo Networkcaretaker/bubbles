@@ -9,7 +9,7 @@ export function ContentPlaceholder({title}: PlaceholderProps) {
 
   return (
     <div className="p-4">
-      <div className={`${STYLE.card}`}>
+      <div className={`${STYLE.card} space-y-4`}>
         <h2 className={`${STYLE.selected_name}`}>{title}</h2>
         <p className={`${STYLE.name}`}>{title} will be managed here in the future.</p>
       </div>

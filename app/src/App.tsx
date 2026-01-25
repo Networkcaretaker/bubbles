@@ -1,14 +1,17 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './stores/authStore';
-import Login from './views/Login';
 import BubbleAnimation from './components/Background';
 import { AppShell } from './components/layout/AppShell';
+// Import Views
+import Login from './views/Login';
 import Dashboard from './views/Dashboard';
-import Settings from './views/Settings';
 import Staff from './views/staff/Main';
-import Jobs from './views/Jobs';
 import Clients from './views/clients/Main';
+import Contacts from './views/contacts/Main';
+import Jobs from './views/jobs/Main';
+import Settings from './views/Settings';
+import Template from './views/template/Main';
 
 // ... ProtectedRoute component ...
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -51,9 +54,11 @@ function App() {
             >
               <Route index element={<Dashboard />} />
               <Route path="clients" element={<Clients />} />
+              <Route path="contacts" element={<Contacts />} />
               <Route path="staff" element={<Staff />} />
               <Route path="jobs" element={<Jobs />} />
               <Route path="settings" element={<Settings />} />
+              <Route path="template" element={<Template />} />
               <Route path="settings/users" element={<h1 className="text-2xl font-bold text-cyan-500">Users</h1>} />
             </Route>
             

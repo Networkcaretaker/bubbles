@@ -1,7 +1,11 @@
 import type { Address, Timestamp } from './shared_interface'
 
 export type ClientType = 
-  | 'yacht'
+  | 'Property Management'
+  | 'Yacht Charters'
+  | 'Yacht Maintainence'  
+  | 'Golf Club'
+  | 'yacht'  
   | 'villa'
   | 'hotel'
   | 'restaurant'
