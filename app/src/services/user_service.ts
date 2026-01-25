@@ -12,6 +12,7 @@ import {
 } from '@firebase/firestore';
 import { getAuth, createUserWithEmailAndPassword, deleteUser as deleteAuthUser } from 'firebase/auth';
 import type { AuthUser } from '../types/user_interface';
+import { getDefaultPermissions } from '../functions/user_functions'
 
 export const userService = {
   async getAllUsers() {
@@ -75,23 +76,27 @@ export const userService = {
         userData.password
       );
       authUser = userCredential.user;
-      
-      // Create the user document in Firestore using the auth UID as document ID
-      await setDoc(doc(db, 'users', authUser.uid), {
+      const now = new Date().toISOString();
+
+      const userModel = {
         uid: authUser.uid,
         name: userData.name,
         email: userData.email,
-        role: userData.role
-      });
+        phone: userData.phone,
+        role: userData.role,
+        permissions: getDefaultPermissions(userData.role),
+        timestamp: {
+          createdAt: now,
+          updatedAt: now
+        }
+      }
+      
+      // Create the user document in Firestore using the auth UID as document ID
+      await setDoc(doc(db, 'users', authUser.uid), userModel);
       
       console.log('User created successfully with uid:', authUser.uid);
       
-      return {
-        uid: authUser.uid,
-        name: userData.name,
-        email: userData.email,
-        role: userData.role
-      };
+      return userModel;
       
     } catch (error) {
       console.error('Firebase error adding user:', error);

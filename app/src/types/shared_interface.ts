@@ -12,4 +12,9 @@ export interface Address {
     country?: string;
 }
 
+export interface Timestamp {
+    createdAt?: string;
+    updatedAt?: string;
+}
+
 export interface Times { start: string; end: string }

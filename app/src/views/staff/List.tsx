@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { UserPlus } from 'lucide-react';
 import { userService } from '../../services/user_service';
-import type { AuthUser } from '../../types/user_interface';
+import type { AuthUser, UserRole } from '../../types/user_interface';
 import Card from './Card';
 import Form from './Form';
 import { Theme } from '../../components/ui/Theme';
+import { getDefaultPermissions } from '../../functions/user_functions'
 
 export default function List() {
   const [users, setUsers] = useState<AuthUser[]>([]);
@@ -47,12 +48,16 @@ export default function List() {
     }
   };
 
-  const handleUpdateUser = async (uid: string, userData: Partial<Omit<AuthUser, 'uid'>> & { password?: string }) => {
+  const handleUpdateUser = async (uid: string, role: UserRole, userData: Partial<Omit<AuthUser, 'uid'>> & { password?: string }) => {
     try {
       setError(null);
       // Remove password field for updates as we're not handling password changes yet
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...updateData } = userData;
+      updateData.timestamp = {
+        updatedAt: new Date().toISOString(),
+      }
+      updateData.permissions = getDefaultPermissions(role)
       await userService.updateUser(uid, updateData);
       await loadUsers();
       setEditingUser(null);
@@ -124,7 +129,7 @@ export default function List() {
               onCancelView={() => setViewingUser(null)}
               isEditing={editingUser?.uid === user.uid}
               onEdit={() => setEditingUser(user)}
-              onUpdate={(userData) => handleUpdateUser(user.uid, userData)}
+              onUpdate={(userData) => handleUpdateUser(user.uid, user.role, userData)}
               onCancelEdit={() => setEditingUser(null)}
             />
           ))}
