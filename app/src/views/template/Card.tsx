@@ -1,10 +1,10 @@
 import { Mail, PhoneIcon, Pencil } from 'lucide-react';
-import { WhatsApp } from '../ui/IconSets'; 
+import { WhatsApp } from '../../components/ui/IconSets'; 
 import type { AuthUser } from '../../types/user_interface';
-import { CARD, CONTACT, Theme } from '../ui/Theme';
-import StaffForm from './StaffForm';
+import { CARD, CONTACT, Theme } from '../../components/ui/Theme';
+import Form from './Form';
 
-interface UserCardProps {
+interface CardProps {
   user: AuthUser;
   isViewing: boolean;
   onView: () => void;
@@ -16,7 +16,7 @@ interface UserCardProps {
   onCancelEdit: () => void;
 }
 
-export default function StaffCard({
+export default function Card({
   user,
   isViewing,
   onView,
@@ -26,7 +26,7 @@ export default function StaffCard({
   //onDelete,
   onUpdate,
   onCancelEdit,
-}: UserCardProps) {
+}: CardProps) {
 
   const getRoleBadgeColor = (role: AuthUser['role']) => {
     const colors = {
@@ -115,7 +115,7 @@ export default function StaffCard({
 
           {isEditing &&
             <div >
-              <StaffForm
+              <Form
                 initialData={{
                   name: user.name,
                   email: user.email,

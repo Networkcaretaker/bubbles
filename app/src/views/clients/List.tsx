@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { UserPlus } from 'lucide-react';
 import { userService } from '../../services/user_service';
 import type { AuthUser } from '../../types/user_interface';
-import StaffCard from './StaffCard';
-import StaffForm from './StaffForm';
-import { SYSTEM, Theme } from '../ui/Theme';
+import Card from './Card';
+import Form from './Form';
+import { Theme } from '../../components/ui/Theme';
 
-export default function StaffList() {
+export default function List() {
   const [users, setUsers] = useState<AuthUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -65,7 +65,7 @@ export default function StaffList() {
   if (loading) {
     return (
       <div className="p-4">
-        <p className={`${SYSTEM.notice}`}>Loading...</p>
+        <p className={`${Theme.system.notice}`}>Loading...</p>
       </div>
     );
   }
@@ -73,7 +73,7 @@ export default function StaffList() {
   if (error) {
     return (
       <div className="p-4">
-        <p className={`${SYSTEM.error}`}>{error}</p>
+        <p className={`${Theme.system.error}`}>{error}</p>
       </div>
     );
   }
@@ -104,7 +104,7 @@ export default function StaffList() {
               <h3 className="text-xl font-medium text-cyan-500">New User</h3>
             </div>
           </div>
-          <StaffForm
+          <Form
             onSubmit={handleAddUser}
             onCancel={() => setShowAddForm(false)}
           />
@@ -112,11 +112,11 @@ export default function StaffList() {
       )}
 
       {users.length === 0 ? (
-        <p className={`${SYSTEM.notice}`}>No staff found. Add your first user to get started.</p>
+        <p className={`${Theme.system.notice}`}>No staff found. Add your first user to get started.</p>
       ) : (
         <div className="space-y-2">
           {users.map((user) => (
-            <StaffCard
+            <Card
               key={user.uid}
               user={user}
               isViewing={viewingUser?.uid === user.uid}

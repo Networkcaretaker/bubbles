@@ -11,7 +11,7 @@ export const PageStyle = {
     title_icon: "h-6 w-6 text-cyan-500"
 }
 
-export const CardLayout = {
+export const CARD = {
     card: "p-4 bg-gradient-to-r from-blue-900/80 to-blue-500/90 rounded-xl border border-cyan-500 hover:border-cyan-300 transition-colors",
     header: "flex flex-row items-center justify-between gap-2",
     title: "flex-1 min-w-0",
@@ -21,18 +21,55 @@ export const CardLayout = {
     tags: "inline-block px-1 text-xs font-medium rounded",
     name: "text-base font-medium text-white",
     selected_name: "text-xl font-bold text-cyan-400",
-    contact_grid: "p-1 grid grid-cols-3 gap-1 items-center text-cyan-500"
+    contact_grid: "grid grid-cols-3 gap-1 items-center "
 }
 
-export const ContactLayout = {
+export const LIST = {
+    y_space: "space-y-2"
+}
+export const CONTACT = {
     profile_initial: "rounded-full h-12 w-12 flex items-center justify-center font-light text-2xl"
 }
 
 export const ContentLayout = {
     content_space: "space-y-2"
 }
+export const CONTENT = {
+    y_space: "space-y-2"
+}
 
-export const ButtonLayout = {
-    contact_button: "p-2 border border-cyan-500 hover:border-cyan-300 hover:bg-blue-600/50 hover:text-cyan-300 cursor-pointer",
-    theme_button: ""
+
+
+export const SYSTEM = {
+    error: "text-red-700 text-center py-8",
+    notice: "text-cyan-400 text-center py-8"
+}
+
+export const VIEW = {
+    page: "max-w-8xl mx-auto",
+    header: "h-[8vh] md:h-[7vh] bg-blue-700/40",
+    title: "p-4 flex items-center gap-2 h-full text-2xl font-bold text-cyan-500",
+    content: "max-h-[82vh] overflow-y-scroll",
+    title_text: "text-2xl font-bold text-cyan-500",
+    title_icon: "h-6 w-6 text-cyan-500"
+}
+
+export const FORM = {
+    layout: "space-y-4 p-4 bg-blue-800/50 border border-cyan-500 rounded-lg",
+    label: "block text-sm font-medium text-cyan-500 mb-1",
+    input: "w-full px-3 py-2 border border-cyan-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500",
+    action: "flex flex-col sm:flex-row gap-2 pt-2"
+}
+
+export const BUTTON = {
+    layout: "p-2 flex items-center justify-center gap-1 cursor-pointer border rounded-md",
+    solid: "p-2 flex items-center justify-center gap-2 cursor-pointer border rounded-md w-full transition-colors bg-gradient-to-t from-cyan-700 to-cyan-500 hover:from-cyan-600 hover:to-cyan-400 border-cyan-500 hover:border-cyan-300 text-cyan-200 hover:text-cyan-50",
+    outline: "p-2 flex items-center justify-center gap-2 cursor-pointer border rounded-md w-full transition-colors bg-gradient-to-t from-blue-700/40 to-blue-800/40 hover:from-blue-600/50 hover:to-blue-500/50 border-cyan-500 hover:border-cyan-300 text-cyan-500 hover:text-cyan-300"
+}
+
+export const Theme = {
+    system: SYSTEM,
+    view: VIEW,
+    form: FORM,
+    button: BUTTON,
 }

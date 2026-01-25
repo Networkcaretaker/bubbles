@@ -1,11 +1,11 @@
-import { CardLayout } from '../ui/Theme';
+import { CARD } from '../ui/Theme';
 
 interface PlaceholderProps {
     title: string;
 }
 
 export function ContentPlaceholder({title}: PlaceholderProps) {
-  const STYLE = CardLayout
+  const STYLE = CARD
 
   return (
     <div className="p-4">

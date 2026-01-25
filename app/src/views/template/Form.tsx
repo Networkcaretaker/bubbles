@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import type { AuthUser } from '../../../types/user_interface';
+import type { AuthUser } from '../../types/user_interface';
+import { Theme } from '../../components/ui/Theme';
 
-interface UserFormProps {
+interface FormProps {
   initialData?: Partial<Omit<AuthUser, 'uid'>>;
   onSubmit: (data: Omit<AuthUser, 'uid'> & { password?: string }) => Promise<void>;
   onCancel: () => void;
@@ -9,13 +10,13 @@ interface UserFormProps {
   isEditMode?: boolean;
 }
 
-export default function UserForm({ 
+export default function Form({ 
   initialData, 
   onSubmit, 
   onCancel,
   submitLabel = 'Save',
   isEditMode = false
-}: UserFormProps) {
+}: FormProps) {
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
     email: initialData?.email || '',
@@ -63,9 +64,9 @@ export default function UserForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 " autoComplete="off">
+    <form onSubmit={handleSubmit} className={`${Theme.form.layout}`} autoComplete="off">
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-cyan-500 mb-1">
+        <label htmlFor="name" className={`${Theme.form.label}`}>
           Name *
         </label>
         <input
@@ -73,14 +74,14 @@ export default function UserForm({
           id="name"
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="w-full px-3 py-2 border border-cyan-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className={`${Theme.form.input}`}
           autoComplete="off"
           required
         />
       </div>
 
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-cyan-500 mb-1">
+        <label htmlFor="email" className={`${Theme.form.label}`}>
           Email *
         </label>
         <input
@@ -88,14 +89,14 @@ export default function UserForm({
           id="email"
           value={formData.email}
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          className="w-full px-3 py-2 border border-cyan-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className={`${Theme.form.input}`}
           autoComplete="new-email"
           required
         />
       </div>
 
       <div>
-        <label htmlFor="phone" className="block text-sm font-medium text-cyan-500 mb-1">
+        <label htmlFor="phone" className={`${Theme.form.label}`}>
           Phone
         </label>
         <input
@@ -103,20 +104,20 @@ export default function UserForm({
           id="phone"
           value={formData.phone}
           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-          className="w-full px-3 py-2 border border-cyan-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className={`${Theme.form.input}`}
           autoComplete="new-phone"
         />
       </div>
 
       <div>
-        <label htmlFor="role" className="block text-sm font-medium text-cyan-500 mb-1">
+        <label htmlFor="role" className={`${Theme.form.label}`}>
           Role *
         </label>
         <select
           id="role"
           value={formData.role}
           onChange={(e) => setFormData({ ...formData, role: e.target.value as AuthUser['role'] })}
-          className="w-full px-3 py-2 border border-cyan-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className={`${Theme.form.input}`}
           required
         >
           <option value="owner">Owner</option>
@@ -130,7 +131,7 @@ export default function UserForm({
       {!isEditMode && (
         <>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-cyan-500 mb-1">
+            <label htmlFor="password" className={`${Theme.form.label}`}>
               Password *
             </label>
             <input
@@ -138,7 +139,7 @@ export default function UserForm({
               id="password"
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              className="w-full px-3 py-2 border border-cyan-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`${Theme.form.input}`}
               minLength={6}
               autoComplete="new-password"
               required
@@ -147,7 +148,7 @@ export default function UserForm({
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-cyan-500 mb-1">
+            <label htmlFor="confirmPassword" className={`${Theme.form.label}`}>
               Confirm Password *
             </label>
             <input
@@ -155,7 +156,7 @@ export default function UserForm({
               id="confirmPassword"
               value={formData.confirmPassword}
               onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-              className="w-full px-3 py-2 border border-cyan-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`${Theme.form.input}`}
               minLength={6}
               autoComplete="new-password"
               required
@@ -165,11 +166,11 @@ export default function UserForm({
         </>
       )}
 
-      <div className="flex flex-col sm:flex-row gap-2 pt-2">
+      <div className={`${Theme.form.action}`}>
         <button
           type="submit"
           disabled={submitting}
-          className="flex-1 px-4 py-2 bg-gradient-to-t from-cyan-700 to-cyan-500 text-white rounded hover:from-cyan-600 hover:to-cyan-400 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+          className={`${Theme.button.solid}`}
         >
           {submitting ? 'Saving...' : submitLabel}
         </button>
@@ -177,7 +178,7 @@ export default function UserForm({
           type="button"
           onClick={onCancel}
           disabled={submitting}
-          className="flex-1 px-4 py-2 bg-gradient-to-t from-gray-400 to-gray-200 text-gray-700 rounded hover:from-gray-300 hover:to-gray-100 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
+          className={`${Theme.button.outline}`}
         >
           Cancel
         </button>

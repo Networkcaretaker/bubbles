@@ -6,9 +6,9 @@ import BubbleAnimation from './components/Background';
 import { AppShell } from './components/layout/AppShell';
 import Dashboard from './views/Dashboard';
 import Settings from './views/Settings';
-import Staff from './views/Staff';
+import Staff from './views/staff/Main';
 import Jobs from './views/Jobs';
-import Client from './views/Clients';
+import Clients from './views/clients/Main';
 
 // ... ProtectedRoute component ...
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -50,7 +50,7 @@ function App() {
               }
             >
               <Route index element={<Dashboard />} />
-              <Route path="client" element={<Client />} />
+              <Route path="clients" element={<Clients />} />
               <Route path="staff" element={<Staff />} />
               <Route path="jobs" element={<Jobs />} />
               <Route path="settings" element={<Settings />} />
