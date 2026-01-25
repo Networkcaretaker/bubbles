@@ -1,4 +1,4 @@
-import type { Address } from './shared_interface'
+import type { Address, Timestamp } from './shared_interface'
 
 export type ClientType = 
   | 'yacht'
@@ -16,8 +16,5 @@ export interface Client {
   phone: string;
   address: Address;
   clientType: ClientType;
-  
-  // Timestamps
-  createdAt: string;
-  updatedAt: string;
+  timestamp?: Timestamp;
 }

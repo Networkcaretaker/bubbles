@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 //import { Settings } from 'lucide-react';
-import UserList from './users/UserList';
 //import { PageLayout, PageStyle } from '../ui/Theme';
 
 //const PAGE_TITLE = "Settings"
@@ -14,6 +13,14 @@ function GeneralSettingsPlaceholder() {
     <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
       <h2 className="text-lg font-medium text-gray-900 mb-4">General Settings</h2>
       <p className="text-gray-500">General application settings will be managed here in the future.</p>
+    </div>
+  );
+}
+function UserSettingsPlaceholder() {
+  return (
+    <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+      <h2 className="text-lg font-medium text-gray-900 mb-4">User Settings</h2>
+      <p className="text-gray-500">User settings will be managed here in the future.</p>
     </div>
   );
 }
@@ -63,7 +70,7 @@ export default function SettingsTabs() {
         {/* Tab Content */}
         <div>
           {activeTab === 'general' && <GeneralSettingsPlaceholder />}
-          {activeTab === 'users' && <UserList />}
+          {activeTab === 'users' && <UserSettingsPlaceholder />}
         </div>
       </div>
     </div>

@@ -13,7 +13,7 @@ export const PageStyle = {
 
 export const CARD = {
     card: "p-4 bg-gradient-to-r from-blue-900/80 to-blue-500/90 rounded-xl border border-cyan-500 hover:border-cyan-300 transition-colors",
-    header: "flex flex-row items-center justify-between gap-2",
+    header: "flex flex-row items-center justify-between gap-2 w-full",
     title: "flex-1 min-w-0",
     selection: "relative w-full h-12 cursor-pointer",
     list_content: "my-4 p-2 text-cyan-500 space-y-2 text-sm",
@@ -37,8 +37,6 @@ export const ContentLayout = {
 export const CONTENT = {
     y_space: "space-y-2"
 }
-
-
 
 export const SYSTEM = {
     error: "text-red-700 text-center py-8",
