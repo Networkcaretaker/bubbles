@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, LogOut, Users } from 'lucide-react';
+import { LayoutDashboard, LogOut, Users, WashingMachine } from 'lucide-react';
 import { auth } from '../../services/firebase/config';
 
 // In a larger app, you might want to move this to a shared configuration file
@@ -8,8 +8,10 @@ const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   { name: 'Staff', href: '/staff', icon: Users },
   { name: 'Clients', href: '/clients', icon: Users },
-  { name: 'Contacts', href: '/contacts', icon: Users },
+  //{ name: 'Contacts', href: '/contacts', icon: Users },
+  { name: 'Services', href: '/services', icon: WashingMachine },
   //{ name: 'Jobs', href: '/jobs', icon: WashingMachine },
+  //{ name: 'Items', href: '/items', icon: WashingMachine },
   //{ name: 'Settings', href: '/settings', icon: Settings },
 ];
 

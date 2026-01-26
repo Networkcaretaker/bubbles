@@ -1,8 +1,14 @@
+export type PricingUnit = 
+  | 'per_item'
+  | 'per_kg'
+  | 'per_load'
+  | 'per_sqm';
+  
 export interface SocialLinks {
     facebook?: string;
     whatsapp?: string;
     linkedin?: string;
-}
+};
 
 export interface Address {
     street?: string;
@@ -10,11 +16,11 @@ export interface Address {
     region?: string;
     postalCode?: string;
     country?: string;
-}
+};
 
 export interface Timestamp {
     createdAt?: string;
     updatedAt?: string;
-}
+};
 
-export interface Times { start: string; end: string }
+export interface Times { start: string; end: string };

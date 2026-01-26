@@ -1,4 +1,4 @@
-import type { Address, Timestamp } from './shared_interface'
+import type { Address, Timestamp } from './shared_interface';
 
 export type ClientType = 
   | 'Property Management'
@@ -21,4 +21,4 @@ export interface Client {
   address: Address;
   clientType: ClientType;
   timestamp?: Timestamp;
-}
+};

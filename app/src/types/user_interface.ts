@@ -1,4 +1,4 @@
-import type { Timestamp } from './shared_interface'
+import type { Timestamp } from './shared_interface';
 
 export type UserRole = 
   | 'owner'
@@ -18,7 +18,7 @@ export interface RolePermissions {
   canCreateClients: boolean;
   canEditClients: boolean;
   canDeleteClients: boolean;
-}
+};
 
 export interface AuthUser {
   uid: string;
@@ -28,4 +28,4 @@ export interface AuthUser {
   role: UserRole;
   permissions?: RolePermissions;
   timestamp?: Timestamp;
-}
+};

@@ -1,4 +1,4 @@
-import type { Address, Timestamp } from './shared_interface'
+import type { Address, Timestamp } from './shared_interface';
 
 export type ContactType = 
   | 'primary'
@@ -18,4 +18,4 @@ export interface Contact {
   address: Address;
   contactType: ContactType;
   timestamp?: Timestamp;
-}
+};
