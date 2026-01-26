@@ -44,10 +44,10 @@ export const SYSTEM = {
 }
 
 export const VIEW = {
-    page: "max-w-8xl mx-auto",
-    header: "h-[8vh] md:h-[7vh] bg-blue-700/40",
+    page: "max-w-8xl",
+    header: "h-[8vh] lg:h-[7vh] bg-blue-700/40",
     title: "p-4 flex items-center gap-2 h-full text-2xl font-bold text-cyan-500",
-    content: "max-h-[82vh] overflow-y-scroll",
+    content: "max-h-[81vh] lg:max-h-[93vh] overflow-y-scroll",
     title_text: "text-2xl font-bold text-cyan-500",
     title_icon: "h-6 w-6 text-cyan-500"
 }

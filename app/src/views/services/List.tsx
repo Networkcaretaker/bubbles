@@ -82,7 +82,7 @@ export default function List() {
   }
 
   return (
-    <div className="p-4 mb-12">
+    <div className="p-4">
       {!showAddForm &&
         <div className="flex mb-4">
           <button

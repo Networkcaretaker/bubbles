@@ -1,9 +1,9 @@
-import { WashingMachine } from 'lucide-react';
+import { FileText } from 'lucide-react';
 import { Theme } from '../components/ui/Theme';
 import { ContentPlaceholder } from '../components/dev/ContentPlaceholder';
 
-const PAGE_TITLE = "Laundry Jobs"
-const PAGE_ICON = WashingMachine
+const PAGE_TITLE = "Quotes"
+const PAGE_ICON = FileText
 
 export default function View() {
   return (

@@ -6,7 +6,7 @@ import {
   Users, 
   WashingMachine, 
   Settings, 
-  Briefcase, 
+  FileText, 
   ChevronUp, 
   ChevronDown 
 } from 'lucide-react';
@@ -19,7 +19,10 @@ const navigation = [
   { name: 'Contacts', href: '/contacts', icon: Users },
   { name: 'Items', href: '/items', icon: WashingMachine },
   { name: 'Services', href: '/services', icon: WashingMachine },
-  { name: 'Jobs', href: '/jobs', icon: Briefcase },
+  { name: 'Jobs', href: '/jobs', icon: WashingMachine },
+  { name: 'Batches', href: '/batches', icon: WashingMachine },
+  { name: 'Invoices', href: '/invoices', icon: FileText },
+  { name: 'Quotes', href: '/quotes', icon: FileText },
   { name: 'Settings', href: '/settings', icon: Settings },
 ];
 
@@ -65,7 +68,7 @@ export function MobileNavigation() {
               to={item.href}
               onClick={() => setIsExpanded(false)}
               className={({ isActive }) =>
-                `flex flex-col items-center justify-center gap-1 py-2 text-[10px] font-medium transition-colors ${
+                `flex flex-col items-center justify-center gap-1 py-2 mb-1 text-[10px] font-medium transition-colors ${
                   isActive
                     ? 'text-cyan-400 bg-blue-500/20 rounded-lg'
                     : 'text-cyan-500 hover:text-cyan-100'

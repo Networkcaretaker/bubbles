@@ -14,6 +14,9 @@ import Items from './views/items/Main';
 import Jobs from './views/jobs/Main';
 import Settings from './views/Settings';
 import Template from './views/template/Main';
+import Batches from './views/Batches';
+import Invoices from './views/Invoices';
+import Quotes from './views/Quotes';
 
 // ... ProtectedRoute component ...
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -63,6 +66,9 @@ function App() {
               <Route path="jobs" element={<Jobs />} />
               <Route path="settings" element={<Settings />} />
               <Route path="template" element={<Template />} />
+              <Route path="batches" element={<Batches />} />
+              <Route path="invoices" element={<Invoices />} />
+              <Route path="quotes" element={<Quotes />} />
               <Route path="settings/users" element={<h1 className="text-2xl font-bold text-cyan-500">Users</h1>} />
             </Route>
             
