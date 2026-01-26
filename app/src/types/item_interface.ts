@@ -37,6 +37,7 @@ export interface CatalogItem {
   id: string;
   name: string;
   category: ItemCategory;
-  services: ItemService[];
+  sizes?: ItemSize[];
+  services?: ItemService[];
   timestamp?: Timestamp;
 };

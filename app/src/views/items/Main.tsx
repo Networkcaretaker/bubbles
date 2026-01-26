@@ -2,7 +2,7 @@ import { WashingMachine } from 'lucide-react';
 import { Theme } from '../../components/ui/Theme';
 import List from './List';
 
-const PAGE_TITLE = "Laundry Services"
+const PAGE_TITLE = "Laundry Items"
 const PAGE_ICON = WashingMachine
 
 export default function View() {

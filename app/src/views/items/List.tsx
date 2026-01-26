@@ -1,66 +1,66 @@
 import { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
-import { serviceService } from '../../services/service_service';
-import type { DefaultServices } from '../../types/service_interface';
+import { itemService } from '../../services/item_service';
+import type { CatalogItem } from '../../types/item_interface';
 import Card from './Card';
 import Form from './Form';
 import { Theme } from '../../components/ui/Theme';
 
 export default function List() {
-  const [services, setServices] = useState<DefaultServices[]>([]);
+  const [items, setItems] = useState<CatalogItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [viewingService, setViewingService] = useState<DefaultServices | null>(null);
-  const [editingService, setEditingService] = useState<DefaultServices | null>(null);
+  const [viewingItem, setViewingItem] = useState<CatalogItem | null>(null);
+  const [editingItem, setEditingItem] = useState<CatalogItem | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
 
   useEffect(() => {
-    loadServices();
+    loadItems();
   }, []);
 
-  const loadServices = async () => {
+  const loadItems = async () => {
     try {
       setLoading(true);
       setError(null);
-      const fetchedServices = await serviceService.getAllServices();
-      setServices(fetchedServices);
+      const fetchedItems = await itemService.getAllItems();
+      setItems(fetchedItems);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to load services';
+      const message = err instanceof Error ? err.message : 'Failed to load items';
       setError(message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleAddService = async (serviceData: Omit<DefaultServices, 'id'>) => {
+  const handleAddItem = async (itemData: Omit<CatalogItem, 'id'>) => {
     try {
       setError(null);
-      await serviceService.addService(serviceData);
-      await loadServices();
+      await itemService.addItem(itemData);
+      await loadItems();
       setShowAddForm(false);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to add service';
+      const message = err instanceof Error ? err.message : 'Failed to add item';
       setError(message);
     }
   };
 
-  const handleUpdateService = async (id: string, serviceData: Partial<Omit<DefaultServices, 'id'>>) => {
+  const handleUpdateItem = async (id: string, itemData: Partial<Omit<CatalogItem, 'id'>>) => {
     try {
       setError(null);
-      // Get the current service to preserve createdAt
-      const currentService = services.find(s => s.id === id);
+      // Get the current item to preserve createdAt
+      const currentItem = items.find(s => s.id === id);
       const updateData = {
-        ...serviceData,
+        ...itemData,
         timestamp: {
-          createdAt: currentService?.timestamp?.createdAt,
+          createdAt: currentItem?.timestamp?.createdAt,
           updatedAt: new Date().toISOString(),
         }
       };
-      await serviceService.updateService(id, updateData);
-      await loadServices();
-      setEditingService(null);
+      await itemService.updateItem(id, updateData);
+      await loadItems();
+      setEditingItem(null);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to update service';
+      const message = err instanceof Error ? err.message : 'Failed to update item';
       setError(message);
     }
   };
@@ -90,7 +90,7 @@ export default function List() {
             className={`${Theme.button.outline}`}
           >
             <Plus className="w-5 h-5" />
-            <span>Add Service</span> 
+            <span>Add Item</span> 
           </button>
         </div>
       }
@@ -104,31 +104,31 @@ export default function List() {
               </span>
             </div>
             <div>
-              <h3 className="text-xl font-medium text-cyan-500">New Service</h3>
+              <h3 className="text-xl font-medium text-cyan-500">New Item</h3>
             </div>
           </div>
           <Form
-            onSubmit={handleAddService}
+            onSubmit={handleAddItem}
             onCancel={() => setShowAddForm(false)}
           />
         </div>
       )}
 
-      {services.length === 0 ? (
-        <p className={`${Theme.system.notice}`}>No services found. Add your first service to get started.</p>
+      {items.length === 0 ? (
+        <p className={`${Theme.system.notice}`}>No items found. Add your first item to get started.</p>
       ) : (
         <div className="space-y-2">
-          {services.map((service) => (
+          {items.map((item) => (
             <Card
-              key={service.id}
-              service={service}
-              isViewing={viewingService?.id === service.id}
-              onView={() => setViewingService(service)}
-              onCancelView={() => setViewingService(null)}
-              isEditing={editingService?.id === service.id}
-              onEdit={() => setEditingService(service)}
-              onUpdate={(serviceData) => handleUpdateService(service.id, serviceData)}
-              onCancelEdit={() => setEditingService(null)}
+              key={item.id}
+              item={item}
+              isViewing={viewingItem?.id === item.id}
+              onView={() => setViewingItem(item)}
+              onCancelView={() => setViewingItem(null)}
+              isEditing={editingItem?.id === item.id}
+              onEdit={() => setEditingItem(item)}
+              onUpdate={(itemData) => handleUpdateItem(item.id, itemData)}
+              onCancelEdit={() => setEditingItem(null)}
             />
           ))}
         </div>

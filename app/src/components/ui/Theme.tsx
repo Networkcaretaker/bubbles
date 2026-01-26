@@ -3,7 +3,7 @@ export const PageLayout = {
     header: "h-[8vh] md:h-[7vh] fixed",
     title: "flex items-center gap-2 h-full p-4",
     text: "text-2xl font-bold uppercase",
-    content: "max-h-[82vh] overflow-y-scroll"
+    content: "max-h-[82vh] md:max-h-[92vh] overflow-y-scroll"
 }
 export const PageStyle = {
     header: "bg-gradient-to-r from-blue-900/70 to-blue-600/70",
@@ -21,7 +21,7 @@ export const CARD = {
     tags: "inline-block px-1 text-xs font-medium rounded",
     name: "text-base font-medium text-white cursor-pointer",
     selected_name: "text-xl font-bold text-cyan-400 w-full cursor-pointer",
-    contact_grid: "grid grid-cols-3 gap-1 items-center"
+    contact_grid: "flex gap-1 items-center"
 }
 
 export const LIST = {

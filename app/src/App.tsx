@@ -10,6 +10,7 @@ import Staff from './views/staff/Main';
 import Clients from './views/clients/Main';
 import Contacts from './views/contacts/Main';
 import Services from './views/services/Main';
+import Items from './views/items/Main';
 import Jobs from './views/jobs/Main';
 import Settings from './views/Settings';
 import Template from './views/template/Main';
@@ -58,6 +59,7 @@ function App() {
               <Route path="contacts" element={<Contacts />} />
               <Route path="staff" element={<Staff />} />
               <Route path="services" element={<Services />} />
+              <Route path="items" element={<Items />} />
               <Route path="jobs" element={<Jobs />} />
               <Route path="settings" element={<Settings />} />
               <Route path="template" element={<Template />} />

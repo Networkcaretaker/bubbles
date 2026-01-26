@@ -1,4 +1,4 @@
-import { Mail, PhoneIcon, Pencil, MapPin } from 'lucide-react';
+import { Mail, PhoneIcon, Pencil, MapPin, InfoIcon } from 'lucide-react';
 import { WhatsApp } from '../../components/ui/IconSets'; 
 import type { Contact } from '../../types/contact_interface';
 import { CARD, CONTACT, Theme } from '../../components/ui/Theme';
@@ -98,6 +98,9 @@ export default function Card({
             </div>
             <div className={`${Theme.button.outline}`}>
               <WhatsApp className="w-8 h-8 mx-auto"/>
+            </div>
+            <div className={`${Theme.button.outline}`}>
+              <InfoIcon className="w-8 h-8 mx-auto" />
             </div>
           </div>
 
