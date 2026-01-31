@@ -25,10 +25,26 @@ export default function Card({
   onUpdate,
   onCancelEdit,
 }: CardProps) {
-  const formatItemCategory = (category: string) => {
+  const formatCategory = (category: string) => {
     return category.split('-').map(word => 
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
+  };
+
+  const formatServiceCategory = (category: string) => {
+    return category.split('-').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+  };
+
+  const formatPricingUnit = (unit: string) => {
+    return unit.split('_').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+  };
+
+  const formatSize = (size: string) => {
+    return size.charAt(0).toUpperCase() + size.slice(1);
   };
 
   const formatDate = (dateString?: string) => {
@@ -59,7 +75,7 @@ export default function Card({
                 : <h3 className={`${CARD.name}`}>{item.name}</h3>
               }
               <span className={`${CARD.tags} bg-gray-100 text-gray-800`}>
-                {formatItemCategory(item.category)}
+                {formatCategory(item.category)}
               </span>
             </div>
           </div>
@@ -74,15 +90,63 @@ export default function Card({
         <div>
           
           <div className={`${CARD.list_content}`}>
-            <div className={`${CARD.icon_list}`}>
-
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-300 mb-2">Services & Pricing</p>
-                <div className="space-y-1">
-
+            {/* Sizes */}
+            {item.sizes && item.sizes.length > 0 && (
+              <div className={`${CARD.icon_list}`}>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-100 mb-1">Available Sizes</p>
+                  <div className="flex flex-wrap gap-1">
+                    {item.sizes.map((size, index) => (
+                      <span
+                        key={index}
+                        className="px-2 py-1 text-xs rounded bg-cyan-700 text-cyan-100"
+                      >
+                        {formatSize(size)}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
+
+            {/* Services */}
+            {item.services && item.services.length > 0 && (
+              <div className={`${CARD.icon_list}`}>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-100 mb-2">Services & Pricing</p>
+                  <div className="space-y-3">
+                    {item.services.map((service, index) => (
+                      <div key={index} className="pl-3 border-l-2 border-cyan-500">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm font-bold text-cyan-500">
+                            {formatServiceCategory(service.service)}
+                          </span>
+                          <span className="text-xs font-medium text-cyan-500">
+                            {formatPricingUnit(service.unit)}
+                          </span>
+                        </div>
+                        
+                        {service.unit !== 'per_item' ? (
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-gray-200">{formatPricingUnit(service.unit)}</span>
+                            <span className="text-gray-200 font-medium">€{service.price?.toFixed(2)}</span>
+                          </div>
+                        ) : (
+                          <div className="space-y-1">
+                            {service.prices?.map((priceItem, priceIndex) => (
+                              <div key={priceIndex} className="flex justify-between items-center text-sm">
+                                <span className="text-gray-200 ">{formatSize(priceItem.size)}</span>
+                                <span className="text-gray-200 font-medium">€{priceItem.price.toFixed(2)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex gap-2 sm:flex-col sm:w-auto mt-4">
@@ -104,6 +168,8 @@ export default function Card({
                 initialData={{
                   name: item.name,
                   category: item.category,
+                  sizes: item.sizes,
+                  services: item.services,
                 }}
                 onSubmit={onUpdate}
                 onCancel={onCancelEdit}
@@ -111,8 +177,8 @@ export default function Card({
               />
             </div>
           }
+          {/* Timestamps */}
           <div className={`${CARD.icon_list} pt-4`}>
-
             <div className="flex-1">
               <div className="space-y-1 text-xs">
                 <div className="flex justify-between">

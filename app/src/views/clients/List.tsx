@@ -47,12 +47,22 @@ export default function List() {
   const handleUpdateClient = async (id: string, clientData: Partial<Omit<Client, 'id'>>) => {
     try {
       setError(null);
-      const updateData = {
+      const currentClient = clients.find(i => i.id === id);
+      const updateData: Partial<Omit<Client, 'id'>> = {
         ...clientData,
-        timestamp: {
-          updatedAt: new Date().toISOString(),
-        }
       };
+      // Only add timestamp if we have a createdAt to preserve
+      if (currentClient?.timestamp?.createdAt) {
+        updateData.timestamp = {
+          createdAt: currentClient.timestamp.createdAt,
+          updatedAt: new Date().toISOString(),
+        };
+      } else {
+        updateData.timestamp = {
+          updatedAt: new Date().toISOString(),
+        };
+      }
+
       await clientService.updateClient(id, updateData);
       await loadClients();
       setEditingClient(null);

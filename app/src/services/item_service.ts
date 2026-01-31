@@ -71,7 +71,8 @@ export const itemService = {
         id: itemRef.id,
         name: itemData.name,
         category: itemData.category,
-        //services: itemData.services,
+        ...(itemData.sizes && itemData.sizes.length > 0 ? { sizes: itemData.sizes } : {}),
+        ...(itemData.services && itemData.services.length > 0 ? { services: itemData.services } : {}),
         timestamp: {
           createdAt: now,
           updatedAt: now
@@ -102,7 +103,29 @@ export const itemService = {
         throw new Error(`Item with id ${id} not found`);
       }
       
-      await updateDoc(itemRef, itemData);
+      // Deep clean to remove all undefined values
+      const cleanData: Record<string, unknown> = {};
+      
+      Object.entries(itemData).forEach(([key, value]) => {
+        if (value !== undefined) {
+          // Handle nested timestamp object
+          if (key === 'timestamp' && typeof value === 'object' && value !== null) {
+            const cleanTimestamp: Record<string, unknown> = {};
+            Object.entries(value).forEach(([tsKey, tsValue]) => {
+              if (tsValue !== undefined) {
+                cleanTimestamp[tsKey] = tsValue;
+              }
+            });
+            if (Object.keys(cleanTimestamp).length > 0) {
+              cleanData[key] = cleanTimestamp;
+            }
+          } else {
+            cleanData[key] = value;
+          }
+        }
+      });
+      
+      await updateDoc(itemRef, cleanData);
       
       const updatedDoc = await getDoc(itemRef);
       return {

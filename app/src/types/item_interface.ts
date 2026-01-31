@@ -3,9 +3,12 @@ import type { ServiceCategory } from './service_interface';
 
 export type ItemCategory = 
   | 'bed-linen'
+  | 'bedding'
   | 'clothing'
   | 'towel' 
-  | 'dining';
+  | 'dining'
+  | 'service';
+  
 
 export type ItemSize = 
   | 'standard'

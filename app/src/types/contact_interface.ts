@@ -17,5 +17,6 @@ export interface Contact {
   phone: string;
   address: Address;
   contactType: ContactType;
+  clientId?: string;
   timestamp?: Timestamp;
 };

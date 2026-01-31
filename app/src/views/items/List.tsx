@@ -48,14 +48,23 @@ export default function List() {
     try {
       setError(null);
       // Get the current item to preserve createdAt
-      const currentItem = items.find(s => s.id === id);
-      const updateData = {
+      const currentItem = items.find(i => i.id === id);
+      const updateData: Partial<Omit<CatalogItem, 'id'>> = {
         ...itemData,
-        timestamp: {
-          createdAt: currentItem?.timestamp?.createdAt,
-          updatedAt: new Date().toISOString(),
-        }
       };
+      
+      // Only add timestamp if we have a createdAt to preserve
+      if (currentItem?.timestamp?.createdAt) {
+        updateData.timestamp = {
+          createdAt: currentItem.timestamp.createdAt,
+          updatedAt: new Date().toISOString(),
+        };
+      } else {
+        updateData.timestamp = {
+          updatedAt: new Date().toISOString(),
+        };
+      }
+      
       await itemService.updateItem(id, updateData);
       await loadItems();
       setEditingItem(null);
