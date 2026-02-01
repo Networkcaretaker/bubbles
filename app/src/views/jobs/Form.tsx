@@ -12,6 +12,7 @@ interface FormProps {
   submitLabel?: string;
   availableClients?: Client[];
   availableServices?: DefaultServices[];
+  isNewJobMode?: boolean; // Simplified form for creating new jobs
 }
 
 export default function Form({ 
@@ -21,6 +22,7 @@ export default function Form({
   submitLabel = 'Save',
   availableClients = [],
   availableServices = [],
+  isNewJobMode = false,
 }: FormProps) {
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [formData, setFormData] = useState({
@@ -234,29 +236,32 @@ export default function Form({
         </select>
       </div>
 
-      {/* Job Status */}
-      <div>
-        <label htmlFor="jobStatus" className={`${Theme.form.label}`}>
-          Job Status *
-        </label>
-        <select
-          id="jobStatus"
-          value={formData.jobStatus}
-          onChange={(e) => setFormData({ ...formData, jobStatus: e.target.value as LaundryJob['jobStatus'] })}
-          className={`${Theme.form.input}`}
-          required
-        >
-          <option value="new">New</option>
-          <option value="received">Received</option>
-          <option value="inspecting">Inspecting</option>
-          <option value="in_progress">In Progress</option>
-          <option value="quality_check">Quality Check</option>
-          <option value="completed">Completed</option>
-        </select>
-      </div>
+      {/* Job Status - Only shown when editing existing jobs */}
+      {!isNewJobMode && (
+        <div>
+          <label htmlFor="jobStatus" className={`${Theme.form.label}`}>
+            Job Status *
+          </label>
+          <select
+            id="jobStatus"
+            value={formData.jobStatus}
+            onChange={(e) => setFormData({ ...formData, jobStatus: e.target.value as LaundryJob['jobStatus'] })}
+            className={`${Theme.form.input}`}
+            required
+          >
+            <option value="new">New</option>
+            <option value="received">Received</option>
+            <option value="inspecting">Inspecting</option>
+            <option value="in_progress">In Progress</option>
+            <option value="quality_check">Quality Check</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      )}
 
-      {/* Date Received */}
-      <div>
+      {/* Date Received - Only shown when editing existing jobs */}
+      {!isNewJobMode && (
+        <div>
         <label className={`${Theme.form.label}`}>
           Date Received
         </label>
@@ -278,9 +283,11 @@ export default function Form({
           </button>
         </div>
       </div>
+      )}
 
-      {/* Date Required */}
-      <div>
+      {/* Date Required - Only shown when editing existing jobs */}
+      {!isNewJobMode && (
+        <div>
         <label htmlFor="dateRequired" className={`${Theme.form.label}`}>
           Date Required *
         </label>
@@ -298,9 +305,11 @@ export default function Form({
           className={`${Theme.form.input}`}
         />
       </div>
+      )}
 
-      {/* Date Complete */}
-      <div>
+      {/* Date Complete - Only shown when editing existing jobs */}
+      {!isNewJobMode && (
+        <div>
         <label className={`${Theme.form.label}`}>
           Date Completed
         </label>
@@ -322,9 +331,11 @@ export default function Form({
           </button>
         </div>
       </div>
+      )}
 
-      {/* Bags Count */}
-      <div>
+      {/* Bags Count - Only shown when editing existing jobs */}
+      {!isNewJobMode && (
+        <div>
         <label htmlFor="bagsCount" className={`${Theme.form.label}`}>
           Bags Count
         </label>
@@ -344,9 +355,11 @@ export default function Form({
           placeholder="0"
         />
       </div>
+      )}
 
-      {/* Items Count */}
-      <div>
+      {/* Items Count - Only shown when editing existing jobs */}
+      {!isNewJobMode && (
+        <div>
         <label htmlFor="itemsCount" className={`${Theme.form.label}`}>
           Items Count
         </label>
@@ -366,9 +379,11 @@ export default function Form({
           placeholder="0"
         />
       </div>
+      )}
 
-      {/* Services */}
-      <div>
+      {/* Services - Only shown when editing existing jobs */}
+      {!isNewJobMode && (
+        <div>
         <label className={`${Theme.form.label}`}>
           Services
         </label>
@@ -418,6 +433,7 @@ export default function Form({
           </div>
         )}
       </div>
+      )}
 
       <div className={`${Theme.form.action}`}>
         <button

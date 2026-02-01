@@ -58,6 +58,34 @@ export default function List() {
     }
   };
 
+  const handleUpdateJob = async (id: string, jobData: Partial<Omit<LaundryJob, 'id'>>) => {
+    try {
+      setError(null);
+      const currentJob = jobs.find(j => j.id === id);
+      const updateData: Partial<Omit<LaundryJob, 'id'>> = {
+        ...jobData,
+      };
+      
+      // Only add timestamp if we have a createdAt to preserve
+      if (currentJob?.timestamp?.createdAt) {
+        updateData.timestamp = {
+          createdAt: currentJob.timestamp.createdAt,
+          updatedAt: new Date().toISOString(),
+        };
+      } else {
+        updateData.timestamp = {
+          updatedAt: new Date().toISOString(),
+        };
+      }
+
+      await jobService.updateJob(id, updateData);
+      await loadData();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to update job';
+      setError(message);
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-4">
@@ -103,6 +131,7 @@ export default function List() {
             onCancel={() => setShowAddForm(false)}
             availableClients={clients}
             availableServices={services}
+            isNewJobMode={true}
           />
         </div>
       )}
@@ -118,6 +147,7 @@ export default function List() {
               isViewing={viewingJob?.id === job.id}
               onView={() => setViewingJob(job)}
               onCancelView={() => setViewingJob(null)}
+              onUpdate={(jobData) => handleUpdateJob(job.id, jobData)}
             />
           ))}
         </div>
