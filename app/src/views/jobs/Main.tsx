@@ -1,7 +1,7 @@
 import { WashingMachine } from 'lucide-react';
 import { Theme } from '../../components/ui/Theme';
-// import List from './List';
-import { ContentPlaceholder } from '../../components/dev/ContentPlaceholder';
+import List from './List';
+//import { ContentPlaceholder } from '../../components/dev/ContentPlaceholder';
 
 const PAGE_TITLE = "Laundry Jobs"
 const PAGE_ICON = WashingMachine
@@ -16,7 +16,7 @@ export default function View() {
         </div>
       </div>
       <div className={`${Theme.view.content}`}>
-        <ContentPlaceholder title={PAGE_TITLE}/>
+        <List />
       </div>
     </div>
   );

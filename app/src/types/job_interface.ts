@@ -1,30 +1,25 @@
+import type { Timestamp } from './shared_interface';
+
+export type JobStatus = 
+  | 'received'
+  | 'inspecting'
+  | 'in_progress'
+  | 'quality_check'
+  | 'completed';
+
 export type BatchBy = 
   | 'item_category'
   | 'cabin_room'
   | 'bag'
   | 'mixed'
 
-  export type JobType = 
-  | 'villa'
-  | 'yatch'
-  | 'personal'
-  | 'sports'
-
-export interface ClientJob {
-  id: string;
-  clientId: string;
-  jobReference: string;
-  jobType: JobType; 
-  //jobLocation: string;
-  //quoteId: string;
-}
-
 export interface JobOverview {
-  dateRecevied: string;
+  dateReceived: string;
+  dateComplete: string;
   dateRequired: string;
-  bagsCount: number;
-  itemsCount: number;
-  services: string[];
+  bagsCount?: number;
+  itemsCount?: number;
+  services?: string[];
 }
 
 export interface Batch {
@@ -39,7 +34,9 @@ export interface LaundryJob {
   clientId: string;
   clientJob: string;
   jobReference: string;
+  jobStatus: JobStatus;
   jobOverview: JobOverview;
-  batchBy: BatchBy;
-  batches: Batch[];
+  timestamp?: Timestamp;
+  //batchBy: BatchBy;
+  //batches: Batch[];
 }

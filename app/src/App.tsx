@@ -12,6 +12,7 @@ import Contacts from './views/contacts/Main';
 import Services from './views/services/Main';
 import Items from './views/items/Main';
 import Jobs from './views/jobs/Main';
+import JobPage from './views/jobs/Page';
 import Settings from './views/Settings';
 import Template from './views/template/Main';
 import Batches from './views/Batches';
@@ -64,6 +65,7 @@ function App() {
               <Route path="services" element={<Services />} />
               <Route path="items" element={<Items />} />
               <Route path="jobs" element={<Jobs />} />
+              <Route path="jobs/:id" element={<JobPage />} />
               <Route path="settings" element={<Settings />} />
               <Route path="template" element={<Template />} />
               <Route path="batches" element={<Batches />} />
