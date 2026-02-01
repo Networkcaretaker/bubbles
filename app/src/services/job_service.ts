@@ -70,6 +70,7 @@ export const jobService = {
       const jobModel: LaundryJob = {
         id: jobRef.id,
         clientId: jobData.clientId,
+        clientName: jobData.clientName,
         clientJob: jobData.clientJob,
         jobStatus: jobData.jobStatus,
         jobReference: jobData.jobReference,

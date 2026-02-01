@@ -26,7 +26,7 @@ export default function Form({
   const [formData, setFormData] = useState({
     clientId: initialData?.clientId || '',
     clientJob: initialData?.clientJob || '',
-    jobStatus: initialData?.jobStatus || 'received' as const,
+    jobStatus: initialData?.jobStatus || 'new' as const,
     jobOverview: {
       dateReceived: initialData?.jobOverview?.dateReceived || '',
       dateRequired: initialData?.jobOverview?.dateRequired || '',
@@ -56,10 +56,10 @@ export default function Form({
       return;
     }
 
-    if (!formData.jobOverview.dateRequired) {
+    /*if (!formData.jobOverview.dateRequired) {
       alert('Please provide a required date');
       return;
-    }
+    }*/
 
     setSubmitting(true);
     try {
@@ -236,6 +236,7 @@ export default function Form({
           className={`${Theme.form.input}`}
           required
         >
+          <option value="new">New</option>
           <option value="received">Received</option>
           <option value="inspecting">Inspecting</option>
           <option value="in_progress">In Progress</option>
@@ -285,7 +286,6 @@ export default function Form({
             }
           })}
           className={`${Theme.form.input}`}
-          required
         />
       </div>
 

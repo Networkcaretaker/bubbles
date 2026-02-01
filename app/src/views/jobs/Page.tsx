@@ -88,6 +88,7 @@ export default function Page() {
 
   const getStatusColor = (status: LaundryJob['jobStatus']) => {
     const colors = {
+      new: 'bg-gray-500/20 text-gray-400 border-gray-500',
       received: 'bg-blue-500/20 text-blue-400 border-blue-500',
       inspecting: 'bg-yellow-500/20 text-yellow-400 border-yellow-500',
       in_progress: 'bg-purple-500/20 text-purple-400 border-purple-500',
@@ -140,15 +141,13 @@ export default function Page() {
       </div>
     );
   }
-  const PAGE_TITLE = "Laundry Jobs"
-  const PAGE_ICON = WashingMachine
 
   return (
     
     <div className={`${Theme.view.header}`}>
         <div className={`${Theme.view.title}`}>
-            <PAGE_ICON className="w-6 h-6" />
-            <h1>{PAGE_TITLE}: <span className="font-bold text-gray-100">{job.jobReference}</span></h1>
+            <WashingMachine className="w-6 h-6" />
+            <h1>{job.jobReference}</h1>
         </div>
         
         <div className="p-4">

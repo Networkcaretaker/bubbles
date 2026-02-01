@@ -67,6 +67,7 @@ export default function Card({
 
   const getStatusColor = (status: LaundryJob['jobStatus']) => {
     const colors = {
+      new: 'bg-gray-500/20 text-gray-400 border-gray-500',
       received: 'bg-blue-500/20 text-blue-400 border-blue-500',
       inspecting: 'bg-yellow-500/20 text-yellow-400 border-yellow-500',
       in_progress: 'bg-purple-500/20 text-purple-400 border-purple-500',
@@ -150,36 +151,11 @@ export default function Card({
                     </div>
                     <div className="text-xs text-gray-400 space-y-0.5">
                       <div>Job: {job.clientJob}</div>
-                      <div>{client.email}</div>
-                      <div>{client.phone}</div>
                     </div>
                   </div>
                 </div>
               </div>
             )}
-
-            {/* Job Overview */}
-            <div className={`${CARD.icon_list}`}>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-100 mb-2">Timeline</p>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Received:</span>
-                    <span className="text-gray-300">{formatDate(job.jobOverview.dateReceived)}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Required:</span>
-                    <span className="text-gray-300 font-medium">{formatDate(job.jobOverview.dateRequired)}</span>
-                  </div>
-                  {job.jobOverview.dateComplete && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-400">Completed:</span>
-                      <span className="text-green-400 font-medium">{formatDate(job.jobOverview.dateComplete)}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
 
             {/* Services */}
             {job.jobOverview.services && job.jobOverview.services.length > 0 && (
@@ -258,7 +234,7 @@ export default function Card({
             </div>
             <div className={`${Theme.button.outline} grid gri-cols-1 text-xs font-bold`}>
               <InfoIcon className="w-8 h-8 mx-auto" />
-              <p>In Progress</p>
+              <p>Progress</p>
             </div>
             <div className={`${Theme.button.outline} grid gri-cols-1 text-xs font-bold`}>
               <InfoIcon className="w-8 h-8 mx-auto" />

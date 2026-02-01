@@ -1,6 +1,7 @@
 import type { Timestamp } from './shared_interface';
 
 export type JobStatus = 
+  | 'new'
   | 'received'
   | 'inspecting'
   | 'in_progress'
@@ -32,6 +33,7 @@ export interface Batch {
 export interface LaundryJob {
   id: string;
   clientId: string;
+  clientName?: string;
   clientJob: string;
   jobReference: string;
   jobStatus: JobStatus;
