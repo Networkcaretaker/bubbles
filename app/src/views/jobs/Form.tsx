@@ -25,6 +25,7 @@ export default function Form({
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [formData, setFormData] = useState({
     clientId: initialData?.clientId || '',
+    clientName: initialData?.clientName || '',
     clientJob: initialData?.clientJob || '',
     jobStatus: initialData?.jobStatus || 'new' as const,
     jobOverview: {
@@ -44,14 +45,21 @@ export default function Form({
       const client = availableClients.find(c => c.id === initialData.clientId);
       if (client) {
         setSelectedClient(client);
+        // Also set clientName in formData if it wasn't provided in initialData
+        if (!initialData?.clientName && client.name) {
+          setFormData(prev => ({
+            ...prev,
+            clientName: client.name
+          }));
+        }
       }
     }
-  }, [initialData?.clientId, availableClients]);
+  }, [initialData?.clientId, initialData?.clientName, availableClients]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.clientId || !formData.clientJob) {
+    if (!formData.clientId || !formData.clientName || !formData.clientJob) {
       alert('Please select a client and job');
       return;
     }
@@ -84,6 +92,7 @@ export default function Form({
       
       await onSubmit({
         clientId: formData.clientId,
+        clientName: formData.clientName,
         clientJob: formData.clientJob,
         jobStatus: formData.jobStatus,
         jobReference,
@@ -114,6 +123,7 @@ export default function Form({
     setFormData(prev => ({
       ...prev,
       clientId,
+      clientName: client?.name || '', // Auto-populate client name
       clientJob: '', // Reset job selection when client changes
     }));
   };

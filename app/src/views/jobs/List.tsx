@@ -17,7 +17,6 @@ export default function List() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [viewingJob, setViewingJob] = useState<LaundryJob | null>(null);
-  const [editingJob, setEditingJob] = useState<LaundryJob | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
 
   useEffect(() => {
@@ -55,35 +54,6 @@ export default function List() {
       setShowAddForm(false);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to add job';
-      setError(message);
-    }
-  };
-
-  const handleUpdateJob = async (id: string, jobData: Partial<Omit<LaundryJob, 'id'>>) => {
-    try {
-      setError(null);
-      const currentJob = jobs.find(j => j.id === id);
-      const updateData: Partial<Omit<LaundryJob, 'id'>> = {
-        ...jobData,
-      };
-      
-      // Only add timestamp if we have a createdAt to preserve
-      if (currentJob?.timestamp?.createdAt) {
-        updateData.timestamp = {
-          createdAt: currentJob.timestamp.createdAt,
-          updatedAt: new Date().toISOString(),
-        };
-      } else {
-        updateData.timestamp = {
-          updatedAt: new Date().toISOString(),
-        };
-      }
-
-      await jobService.updateJob(id, updateData);
-      await loadData();
-      setEditingJob(null);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to update job';
       setError(message);
     }
   };
@@ -148,10 +118,6 @@ export default function List() {
               isViewing={viewingJob?.id === job.id}
               onView={() => setViewingJob(job)}
               onCancelView={() => setViewingJob(null)}
-              isEditing={editingJob?.id === job.id}
-              onEdit={() => setEditingJob(job)}
-              onUpdate={(jobData) => handleUpdateJob(job.id, jobData)}
-              onCancelEdit={() => setEditingJob(null)}
             />
           ))}
         </div>

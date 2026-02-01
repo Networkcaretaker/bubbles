@@ -1,12 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Pencil, Package, InfoIcon, CheckCircle } from 'lucide-react';
+import { Package, InfoIcon, CheckCircle } from 'lucide-react';
 import type { LaundryJob } from '../../types/job_interface';
-import type { Client } from '../../types/client_interface';
 import type { DefaultServices } from '../../types/service_interface';
 import { CARD, CONTACT, Theme } from '../../components/ui/Theme';
-import Form from './Form';
-import { clientService } from '../../services/client_service';
 import { serviceService } from '../../services/service_service';
 
 
@@ -15,10 +12,6 @@ interface CardProps {
   isViewing: boolean;
   onView: () => void;
   onCancelView: () => void;
-  isEditing: boolean;
-  onEdit: () => void;
-  onUpdate: (data: Partial<Omit<LaundryJob, 'id'>>) => Promise<void>;
-  onCancelEdit: () => void;
 }
 
 export default function Card({
@@ -26,44 +19,26 @@ export default function Card({
   isViewing,
   onView,
   onCancelView,
-  isEditing,
-  onEdit,
-  onUpdate,
-  onCancelEdit,
 }: CardProps) {
-  const [client, setClient] = useState<Client | null>(null);
-  const [clients, setClients] = useState<Client[]>([]);
   const [services, setServices] = useState<DefaultServices[]>([]);
-  const [loadingData, setLoadingData] = useState(false);
 
-  // Fetch client info when viewing or editing mode is activated
+  // Fetch services only when viewing mode is activated
+  // Note: We use job.clientName in the card to avoid fetching client data
   useEffect(() => {
     const fetchData = async () => {
-      if (isViewing || isEditing) {
+      if (isViewing) {
         try {
-          setLoadingData(true);
-          
-          // Fetch the specific client for this job
-          const fetchedClient = await clientService.getClient(job.clientId);
-          setClient(fetchedClient);
-          
-          // Fetch all clients for the form dropdown
-          const allClients = await clientService.getAllClients();
-          setClients(allClients);
-          
-          // Fetch all services for the form
+          // Fetch all services for display
           const allServices = await serviceService.getAllServices();
           setServices(allServices);
         } catch (error) {
           console.error('Error fetching data:', error);
-        } finally {
-          setLoadingData(false);
         }
       }
     };
 
     fetchData();
-  }, [isViewing, isEditing, job.clientId]);
+  }, [isViewing, job.clientId]);
 
   const getStatusColor = (status: LaundryJob['jobStatus']) => {
     const colors = {
@@ -117,9 +92,9 @@ export default function Card({
                 <span className={`${CARD.tags} ${getStatusColor(job.jobStatus)} border`}>
                   {formatStatusText(job.jobStatus)}
                 </span>
-                {client && (
+                {job.clientName && (
                   <span className={`${CARD.tags} bg-gray-700 text-gray-300`}>
-                    {client.name}
+                    {job.clientName}
                   </span>
                 )}
               </div>
@@ -136,26 +111,21 @@ export default function Card({
         <div>
           <div className={`${CARD.list_content}`}>
             {/* Client Info */}
-            {client && (
-              <div className={`${CARD.icon_list}`}>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-100 mb-2">Client Details</p>
-                  <div className="pl-3 border-l-2 border-cyan-500">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-bold text-cyan-500">
-                        {client.name}
-                      </span>
-                      <span className="text-xs font-medium text-cyan-500">
-                        {client.clientType}
-                      </span>
-                    </div>
-                    <div className="text-xs text-gray-400 space-y-0.5">
-                      <div>Job: {job.clientJob}</div>
-                    </div>
+            <div className={`${CARD.icon_list}`}>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-100 mb-2">Client Details</p>
+                <div className="pl-3 border-l-2 border-cyan-500">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-bold text-cyan-500">
+                      {job.clientName}
+                    </span>
+                  </div>
+                  <div className="text-xs text-gray-400 space-y-0.5">
+                    <div>Job: {job.clientJob}</div>
                   </div>
                 </div>
               </div>
-            )}
+            </div>
 
             {/* Services */}
             {job.jobOverview.services && job.jobOverview.services.length > 0 && (
@@ -241,41 +211,6 @@ export default function Card({
               <p>Quality</p>
             </div>
           </div>
-
-          <div className="flex gap-2 sm:flex-col sm:w-auto mt-4">
-            {!isEditing &&
-              <button
-                onClick={onEdit}
-                className={`${Theme.button.solid}`}
-                title="Edit Job"
-              >
-                <Pencil className="w-5 h-5" />
-                <span>Edit Job</span>
-              </button>
-            }
-          </div>
-
-          {isEditing &&
-            <div>
-              {loadingData ? (
-                <div className="text-center py-4 text-gray-400">Loading data...</div>
-              ) : (
-                <Form
-                  initialData={{
-                    clientId: job.clientId,
-                    clientJob: job.clientJob,
-                    jobStatus: job.jobStatus,
-                    jobOverview: job.jobOverview,
-                  }}
-                  onSubmit={onUpdate}
-                  onCancel={onCancelEdit}
-                  availableClients={clients}
-                  availableServices={services}
-                  submitLabel="Update"
-                />
-              )}
-            </div>
-          }
 
           {/* Timestamps */}
           <div className={`${CARD.icon_list} pt-4`}>
