@@ -36,10 +36,10 @@ export default function Form({
       return;
     }
 
-    if (formData.default_prices.some(p => p.price <= 0)) {
+    /*if (formData.default_prices.some(p => p.price <= 0)) {
       alert('All prices must be greater than 0');
       return;
-    }
+    }*/
 
     setSubmitting(true);
     try {
@@ -145,21 +145,25 @@ export default function Form({
                 </select>
               </div>
 
-              <div className="flex-1">
-                <label htmlFor={`price-${index}`} className="block text-xs text-gray-400 mb-1">
-                  Price (€)
-                </label>
-                <input
-                  type="number"
-                  id={`price-${index}`}
-                  value={priceOption.price}
-                  onChange={(e) => updatePriceOption(index, 'price', parseFloat(e.target.value) || 0)}
-                  className={`${Theme.form.input}`}
-                  step="0.01"
-                  min="0"
-                  required
-                />
-              </div>
+              {priceOption.unit !== "per_item" && (
+                <div className="flex-1">
+                  <div>
+                    <label htmlFor={`price-${index}`} className="block text-xs text-gray-400 mb-1">
+                      Price (€)
+                    </label>
+                    <input
+                      type="number"
+                      id={`price-${index}`}
+                      value={priceOption.price}
+                      onChange={(e) => updatePriceOption(index, 'price', parseFloat(e.target.value) || 0)}
+                      className={`${Theme.form.input}`}
+                      step="0.25"
+                      min="0"
+                      required
+                    />
+                  </div>
+                </div>)
+              }
 
               {formData.default_prices.length > 1 && (
                 <button
