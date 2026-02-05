@@ -74,7 +74,7 @@ export default function Form({
           id="name"
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className={`${Theme.form.input}`}
+          className={`${Theme.form.input} `}
           autoComplete="off"
           required
         />

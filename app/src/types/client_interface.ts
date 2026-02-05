@@ -7,6 +7,7 @@ export type ClientType =
   | 'Yacht Maintainence'  
   | 'yacht-maintainence'  
   | 'Golf Club'
+  | 'private-yacht'
   | 'yacht'  
   | 'villa'
   | 'hotel'
@@ -23,7 +24,8 @@ export type JobType =
 
 export interface ClientJob {
   jobName: string;
-  jobType: JobType; 
+  jobType: JobType;
+  workOrderIds?: string[];
   //jobLocation: string;
   //quoteId: string;
 }

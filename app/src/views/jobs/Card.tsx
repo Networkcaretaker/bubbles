@@ -141,6 +141,29 @@ export default function Card({
               </div>
             </div>
 
+            {/* Counts */}
+            {(job.jobOverview.bagsCount !== undefined || job.jobOverview.itemsCount !== undefined) && (
+              <div className={`${CARD.icon_list}`}>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-100 mb-2">Quantities</p>
+                  {job.jobOverview.bagsCount !== undefined && (
+                  <div className="pl-3 border-l-2 border-cyan-500">
+                    <span className="text-xs font-medium text-gray-400">
+                      Bags: <span className="text-sm text-cyan-500 font-bold">{job.jobOverview.bagsCount}</span>
+                    </span>
+                  </div>
+                  )}
+                  {job.jobOverview.itemsCount !== undefined && (
+                  <div className="pl-3 border-l-2 border-cyan-500">
+                    <span className="text-xs font-medium text-gray-400">
+                      Items: <span className=" text-sm text-cyan-500 font-bold">{job.jobOverview.itemsCount}</span>
+                    </span>
+                  </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* Services */}
             {job.jobOverview.services && job.jobOverview.services.length > 0 && (
               <div className={`${CARD.icon_list}`}>
@@ -162,28 +185,6 @@ export default function Card({
                       );
                     })}
                   </div>
-                </div>
-              </div>
-            )}
-            {/* Counts */}
-            {(job.jobOverview.bagsCount !== undefined || job.jobOverview.itemsCount !== undefined) && (
-              <div className={`${CARD.icon_list}`}>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-100 mb-2">Quantities</p>
-                  {job.jobOverview.bagsCount !== undefined && (
-                  <div className="pl-3 border-l-2 border-cyan-500">
-                    <span className="text-xs font-medium text-gray-400">
-                      Bags: <span className="text-sm text-cyan-500 font-bold">{job.jobOverview.bagsCount}</span>
-                    </span>
-                  </div>
-                  )}
-                  {job.jobOverview.itemsCount !== undefined && (
-                  <div className="pl-3 border-l-2 border-cyan-500">
-                    <span className="text-xs font-medium text-gray-400">
-                      Items: <span className=" text-sm text-cyan-500 font-bold">{job.jobOverview.itemsCount}</span>
-                    </span>
-                  </div>
-                  )}
                 </div>
               </div>
             )}

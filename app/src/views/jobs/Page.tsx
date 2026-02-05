@@ -88,6 +88,16 @@ export default function Page() {
   };
 
   const handleReceivedClick = () => {
+    //if (!job?.jobOverview.dateReceived) {
+      // If not yet received, enter edit mode
+      setIsEditingReceived(true);
+      setIsEditing(false); // Close main edit if open
+    //}
+    // If already received, do nothing (just shows the checkmark)
+  };
+
+  /*
+  const handleReceivedClick = () => {
     if (!job?.jobOverview.dateReceived) {
       // If not yet received, enter edit mode
       setIsEditingReceived(true);
@@ -95,6 +105,7 @@ export default function Page() {
     }
     // If already received, do nothing (just shows the checkmark)
   };
+  */
 
   const handleReceivedUpdate = async (jobData: Partial<Omit<LaundryJob, 'id'>>) => {
     if (!id || !job) return;

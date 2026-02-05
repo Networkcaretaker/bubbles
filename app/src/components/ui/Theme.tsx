@@ -55,7 +55,8 @@ export const VIEW = {
 export const FORM = {
     layout: "space-y-4 p-4 bg-blue-800/50 border border-cyan-500 rounded-lg",
     label: "block text-sm font-medium text-cyan-500 mb-1",
-    input: "w-full px-3 py-2 border border-cyan-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500",
+    input: "w-full px-3 py-2 border border-cyan-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-blue-800/70 text-cyan-300",
+    inputText: "w-full px-3 py-2 border border-cyan-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500",
     action: "flex flex-col sm:flex-row gap-2 pt-2"
 }
 

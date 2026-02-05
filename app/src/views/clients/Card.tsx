@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Mail, PhoneIcon, Pencil, MapPin, InfoIcon } from 'lucide-react';
 import { WhatsApp } from '../../components/ui/IconSets'; 
 import type { Client } from '../../types/client_interface';
@@ -198,6 +199,10 @@ export default function Card({
               <InfoIcon className="w-8 h-8 mx-auto" />
             </div>
           </div>
+
+          <Link to={`/clients/${client.id}`} className={`${Theme.button.outline} mt-4`}>
+            View Client Details
+          </Link>
 
           <div className="flex gap-2 sm:flex-col sm:w-auto mt-4">
             {!isEditing &&

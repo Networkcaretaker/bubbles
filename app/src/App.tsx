@@ -8,6 +8,7 @@ import Login from './views/Login';
 import Dashboard from './views/Dashboard';
 import Staff from './views/staff/Main';
 import Clients from './views/clients/Main';
+import ClientPage from './views/clients/Page';
 import Contacts from './views/contacts/Main';
 import Services from './views/services/Main';
 import Items from './views/items/Main';
@@ -60,6 +61,7 @@ function App() {
             >
               <Route index element={<Dashboard />} />
               <Route path="clients" element={<Clients />} />
+              <Route path="clients/:id" element={<ClientPage />} />
               <Route path="contacts" element={<Contacts />} />
               <Route path="staff" element={<Staff />} />
               <Route path="services" element={<Services />} />
