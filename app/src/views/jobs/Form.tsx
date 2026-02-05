@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Calendar, CheckCircle } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import type { LaundryJob } from '../../types/job_interface';
 import type { Client } from '../../types/client_interface';
 import type { DefaultServices } from '../../types/service_interface';
@@ -13,6 +13,7 @@ interface FormProps {
   availableClients?: Client[];
   availableServices?: DefaultServices[];
   isNewJobMode?: boolean; // Simplified form for creating new jobs
+  isReceivedMode?: boolean; // Simplified form for marking job as received
 }
 
 export default function Form({ 
@@ -23,6 +24,7 @@ export default function Form({
   availableClients = [],
   availableServices = [],
   isNewJobMode = false,
+  isReceivedMode = false,
 }: FormProps) {
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [formData, setFormData] = useState({
@@ -61,7 +63,8 @@ export default function Form({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.clientId || !formData.clientName || !formData.clientJob) {
+    // Skip client validation in Received mode (job already exists)
+    if (!isReceivedMode && (!formData.clientId || !formData.clientName || !formData.clientJob)) {
       alert('Please select a client and job');
       return;
     }
@@ -73,12 +76,14 @@ export default function Form({
 
     setSubmitting(true);
     try {
-      // Generate job reference
-      const jobReference = generateJobReference(formData.clientJob);
+      // Generate job reference (only for new jobs)
+      const jobReference = isReceivedMode || initialData?.jobReference 
+        ? (initialData?.jobReference || '') 
+        : generateJobReference(formData.clientJob);
       
       // Clean up jobOverview to remove undefined values
       const cleanedJobOverview: Partial<typeof formData.jobOverview> = {
-        dateReceived: formData.jobOverview.dateReceived,
+        dateReceived: isReceivedMode ? new Date().toISOString() : formData.jobOverview.dateReceived, // Auto-set in Received mode
         dateRequired: formData.jobOverview.dateRequired,
         dateComplete: formData.jobOverview.dateComplete,
         services: formData.jobOverview.services,
@@ -96,7 +101,7 @@ export default function Form({
         clientId: formData.clientId,
         clientName: formData.clientName,
         clientJob: formData.clientJob,
-        jobStatus: formData.jobStatus,
+        jobStatus: isReceivedMode ? 'received' : formData.jobStatus, // Auto-set to 'received' in Received mode
         jobReference,
         jobOverview: cleanedJobOverview as typeof formData.jobOverview,
       });
@@ -127,17 +132,6 @@ export default function Form({
       clientId,
       clientName: client?.name || '', // Auto-populate client name
       clientJob: '', // Reset job selection when client changes
-    }));
-  };
-
-  const logDateReceived = () => {
-    const now = new Date().toISOString();
-    setFormData(prev => ({
-      ...prev,
-      jobOverview: {
-        ...prev.jobOverview,
-        dateReceived: now,
-      }
     }));
   };
 
@@ -187,29 +181,32 @@ export default function Form({
 
   return (
     <form onSubmit={handleSubmit} className={`${Theme.form.layout}`} autoComplete="off">
-      {/* Client Selection */}
-      <div>
-        <label htmlFor="clientId" className={`${Theme.form.label}`}>
-          Client *
-        </label>
-        <select
-          id="clientId"
-          value={formData.clientId}
-          onChange={(e) => handleClientChange(e.target.value)}
-          className={`${Theme.form.input}`}
-          required
-        >
-          <option value="">Select a client...</option>
-          {availableClients.map(client => (
-            <option key={client.id} value={client.id}>
-              {client.name}
-            </option>
-          ))}
-        </select>
-      </div>
+      {/* Client Selection - Hidden in Received mode */}
+      {!isReceivedMode && (
+        <div>
+          <label htmlFor="clientId" className={`${Theme.form.label}`}>
+            Client *
+          </label>
+          <select
+            id="clientId"
+            value={formData.clientId}
+            onChange={(e) => handleClientChange(e.target.value)}
+            className={`${Theme.form.input}`}
+            required
+          >
+            <option value="">Select a client...</option>
+            {availableClients.map(client => (
+              <option key={client.id} value={client.id}>
+                {client.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
-      {/* Client Job Selection */}
-      <div>
+      {/* Client Job Selection - Hidden in Received mode */}
+      {!isReceivedMode && (
+        <div>
         <label htmlFor="clientJob" className={`${Theme.form.label}`}>
           Client Job *
         </label>
@@ -235,9 +232,10 @@ export default function Form({
           ))}
         </select>
       </div>
+      )}
 
       {/* Job Status - Only shown when editing existing jobs */}
-      {!isNewJobMode && (
+      {!isNewJobMode && !isReceivedMode && (
         <div>
           <label htmlFor="jobStatus" className={`${Theme.form.label}`}>
             Job Status *
@@ -259,33 +257,7 @@ export default function Form({
         </div>
       )}
 
-      {/* Date Received - Only shown when editing existing jobs */}
-      {!isNewJobMode && (
-        <div>
-        <label className={`${Theme.form.label}`}>
-          Date Received
-        </label>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={formatDate(formData.jobOverview.dateReceived)}
-            className={`${Theme.form.input} flex-1`}
-            readOnly
-          />
-          <button
-            type="button"
-            onClick={logDateReceived}
-            className={`${Theme.button.outline} whitespace-nowrap`}
-            title="Log receipt time"
-          >
-            <Calendar className="w-4 h-4" />
-            <span>Log Receipt</span>
-          </button>
-        </div>
-      </div>
-      )}
-
-      {/* Date Required - Only shown when editing existing jobs */}
+      {/* Date Required - Shown in Received and Edit modes, hidden in New mode */}
       {!isNewJobMode && (
         <div>
         <label htmlFor="dateRequired" className={`${Theme.form.label}`}>
@@ -307,8 +279,8 @@ export default function Form({
       </div>
       )}
 
-      {/* Date Complete - Only shown when editing existing jobs */}
-      {!isNewJobMode && (
+      {/* Date Complete - Hidden in New and Received modes */}
+      {!isNewJobMode && !isReceivedMode && (
         <div>
         <label className={`${Theme.form.label}`}>
           Date Completed
@@ -333,7 +305,7 @@ export default function Form({
       </div>
       )}
 
-      {/* Bags Count - Only shown when editing existing jobs */}
+      {/* Bags Count - Shown in Received and Edit modes, hidden in New mode */}
       {!isNewJobMode && (
         <div>
         <label htmlFor="bagsCount" className={`${Theme.form.label}`}>
@@ -357,7 +329,7 @@ export default function Form({
       </div>
       )}
 
-      {/* Items Count - Only shown when editing existing jobs */}
+      {/* Items Count - Shown in Received and Edit modes, hidden in New mode */}
       {!isNewJobMode && (
         <div>
         <label htmlFor="itemsCount" className={`${Theme.form.label}`}>
@@ -381,7 +353,7 @@ export default function Form({
       </div>
       )}
 
-      {/* Services - Only shown when editing existing jobs */}
+      {/* Services - Shown in Received and Edit modes, hidden in New mode */}
       {!isNewJobMode && (
         <div>
         <label className={`${Theme.form.label}`}>

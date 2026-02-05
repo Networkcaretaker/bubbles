@@ -257,8 +257,7 @@ export default function Card({
             View Job Details
           </Link>
 
-
-          {/* Temp button placement for job timeline and editing */}
+          {/* Job Actions */}
           <div className={`${CARD.contact_grid} mt-4`}>
             <button
               onClick={handleReceivedClick}

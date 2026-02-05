@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Pencil, Package, WashingMachine } from 'lucide-react';
+import { ArrowLeft, Pencil, Package, WashingMachine, InfoIcon, CheckCircle } from 'lucide-react';
 import type { LaundryJob } from '../../types/job_interface';
 import type { Client } from '../../types/client_interface';
 import type { DefaultServices } from '../../types/service_interface';
@@ -21,6 +21,7 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isEditingReceived, setIsEditingReceived] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -80,6 +81,45 @@ export default function Page() {
       await jobService.updateJob(id, updateData);
       await loadJobData(id);
       setIsEditing(false);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to update job';
+      setError(message);
+    }
+  };
+
+  const handleReceivedClick = () => {
+    if (!job?.jobOverview.dateReceived) {
+      // If not yet received, enter edit mode
+      setIsEditingReceived(true);
+      setIsEditing(false); // Close main edit if open
+    }
+    // If already received, do nothing (just shows the checkmark)
+  };
+
+  const handleReceivedUpdate = async (jobData: Partial<Omit<LaundryJob, 'id'>>) => {
+    if (!id || !job) return;
+
+    try {
+      setError(null);
+      const updateData: Partial<Omit<LaundryJob, 'id'>> = {
+        ...jobData,
+      };
+
+      // Preserve creation timestamp
+      if (job.timestamp?.createdAt) {
+        updateData.timestamp = {
+          createdAt: job.timestamp.createdAt,
+          updatedAt: new Date().toISOString(),
+        };
+      } else {
+        updateData.timestamp = {
+          updatedAt: new Date().toISOString(),
+        };
+      }
+
+      await jobService.updateJob(id, updateData);
+      await loadJobData(id);
+      setIsEditingReceived(false);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to update job';
       setError(message);
@@ -149,9 +189,10 @@ export default function Page() {
             <WashingMachine className="w-6 h-6" />
             <h1>{job.jobReference}</h1>
         </div>
-        
+
+      <div className={`${Theme.view.content}`}>  
         <div className="p-4">
-        {/* Header */}
+        {/* Top */}
         <div className="mb-6">
             <button
             onClick={() => navigate('/jobs')}
@@ -238,6 +279,60 @@ export default function Page() {
                     </div>
                 </div>
                 </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className={`${CARD.card}`}>
+              <h2 className="text-lg font-medium text-gray-100 mb-4">Job Actions</h2>
+              <div className="grid grid-cols-4 gap-3">
+                <button
+                  onClick={handleReceivedClick}
+                  className={`${Theme.button.outline} flex flex-col items-center justify-center text-xs font-bold p-4`}
+                  type="button"
+                  disabled={isEditingReceived || isEditing}
+                >
+                  {job.jobOverview.dateReceived ? (
+                    <CheckCircle className="w-8 h-8 text-green-400" />
+                  ) : (
+                    <InfoIcon className="w-8 h-8" />
+                  )}
+                  <p className="mt-2">Received</p>
+                </button>
+                <div className={`${Theme.button.outline} flex flex-col items-center justify-center text-xs font-bold p-4`}>
+                  <InfoIcon className="w-8 h-8" />
+                  <p className="mt-2">Inspection</p>
+                </div>
+                <div className={`${Theme.button.outline} flex flex-col items-center justify-center text-xs font-bold p-4`}>
+                  <InfoIcon className="w-8 h-8" />
+                  <p className="mt-2">Progress</p>
+                </div>
+                <div className={`${Theme.button.outline} flex flex-col items-center justify-center text-xs font-bold p-4`}>
+                  <InfoIcon className="w-8 h-8" />
+                  <p className="mt-2">Quality</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Received Editing Form */}
+            {isEditingReceived && (
+              <div className={`${CARD.card}`}>
+                <h2 className="text-xl font-medium text-cyan-500 mb-4">Mark as Received</h2>
+                <Form
+                  initialData={{
+                    clientId: job.clientId,
+                    clientName: job.clientName,
+                    clientJob: job.clientJob,
+                    jobReference: job.jobReference,
+                    jobStatus: job.jobStatus,
+                    jobOverview: job.jobOverview,
+                  }}
+                  onSubmit={handleReceivedUpdate}
+                  onCancel={() => setIsEditingReceived(false)}
+                  availableServices={services}
+                  isReceivedMode={true}
+                  submitLabel="Save & Mark Received"
+                />
+              </div>
             )}
 
             {/* Timeline */}
@@ -340,6 +435,7 @@ export default function Page() {
             </div>
         )}
         </div>
+      </div>
     </div>
   );
 }
