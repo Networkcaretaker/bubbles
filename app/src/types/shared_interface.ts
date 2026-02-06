@@ -2,7 +2,12 @@ export type PricingUnit =
   | 'per_item'
   | 'per_kg'
   | 'per_load'
-  | 'per_sqm';
+  | 'per_sqm'
+  | 'per_batch'
+  | 'per_quote'
+  | 'per_km'
+  | 'fixed'
+  | 'free';
   
 export interface SocialLinks {
     facebook?: string;

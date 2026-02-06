@@ -134,7 +134,7 @@ export default function Form({
 
   const addService = () => {
     const newService: ItemService = {
-      service: 'machine-wash',
+      service: 'machine-service',
       unit: 'per_kg',
       price: 0
     };
@@ -297,12 +297,14 @@ export default function Form({
                       className={`${Theme.form.input}`}
                       required
                     >
-                      <option value="wash-and-dry">Wash And Dry</option>
-                      <option value="machine-wash">Machine Wash</option>
-                      <option value="machine-dry">Machine Dry</option>
-                      <option value="roll-ironing">Roll Ironing</option>
-                      <option value="hand-ironing">Hand Ironing</option>
-                      <option value="dry-cleaning">Dry Cleaning</option>
+                      <option value="cleaning-service">Cleaning Service</option>
+                      <option value="machine-service">Machine Service</option>
+                      <option value="ironing-and-pressing">Ironing & Pressing</option>
+                      <option value="specialist-cleaning">Specialist Cleaning</option>
+                      <option value="specialist-treatment">Specialist Treatment</option>
+                      <option value="alteration-and-repair">Alteration & Repair</option>
+                      <option value="logistics-and-storage">Logistics & Storage</option>
+                      <option value="other-services">Other Service</option>
                     </select>
                   </div>
 

@@ -88,7 +88,7 @@ export default function Card({
                   {service.default_prices.map((price, index) => (
                     <div key={index} className="flex justify-between items-center text-sm">
                       <span className="text-gray-400">{formatPricingUnit(price.unit)}</span>
-                      {price.price > 0 ? <span className="text-gray-200 font-medium">€{price.price.toFixed(2)}</span> : <span className="text-gray-200 font-medium">€ per item</span>}
+                      {price.price > 0 ? <span className="text-gray-200 font-medium">€{price.price.toFixed(2)}</span> : <span className="text-gray-200 font-medium">€ {formatPricingUnit(price.unit)}</span>}
                     </div>
                   ))}
                 </div>

@@ -4,16 +4,22 @@ export type PricingUnit =
   | 'per_item'
   | 'per_kg'
   | 'per_load'
-  | 'per_sqm';
+  | 'per_sqm'
+  | 'per_batch'
+  | 'per_quote'
+  | 'per_km'
+  | 'fixed'
+  | 'free';
 
 export type ServiceCategory = 
-  | 'wash-and-dry'
-  | 'machine-wash'
-  | 'machine-dry'
-  | 'roll-ironing'
-  | 'hand-ironing'
-  | 'carpet-cleaning'
-  | 'dry-cleaning';
+  | 'cleaning-service'
+  | 'machine-service'
+  | 'specialist-cleaning'
+  | 'ironing-and-pressing'
+  | 'specialist-treatment'
+  | 'alteration-and-repair'
+  | 'logistics-and-storage'
+  | 'other-services';
 
 export interface ServicePrice {
   unit: PricingUnit;

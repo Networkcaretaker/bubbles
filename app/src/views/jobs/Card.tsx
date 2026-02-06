@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, InfoIcon } from 'lucide-react';
+import { Package } from 'lucide-react';
 import type { LaundryJob } from '../../types/job_interface';
 import type { DefaultServices } from '../../types/service_interface';
 import { CARD, CONTACT, Theme } from '../../components/ui/Theme';
@@ -193,26 +193,6 @@ export default function Card({
           <Link to={`/jobs/${job.id}`} className={`${Theme.button.outline}`}>
             View Job Details
           </Link>
-
-          {/* Job Actions */}
-          <div className={`${CARD.contact_grid} mt-4`}>
-            <div className={`${Theme.button.outline} grid gri-cols-1 text-xs font-bold`}>
-              <InfoIcon className="w-8 h-8 mx-auto" />
-              <p>Received</p>
-            </div>
-            <div className={`${Theme.button.outline} grid gri-cols-1 text-xs font-bold`}>
-              <InfoIcon className="w-8 h-8 mx-auto" />
-              <p>Inspection</p>
-            </div>
-            <div className={`${Theme.button.outline} grid gri-cols-1 text-xs font-bold`}>
-              <InfoIcon className="w-8 h-8 mx-auto" />
-              <p>Progress</p>
-            </div>
-            <div className={`${Theme.button.outline} grid gri-cols-1 text-xs font-bold`}>
-              <InfoIcon className="w-8 h-8 mx-auto" />
-              <p>Quality</p>
-            </div>
-          </div>
 
         </div>
       }

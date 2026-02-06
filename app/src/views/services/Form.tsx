@@ -18,7 +18,7 @@ export default function Form({
 }: FormProps) {
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
-    service: initialData?.service || 'wash-and-dry' as const,
+    service: initialData?.service || 'other-services' as const,
     default_prices: initialData?.default_prices || [{ unit: 'per_load' as PricingUnit, price: 0 }]
   });
   const [submitting, setSubmitting] = useState(false);
@@ -99,19 +99,20 @@ export default function Form({
           className={`${Theme.form.input}`}
           required
         >
-          <option value="wash-and-dry">Wash And Dry</option>
-          <option value="machine-wash">Machine Wash</option>
-          <option value="machine-dry">Machine Dry</option>
-          <option value="roll-ironing">Roll Ironing</option>
-          <option value="hand-ironing">Hand Ironing</option>
-          <option value="dry-cleaning">Dry Cleaning</option>
-          <option value="carpet-cleaning">Carpet Cleaning</option>
+          <option value="cleaning-service">Cleaning Service</option>
+          <option value="machine-service">Machine Service</option>
+          <option value="ironing-and-pressing">Ironing & Pressing</option>
+          <option value="specialist-cleaning">Specialist Cleaning</option>
+          <option value="specialist-treatment">Specialist Treatment</option>
+          <option value="alteration-and-repair">Alteration & Repair</option>
+          <option value="logistics-and-storage">Logistics & Storage</option>
+          <option value="other-services">Other Service</option>
         </select>
       </div>
 
       <div>
         <label className={`${Theme.form.label}`}>
-          Default Pricing Options *
+          Pricing Options *
         </label>
         <div className="flex items-center justify-between mb-2">
           <button
@@ -142,10 +143,15 @@ export default function Form({
                   <option value="per_kg">Per Kg</option>
                   <option value="per_load">Per Load</option>
                   <option value="per_sqm">Per Sqm</option>
+                  <option value="per_batch">Per Batch</option>
+                  <option value="per_quote">Per Quote</option>
+                  <option value="per_km">Per Km</option>
+                  <option value="fixed">Fixed Price</option>
+                  <option value="free">Free</option>
                 </select>
               </div>
 
-              {priceOption.unit !== "per_item" && (
+              {priceOption.unit !== "per_item" && priceOption.unit !== "free" && priceOption.unit !== "per_quote" && (
                 <div className="flex-1">
                   <div>
                     <label htmlFor={`price-${index}`} className="block text-xs text-gray-400 mb-1">

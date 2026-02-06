@@ -410,15 +410,6 @@ export default function Page() {
                                 {service.service}
                             </span>
                             </div>
-                            {service.default_prices && service.default_prices.length > 0 && (
-                            <div className="text-sm text-gray-400">
-                                {service.default_prices.map((price, idx) => (
-                                <span key={idx} className="mr-3">
-                                    €{price.price.toFixed(2)} / {price.unit.replace(/_/g, ' ')}
-                                </span>
-                                ))}
-                            </div>
-                            )}
                         </div>
                         );
                     })}
