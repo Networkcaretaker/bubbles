@@ -1,21 +1,79 @@
-import { Users } from 'lucide-react';
+import { useState } from 'react';
+import { Users, UserPlus } from 'lucide-react';
 import { Theme } from '../../components/ui/Theme';
 import List from './List';
+import Form from './Form';
+import { clientService } from '../../services/client_service';
+import type { Client } from '../../types/client_interface';
 
 const PAGE_TITLE = "Clients"
 const PAGE_ICON = Users
 
 export default function View() {
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const handleAddClient = async (clientData: Omit<Client, 'id'>) => {
+    try {
+      setError(null);
+      await clientService.addClient(clientData);
+      setShowAddForm(false);
+      setRefreshTrigger(prev => prev + 1); // Trigger list refresh
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to add client';
+      setError(message);
+    }
+  };
+
   return (
     <div className={`${Theme.view.page}`}>
       <div className={`${Theme.view.header}`}>
-        <div className={`${Theme.view.title}`}>
-          <PAGE_ICON className="w-6 h-6" />
-          <h1>{PAGE_TITLE}</h1>
+        <div className={`${Theme.header.layout}`}>
+          <div className={`${Theme.header.title}`}>
+            <PAGE_ICON className={`${Theme.icon.md}`} />
+            <h1>{PAGE_TITLE}</h1>
+          </div>
+          <button
+            onClick={() => setShowAddForm(!showAddForm)}
+            className={`${Theme.button.icon}`}
+          >
+            <UserPlus className={`${Theme.icon.md}`} />
+          </button>
         </div>
       </div>
+      
       <div className={`${Theme.view.content}`}>
-        <List />
+        {error && (
+          <div className={`${Theme.content.layout}`}>
+            <p className={`${Theme.system.error}`}>{error}</p>
+          </div>
+        )}
+        {showAddForm ? (
+          <div className={`${Theme.content.layout}`}>
+            <div className={`${Theme.card.layout}`}>
+              <div className={`${Theme.card.header}`}>
+                <div className={`${Theme.card.title_layout}`}>
+                  <div className={`${Theme.card.profile_initial}`}>
+                    <p>N</p>
+                  </div>
+                  <div className={`${Theme.card.title_text}`}>
+                    <p>New Client</p>
+                  </div>
+                </div>
+              </div>
+              <div className={`${Theme.card.content}`}>
+                <Form
+                  onSubmit={handleAddClient}
+                  onCancel={() => setShowAddForm(false)}
+                  showOnlyNew={true}
+                />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <List key={refreshTrigger} />
+        )}
       </div>
     </div>
   );

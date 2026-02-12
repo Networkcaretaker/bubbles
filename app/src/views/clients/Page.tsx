@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Pencil, Mail, PhoneIcon, MapPin, Building2, Briefcase } from 'lucide-react';
+import { ArrowLeft, Pencil, X, Mail, PhoneIcon, MapPin, Building2, Briefcase } from 'lucide-react';
 import { WhatsApp } from '../../components/ui/IconSets';
 import type { Client } from '../../types/client_interface';
 import type { Contact } from '../../types/contact_interface';
-import { CARD, CONTACT, Theme } from '../../components/ui/Theme';
+import { Theme } from '../../components/ui/Theme';
 import Form from './Form';
 import { clientService } from '../../services/client_service';
 import { contactService } from '../../services/contact_service';
@@ -20,6 +20,9 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isEditingContact, setIsEditingContact] = useState(false);
+  const [isEditingContacts, setIsEditingContacts] = useState(false);
+  const [isEditingJobs, setIsEditingJobs] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -120,241 +123,322 @@ export default function Page() {
 
   if (loading) {
     return (
-      <div className="p-4">
-        <p className={`${Theme.system.notice}`}>Loading client...</p>
+      <div className={`${Theme.content.layout}`}>
+        <p className={`${Theme.system.notice}`}>Loading...</p>
       </div>
     );
   }
 
   if (error || !client) {
     return (
-      <div className="p-4">
+      <div className={`${Theme.content.layout}`}>
         <p className={`${Theme.system.error}`}>{error || 'Client not found'}</p>
-        <button
-          onClick={() => navigate('/clients')}
-          className={`${Theme.button.outline} mt-4`}
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span>Back to Clients</span>
-        </button>
       </div>
     );
   }
 
   return (
-    <div className={`${Theme.view.header}`}>
-      <div className={`${Theme.view.title}`}>
-        <Building2 className="w-6 h-6" />
-        <h1>{client.name}</h1>
+    <div className={`${Theme.view.page}`}>
+      <div className={`${Theme.view.header}`}>
+        <div className={`${Theme.header.layout}`}>
+          <div className={`${Theme.header.title}`}>
+            <Building2 className={`${Theme.icon.md}`} />
+            <h1>{client.name}</h1>
+          </div>
+          <button
+            onClick={() => navigate('/clients')}
+            className={`${Theme.button.icon}`}
+          >
+            <ArrowLeft className={`${Theme.icon.md}`} />
+          </button>
+        </div>
       </div>
+
       <div className={`${Theme.view.content}`}>
-        <div className="p-4">
+        <div className={`${Theme.content.layout}`}>
+          <div className={`${Theme.content.list}`}>
+
             {/* Top Section */}
-            <div className="mb-6">
-            <button
-                onClick={() => navigate('/clients')}
-                className={`${Theme.button.outline} mb-4`}
-            >
-                <ArrowLeft className="w-5 h-5" />
-                <span>Back to Clients</span>
-            </button>
-
-            <div className={`${CARD.card}`}>
-                <div className="flex items-start justify-between">
-                <div className={`${CARD.icon_list}`}>
-                    <div>
-                    <div className={`${CONTACT.profile_initial} bg-gray-100 text-gray-800`}>
-                        {ProfileInitial(client.name)}
-                    </div>
+            <div className={`${Theme.card.layout}`}>
+              <div className={`${Theme.card.header}`}>
+                <div className={`${Theme.card.title_layout}`}>
+                  <div className={`${Theme.card.profile_layout}`}>
+                    <div className={`${Theme.card.profile_initial}`}>
+                      {ProfileInitial(client.name)}
                     </div>
                     <div>
-                    <h1 className="text-2xl font-bold text-gray-100">{client.name}</h1>
-                    <div className="flex gap-2 mt-2">
-                        <span className={`${CARD.tags} bg-gray-700 text-gray-300`}>
+                      <p className={`${Theme.card.title_text_xp}`}>
+                        {client.name}
+                      </p>
+                      <p className={`${Theme.card.profile_tag}`}>
                         {client.clientType.charAt(0).toUpperCase() + client.clientType.slice(1)}
-                        </span>
+                      </p>
                     </div>
-                    </div>
+                  </div>
                 </div>
-                </div>
-                {!isEditing && (
-                <button
-                    onClick={() => setIsEditing(true)}
-                    className={`${Theme.button.outline} mt-4`}
-                >
-                    <Pencil className="w-5 h-5" />
-                    <span>Edit</span>
-                </button>
-                )}
-            </div>
-            </div>
-
-            {/* Client Content */}
-            {isEditing ? (
-            <div className={`${CARD.card}`}>
-                <h2 className="text-xl font-medium text-cyan-500 mb-4">Edit Client</h2>
-                <Form
-                initialData={{
-                    name: client.name,
-                    email: client.email,
-                    phone: client.phone,
-                    clientType: client.clientType,
-                    address: client.address,
-                    clientJobs: client.clientJobs,
-                    contacts: client.contacts,
-                }}
-                onSubmit={handleUpdate}
-                onCancel={() => setIsEditing(false)}
-                availableContacts={allContacts}
-                submitLabel="Update"
-                />
-            </div>
-            ) : (
-            <div className="space-y-4">
-                {/* Contact Information */}
-                <div className={`${CARD.card}`}>
-                <h2 className="text-lg font-medium text-gray-100 mb-4">Contact Information</h2>
-                <div className={`${CARD.list_content}`}>
-                    <div className={`${CARD.icon_list}`}>
-                    <PhoneIcon className="w-5 h-5 text-cyan-500" />
-                    <div>
-                        <p className="text-xs text-gray-400">Phone</p>
-                        <p className="text-gray-100">{client.phone}</p>
-                    </div>
-                    </div>
-                    <div className={`${CARD.icon_list}`}>
-                    <Mail className="w-5 h-5 text-cyan-500" />
-                    <div>
-                        <p className="text-xs text-gray-400">Email</p>
-                        <p className="text-gray-100">{client.email}</p>
-                    </div>
-                    </div>
-                    <div className={`${CARD.icon_list}`}>
-                    <MapPin className="w-5 h-5 text-cyan-500" />
-                    <div>
-                        <p className="text-xs text-gray-400">Address</p>
-                        <p className="text-gray-100 text-sm">{formatAddress()}</p>
-                    </div>
-                    </div>
-                </div>
-
-                {/* Quick Actions */}
-                <div className="grid grid-cols-4 gap-3 mt-4">
-                    <a
-                    href={`tel:${client.phone}`}
-                    className={`${Theme.button.outline} flex flex-col items-center justify-center text-xs font-bold p-4`}
-                    >
-                    <PhoneIcon className="w-8 h-8" />
-                    <p className="mt-2">Call</p>
-                    </a>
-                    <a
-                    href={`mailto:${client.email}`}
-                    className={`${Theme.button.outline} flex flex-col items-center justify-center text-xs font-bold p-4`}
-                    >
-                    <Mail className="w-8 h-8" />
-                    <p className="mt-2">Email</p>
-                    </a>
-                    <a
+                <div className={`${Theme.card.selection_area}`} />
+              </div>
+            
+              {/* Action Buttons */}
+              <div className={`${Theme.card.content}`}>
+                <div className={`${Theme.card.action_grid}`}>
+                  <a className={`${Theme.button.outline}`} 
+                    href={`tel:${client.phone}`}>
+                      <PhoneIcon className={`${Theme.icon.lg}`} />
+                  </a>
+                  <a className={`${Theme.button.outline}`} 
+                    href={`mailto:${client.email}`}>
+                      <Mail className={`${Theme.icon.lg}`} />
+                  </a>
+                  <a className={`${Theme.button.outline}`} 
                     href={`https://wa.me/${client.phone.replace(/\D/g, '')}`}
                     target="_blank"
-                    rel="noopener noreferrer"
-                    className={`${Theme.button.outline} flex flex-col items-center justify-center text-xs font-bold p-4`}
-                    >
-                    <WhatsApp className="w-8 h-8" />
-                    <p className="mt-2">WhatsApp</p>
-                    </a>
-                    <button
-                    onClick={() => navigate(`/clients/${client.id}/info`)}
-                    className={`${Theme.button.outline} flex flex-col items-center justify-center text-xs font-bold p-4`}
-                    >
-                    <Building2 className="w-8 h-8" />
-                    <p className="mt-2">Details</p>
-                    </button>
+                    rel="noopener noreferrer">
+                      <WhatsApp className={`${Theme.icon.lg}`} />
+                  </a>
+                  <div className={`${Theme.button.outline}`} onClick={() => setIsEditing(!isEditing)}>
+                    {isEditing ? <X className={`${Theme.icon.lg}`} /> : <Pencil className={`${Theme.icon.lg}`} />}
+                  </div>
                 </div>
-                </div>
-
-                {/* Client Contacts */}
-                {contacts.length > 0 && (
-                <div className={`${CARD.card}`}>
-                    <h2 className="text-lg font-medium text-gray-100 mb-4">Contacts</h2>
-                    <div className={`${CARD.list_content}`}>
-                    <div className="space-y-3">
-                        {contacts.map((contact) => (
-                        <div key={contact.id} className="pl-3 border-l-2 border-cyan-500">
-                            <div className="flex items-center justify-between mb-1">
-                            <span className="text-base font-bold text-cyan-500">
-                                {contact.name}
-                            </span>
-                            <span className="text-sm font-medium text-cyan-500">
-                                {formatContactType(contact.contactType)}
-                            </span>
-                            </div>
-                            <div className="text-sm text-gray-400 space-y-1">
-                            <div className="flex items-center gap-2">
-                                <Mail className="w-3 h-3" />
-                                <span>{contact.email}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <PhoneIcon className="w-3 h-3" />
-                                <span>{contact.phone}</span>
-                            </div>
-                            </div>
-                        </div>
-                        ))}
-                    </div>
-                    </div>
-                </div>
-                )}
-
-                {/* Client Jobs */}
-                {client.clientJobs && client.clientJobs.length > 0 && (
-                <div className={`${CARD.card}`}>
-                    <h2 className="text-lg font-medium text-gray-100 mb-4">Client Jobs</h2>
-                    <div className={`${CARD.list_content}`}>
-                    <div className="space-y-3">
-                        {client.clientJobs.map((job, index) => (
-                        <div key={index} className="pl-3 border-l-2 border-cyan-500">
-                            <div className="flex items-center justify-between mb-1">
-                            <span className="text-base font-bold text-cyan-500">
-                                {job.jobName}
-                            </span>
-                            <span className="text-sm font-medium text-cyan-500">
-                                {formatJobType(job.jobType)}
-                            </span>
-                            </div>
-                            {job.workOrderIds && job.workOrderIds.length > 0 && (
-                            <div className="text-sm text-gray-400 mt-1">
-                                <div className="flex items-center gap-2">
-                                <Briefcase className="w-3 h-3" />
-                                <span>{job.workOrderIds.length} work order{job.workOrderIds.length !== 1 ? 's' : ''}</span>
-                                </div>
-                            </div>
-                            )}
-                        </div>
-                        ))}
-                    </div>
-                    </div>
-                </div>
-                )}
-
-                {/* Record Info */}
-                <div className={`${CARD.card}`}>
-                <h2 className="text-lg font-medium text-gray-100 mb-4">Record Info</h2>
-                <div className={`${CARD.list_content}`}>
-                    <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                        <span className="text-gray-400">Created:</span>
-                        <span className="text-gray-300">{formatDate(client.timestamp?.createdAt)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                        <span className="text-gray-400">Updated:</span>
-                        <span className="text-gray-300">{formatDate(client.timestamp?.updatedAt)}</span>
-                    </div>
-                    </div>
-                </div>
-                </div>
+              </div>
             </div>
-            )}
+
+            {/* Edit Client */}
+            {isEditing 
+              ? (
+                <div className={`${Theme.card.layout}`}>
+                  <Form
+                    initialData={{
+                      name: client.name,
+                      email: client.email,
+                      phone: client.phone,
+                      clientType: client.clientType,
+                      address: client.address,
+                      clientJobs: client.clientJobs,
+                      contacts: client.contacts,
+                    }}
+                    onSubmit={handleUpdate}
+                    onCancel={() => setIsEditing(false)}
+                    availableContacts={allContacts}
+                    submitLabel="Update"
+                  />
+                </div>
+              ) : (
+                <div />
+              )
+            }
+
+            {/* Client Information */}
+            {isEditing 
+              ? (
+                <div />
+              ) : (
+                <div className={`${Theme.card.layout}`}>
+                  <div className={`${Theme.card.content_section}`}>
+
+                    <div className={`${Theme.card.items}`}>
+                      <p className={`${Theme.card.section_title}`}>Information</p>
+                      <button
+                        onClick={() => setIsEditingContact(!isEditingContact)}
+                        className={`${Theme.button.icon}`}
+                      >
+                        {isEditingContact ? <X className={`${Theme.icon.sm}`} /> : <Pencil className={`${Theme.icon.sm}`} />}
+                      </button>
+                    </div>
+
+                    {isEditingContact 
+                      ? (
+                        <Form
+                          initialData={{
+                            phone: client.phone,
+                            email: client.email,
+                            address: client.address,
+                          }}
+                          onSubmit={async (data) => {
+                            await handleUpdate({
+                              phone: data.phone,
+                              email: data.email,
+                              address: data.address,
+                            });
+                            setIsEditingContact(false);
+                          }}
+                          onCancel={() => setIsEditingContact(false)}
+                          submitLabel="Update"
+                          showOnlyContactInfo={true}
+                        />
+                      ) : (
+                        <div className={`${Theme.card.content_section}`}>
+                          <div className={`${Theme.card.icon_list}`}>
+                            <PhoneIcon className={`${Theme.icon.xs}`} />
+                            <p>{client.phone}</p>
+                          </div>
+                          <div className={`${Theme.card.icon_list}`}>
+                            <Mail className={`${Theme.icon.xs}`} />
+                            <p>{client.email}</p>
+                          </div>
+                          <div className={`${Theme.card.icon_list}`}>
+                            <MapPin className={`${Theme.icon.xs}`} />
+                            <p>{formatAddress()}</p>
+                          </div>
+                        </div>
+                      )
+                    }
+                  </div>
+                </div>
+              )
+            }
+
+            {/* Client Contacts */}
+            {isEditing 
+              ? (
+                <div />
+              ) : (
+                <div className={`${Theme.card.layout}`}>
+                  <div className={`${Theme.card.content_section}`}>
+                    <div className={`${Theme.card.items}`}>
+                      <p className={`${Theme.card.section_title}`}>Client Contacts</p>
+                      <button
+                        onClick={() => setIsEditingContacts(!isEditingContacts)}
+                        className={`${Theme.button.icon}`}
+                      >
+                        {isEditingContact ? <X className={`${Theme.icon.sm}`} /> : <Pencil className={`${Theme.icon.sm}`} />}
+                      </button>
+                    </div>
+                    {isEditingContacts 
+                      ? (
+                        <Form
+                          initialData={{
+                            contacts: client.contacts,
+                          }}
+                          onSubmit={async (data) => {
+                            await handleUpdate({
+                              contacts: data.contacts,
+                            });
+                            setIsEditingContacts(false);
+                          }}
+                          onCancel={() => setIsEditingContacts(false)}
+                          availableContacts={allContacts}
+                          submitLabel="Update"
+                          showOnlyContacts={true}
+                        />
+                      ) : (
+                        <div>
+                          {(contacts.length > 0 || isEditingContacts) && (
+                            <div className={`${Theme.card.content_section}`}>
+                              <div className={`${Theme.card.item_list}`}>
+                                {contacts.map((contact) => (
+                                  <div key={contact.id} className={`${Theme.card.item_index}`}>
+                                    <div className={`${Theme.card.items}`}>
+                                      <p className={`${Theme.card.item_text}`}>
+                                          {contact.name}
+                                      </p>
+                                      <p className={`${Theme.card.tags}`}>
+                                          {formatContactType(contact.contactType)}
+                                      </p>
+                                    </div>
+                                    <div className={`${Theme.card.item_sub_text}`}>
+                                      <div className={`${Theme.card.icon_list}`}>
+                                        <PhoneIcon className={`${Theme.icon.xs}`} />
+                                        <p>{contact.phone}</p>
+                                      </div>
+                                      <div className={`${Theme.card.icon_list}`}>
+                                        <Mail className={`${Theme.icon.xs}`} />
+                                        <p>{contact.email}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )
+                    }
+                  </div>
+                </div>
+              )
+            }
+
+            {/* Client Jobs */}
+            {isEditing 
+              ? (
+                <div />
+              ) : (
+                <div className={`${Theme.card.layout}`}>
+                  <div className={`${Theme.card.content_section}`}>
+                    <div className={`${Theme.card.items}`}>
+                      <p className={`${Theme.card.section_title}`}>Client Jobs</p>
+                      <button
+                        onClick={() => setIsEditingJobs(!isEditingJobs)}
+                        className={`${Theme.button.icon}`}
+                      >
+                        {isEditingJobs ? <X className={`${Theme.icon.sm}`} /> : <Pencil className={`${Theme.icon.sm}`} />}
+                      </button>
+                    </div>
+                    {isEditingJobs 
+                      ? (
+                          <Form
+                          initialData={{
+                            clientJobs: client.clientJobs,
+                          }}
+                          onSubmit={async (data) => {
+                            await handleUpdate({
+                              clientJobs: data.clientJobs,
+                            });
+                            setIsEditingJobs(false);
+                          }}
+                          onCancel={() => setIsEditingJobs(false)}
+                          submitLabel="Update"
+                          showOnlyJobs={true}
+                        />
+                      ) : (
+                        <div>
+                          {((client.clientJobs && client.clientJobs.length > 0) || isEditingJobs) && (
+                            <div className={`${Theme.card.content_section}`}>
+                              <div className={`${Theme.card.item_list}`}>
+                                {client.clientJobs && client.clientJobs.map((job, index) => (
+                                <div key={index} className={`${Theme.card.item_index}`}>
+                                  <div className={`${Theme.card.items}`}>
+                                    <p className={`${Theme.card.item_text}`}>
+                                        {job.jobName}
+                                    </p>
+                                    <p className={`${Theme.card.tags}`}>
+                                        {formatJobType(job.jobType)}
+                                    </p>
+                                  </div>
+                                  {job.workOrderIds && job.workOrderIds.length > 0 && (
+                                    <div className={`${Theme.card.item_sub_text}`}>
+                                      <div className={`${Theme.card.icon_list}`}>
+                                        <Briefcase className={`${Theme.icon.xs}`} />
+                                        <p>{job.workOrderIds.length} work order{job.workOrderIds.length !== 1 ? 's' : ''}</p>
+                                      </div>
+                                    </div>
+                                    )}
+                                </div>
+                                ))} 
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )
+                    }
+                  </div>
+                </div>
+              )
+            }
+
+            {/* Record Info */}
+            <div className={`${Theme.card.layout}`}>
+              <div className={`${Theme.card.timestamp}`}>
+                <p>Created:</p>
+                <p>{formatDate(client.timestamp?.createdAt)}</p>
+              </div>
+              <div className={`${Theme.card.timestamp}`}>
+                <p>Updated:</p>
+                <p>{formatDate(client.timestamp?.updatedAt)}</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
