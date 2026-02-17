@@ -16,13 +16,12 @@ export default function Page() {
   const navigate = useNavigate();
   
   const [client, setClient] = useState<Client | null>(null);
-  const [contacts, setContacts] = useState<Contact[]>([]);
   const [allContacts, setAllContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingContact, setIsEditingContact] = useState(false);
-  const [isEditingContacts, setIsEditingContacts] = useState(false);
+  const [isEditingClientContacts, setIsEditingClientContacts] = useState(false);
   const [isEditingJobs, setIsEditingJobs] = useState(false);
 
   useEffect(() => {
@@ -40,17 +39,9 @@ export default function Page() {
       const fetchedClient = await clientService.getClient(clientId);
       setClient(fetchedClient);
 
-      // Fetch all contacts for the form
+      // Fetch all contacts for the form and display
       const fetchedAllContacts = await contactService.getAllContacts();
       setAllContacts(fetchedAllContacts);
-
-      // Get the specific contacts for this client
-      if (fetchedClient.contacts && fetchedClient.contacts.length > 0) {
-        const clientContacts = fetchedAllContacts.filter(contact => 
-          fetchedClient.contacts?.includes(contact.id)
-        );
-        setContacts(clientContacts);
-      }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load client';
       setError(message);
@@ -188,7 +179,7 @@ export default function Page() {
                       clientType: client.clientType,
                       address: client.address,
                       clientJobs: client.clientJobs,
-                      contacts: client.contacts,
+                      clientContacts: client.clientContacts,
                       status: client.status,
                     }}
                     onSubmit={handleUpdate}
@@ -264,75 +255,75 @@ export default function Page() {
             }
 
             {/* Client Contacts */}
-            {isEditing 
-              ? (
-                <div />
-              ) : (
-                <div className={`${Theme.card.layout}`}>
-                  <div className={`${Theme.card.content_section}`}>
-                    <div className={`${Theme.card.items}`}>
-                      <p className={`${Theme.card.section_title}`}>Client Contacts</p>
-                      <button
-                        onClick={() => setIsEditingContacts(!isEditingContacts)}
-                        className={`${Theme.button.icon}`}
-                      >
-                        {isEditingContact ? <X className={`${Theme.icon.sm}`} /> : <Pencil className={`${Theme.icon.sm}`} />}
-                      </button>
-                    </div>
-                    {isEditingContacts 
-                      ? (
-                        <Form
-                          initialData={{
-                            contacts: client.contacts,
-                          }}
-                          onSubmit={async (data) => {
-                            await handleUpdate({
-                              contacts: data.contacts,
-                            });
-                            setIsEditingContacts(false);
-                          }}
-                          onCancel={() => setIsEditingContacts(false)}
-                          availableContacts={allContacts}
-                          submitLabel="Update"
-                          showOnlyContacts={true}
-                        />
-                      ) : (
-                        <div>
-                          {(contacts.length > 0 || isEditingContacts) && (
-                            <div className={`${Theme.card.content_section}`}>
-                              <div className={`${Theme.card.item_list}`}>
-                                {contacts.map((contact) => (
-                                  <div key={contact.id} className={`${Theme.card.item_index}`}>
-                                    <div className={`${Theme.card.items}`}>
-                                      <p className={`${Theme.card.item_text}`}>
-                                          {contact.name}
-                                      </p>
-                                      <p className={`${Theme.card.tags}`}>
-                                          {formatTagText(contact.contactType)}
-                                      </p>
-                                    </div>
+            {!isEditing && (
+              <div className={`${Theme.card.layout}`}>
+                <div className={`${Theme.card.content_section}`}>
+                  <div className={`${Theme.card.items}`}>
+                    <p className={`${Theme.card.section_title}`}>Client Contacts</p>
+                    <button
+                      onClick={() => setIsEditingClientContacts(!isEditingClientContacts)}
+                      className={`${Theme.button.icon}`}
+                    >
+                      {isEditingClientContacts ? <X className={`${Theme.icon.sm}`} /> : <Pencil className={`${Theme.icon.sm}`} />}
+                    </button>
+                  </div>
+
+                  {isEditingClientContacts ? (
+                    <Form
+                      initialData={{
+                        clientContacts: client.clientContacts,
+                      }}
+                      onSubmit={async (data) => {
+                        await handleUpdate({
+                          clientContacts: data.clientContacts,
+                        });
+                        setIsEditingClientContacts(false);
+                      }}
+                      onCancel={() => setIsEditingClientContacts(false)}
+                      availableContacts={allContacts}
+                      submitLabel="Update"
+                      showOnlyClientContacts={true}
+                    />
+                  ) : (
+                    <div>
+                      {client.clientContacts && client.clientContacts.length > 0 ? (
+                        <div className={`${Theme.card.content_section}`}>
+                          <div className={`${Theme.card.item_list}`}>
+                            {client.clientContacts.map((cc) => {
+                              const fullContact = allContacts.find(c => c.id === cc.id);
+                              return (
+                                <div key={cc.id} className={`${Theme.card.item_index}`}>
+                                  <div className={`${Theme.card.items}`}>
+                                    <p className={`${Theme.card.item_text}`}>{cc.name}</p>
+                                    <p className={`${Theme.card.tags}`}>{formatTagText(cc.type)}</p>
+                                  </div>
+                                  {fullContact && (
                                     <div className={`${Theme.card.item_sub_text}`}>
                                       <div className={`${Theme.card.icon_list}`}>
                                         <PhoneIcon className={`${Theme.icon.xs}`} />
-                                        <p>{contact.phone}</p>
+                                        <p>{fullContact.phone}</p>
                                       </div>
                                       <div className={`${Theme.card.icon_list}`}>
                                         <Mail className={`${Theme.icon.xs}`} />
-                                        <p>{contact.email}</p>
+                                        <p>{fullContact.email}</p>
                                       </div>
                                     </div>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
                         </div>
-                      )
-                    }
-                  </div>
+                      ) : (
+                        <div className={`${Theme.system.notice}`}>
+                          No contacts added yet.
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-              )
-            }
+              </div>
+            )}
 
             {/* Client Jobs */}
             {isEditing 

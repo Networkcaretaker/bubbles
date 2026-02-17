@@ -19,7 +19,6 @@ export default function Form({
     name: initialData?.name || '',
     email: initialData?.email || '',
     phone: initialData?.phone || '',
-    contactType: initialData?.contactType || 'primary' as const,
     address: {
       street: initialData?.address?.street || '',
       city: initialData?.address?.city || '',
@@ -33,7 +32,7 @@ export default function Form({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name.trim() || !formData.email.trim()) {
+    if (!formData.name.trim()) {
       alert('Please fill in all required fields');
       return;
     }
@@ -65,7 +64,7 @@ export default function Form({
 
       <div>
         <label htmlFor="email" className={`${Theme.form.label}`}>
-          Email *
+          Email
         </label>
         <input
           type="email"
@@ -74,7 +73,6 @@ export default function Form({
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           className={`${Theme.form.input}`}
           autoComplete="new-email"
-          required
         />
       </div>
 
@@ -90,28 +88,6 @@ export default function Form({
           className={`${Theme.form.input}`}
           autoComplete="new-phone"
         />
-      </div>
-
-      <div>
-        <label htmlFor="contactType" className={`${Theme.form.label}`}>
-          Contact Type *
-        </label>
-        <select
-          id="contactType"
-          value={formData.contactType}
-          onChange={(e) => setFormData({ ...formData, contactType: e.target.value as Contact['contactType'] })}
-          className={`${Theme.form.input}`}
-          required
-        >
-          <option value="primary">Primary</option>
-          <option value="billing">Billing</option>
-          <option value="operations">Operations</option>
-          <option value="captain">Captain</option>
-          <option value="stewardess">Stewardess</option>
-          <option value="property_manager">Property Manager</option>
-          <option value="owner">Owner</option>
-          <option value="other">Other</option>
-        </select>
       </div>
 
       <div>

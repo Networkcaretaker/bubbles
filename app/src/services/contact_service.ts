@@ -73,7 +73,6 @@ export const contactService = {
         email: contactData.email,
         phone: contactData.phone,
         address: contactData.address,
-        contactType: contactData.contactType,
         timestamp: {
           createdAt: now,
           updatedAt: now

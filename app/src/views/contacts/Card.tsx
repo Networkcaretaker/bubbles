@@ -62,12 +62,6 @@ export default function Card({
     return parts.join(', ') || 'No address provided';
   };
 
-  const formatContactType = (type: string) => {
-    return type.split('_').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
-  };
-
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString('en-GB', {
@@ -112,9 +106,6 @@ export default function Card({
 
       {isViewing &&
         <div>
-          <span className={`${CARD.tags} bg-gray-100 text-gray-800`}>
-            {formatContactType(contact.contactType)}
-          </span>
           
           <div className={`${CARD.list_content}`}>
 
@@ -167,7 +158,6 @@ export default function Card({
                   name: contact.name,
                   email: contact.email,
                   phone: contact.phone,
-                  contactType: contact.contactType,
                   address: contact.address,
                 }}
                 onSubmit={onUpdate}

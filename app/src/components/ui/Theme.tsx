@@ -23,7 +23,7 @@ export const CARD = {
     selection_area: "relative w-full h-12 cursor-pointer mt-[-3rem]",
     list_text: "",
     content: "mt-3",
-    content_section: "p-2 text-cyan-50 space-y-2 text-xs",
+    content_section: "text-cyan-50 space-y-2 text-xs",
     section_title: "text-sm font-medium text-cyan-400",
     page_section_title: "text-sm font-medium text-cyan-400", //old
     icon_list: "flex gap-2 items-center",

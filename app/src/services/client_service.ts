@@ -74,7 +74,7 @@ export const clientService = {
         address: clientData.address,
         clientType: clientData.clientType,
         clientJobs: clientData.clientJobs,
-        contacts: clientData.contacts,
+        clientContacts: clientData.clientContacts,
         timestamp: {
           createdAt: now,
           updatedAt: now
@@ -85,14 +85,12 @@ export const clientService = {
       // Add the client
       batch.set(clientRef, clientModel);
       
-      // Update all associated contacts with this client's ID
-      if (clientData.contacts && clientData.contacts.length > 0) {
-        for (const contactId of clientData.contacts) {
-          if (contactId) { // Make sure contactId is not empty
-            const contactRef = doc(db, 'contacts', contactId);
-            batch.update(contactRef, { 
-              clientId: clientRef.id 
-            });
+      // Update clientId on all contacts in clientContacts
+      if (clientData.clientContacts && clientData.clientContacts.length > 0) {
+        for (const clientContact of clientData.clientContacts) {
+          if (clientContact.id) {
+            const contactRef = doc(db, 'contacts', clientContact.id);
+            batch.update(contactRef, { clientId: clientRef.id });
           }
         }
       }
@@ -124,8 +122,8 @@ export const clientService = {
       }
 
       const currentClient = clientDoc.data() as Client;
-      const oldContactIds = currentClient.contacts || [];
-      const newContactIds = clientData.contacts || [];
+      const oldClientContactIds = (currentClient.clientContacts || []).map(cc => cc.id).filter(Boolean);
+      const newClientContactIds = (clientData.clientContacts || []).map(cc => cc.id).filter(Boolean);
 
       // Update the client document with timestamp
       const now = new Date().toISOString();
@@ -134,22 +132,17 @@ export const clientService = {
         'timestamp.updatedAt': now
       });
       
-      // Handle contact updates
-      if (clientData.contacts !== undefined) {
-        // Contacts to add (new contacts that weren't in the old list)
-        const contactsToAdd = newContactIds.filter(id => id && !oldContactIds.includes(id));
-        
-        // Contacts to remove (old contacts that aren't in the new list)
-        const contactsToRemove = oldContactIds.filter(id => id && !newContactIds.includes(id));
-        
-        // Add clientId to new contacts
-        for (const contactId of contactsToAdd) {
+      // Handle clientContacts updates
+      if (clientData.clientContacts !== undefined) {
+        const clientContactsToAdd = newClientContactIds.filter(ccId => !oldClientContactIds.includes(ccId));
+        const clientContactsToRemove = oldClientContactIds.filter(ccId => !newClientContactIds.includes(ccId));
+
+        for (const contactId of clientContactsToAdd) {
           const contactRef = doc(db, 'contacts', contactId);
           batch.update(contactRef, { clientId: id });
         }
-        
-        // Remove clientId from contacts that are no longer associated
-        for (const contactId of contactsToRemove) {
+
+        for (const contactId of clientContactsToRemove) {
           const contactRef = doc(db, 'contacts', contactId);
           batch.update(contactRef, { clientId: null });
         }
@@ -185,11 +178,11 @@ export const clientService = {
 
       const client = clientDoc.data() as Client;
       
-      // Remove clientId from all associated contacts
-      if (client.contacts && client.contacts.length > 0) {
-        for (const contactId of client.contacts) {
-          if (contactId) {
-            const contactRef = doc(db, 'contacts', contactId);
+      // Remove clientId from all contacts in clientContacts
+      if (client.clientContacts && client.clientContacts.length > 0) {
+        for (const clientContact of client.clientContacts) {
+          if (clientContact.id) {
+            const contactRef = doc(db, 'contacts', clientContact.id);
             batch.update(contactRef, { clientId: null });
           }
         }

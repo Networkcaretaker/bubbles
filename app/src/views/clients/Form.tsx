@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Plus, Trash2, UserPlus } from 'lucide-react';
-import type { Client, ClientJob, JobType } from '../../types/client_interface';
+import type { Client, ClientJob, JobType, ClientContact } from '../../types/client_interface';
 import type { Contact } from '../../types/contact_interface';
 import { Theme } from '../../components/ui/Theme';
 
@@ -12,7 +12,7 @@ interface FormProps {
   availableContacts?: Contact[]; // All contacts from the database
   showFullForm?: boolean;
   showOnlyContactInfo?: boolean; // Show only phone, email, address fields
-  showOnlyContacts?: boolean; // Show only contacts selection
+  showOnlyClientContacts?: boolean; // Show only clientContacts selection
   showOnlyJobs?: boolean; // Show only client jobs
   showOnlyNew?: boolean; // Show only client type, name, phone, email
 }
@@ -25,7 +25,7 @@ export default function Form({
   availableContacts = [],
   showFullForm = false,
   showOnlyContactInfo = false,
-  showOnlyContacts = false,
+  showOnlyClientContacts = false,
   showOnlyJobs = false,
   showOnlyNew = false,
 }: FormProps) {
@@ -42,7 +42,7 @@ export default function Form({
       country: initialData?.address?.country || '',
     },
     clientJobs: initialData?.clientJobs || [] as ClientJob[],
-    contacts: initialData?.contacts || [] as string[],
+    clientContacts: initialData?.clientContacts || [] as ClientContact[],
     status: initialData?.status || 'prospect' as const,
   });
   const [submitting, setSubmitting] = useState(false);
@@ -51,7 +51,7 @@ export default function Form({
     e.preventDefault();
     
     // Only validate name if showing all fields or not in section-specific mode
-    if (!showOnlyContactInfo && !showOnlyContacts && !showOnlyJobs) {
+    if (!showOnlyContactInfo && !showOnlyClientContacts && !showOnlyJobs) {
       if (!formData.name.trim()) {
         alert('Please fill in all required fields');
         return;
@@ -101,42 +101,53 @@ export default function Form({
     });
   };
 
-  const addContact = () => {
+  const addClientContact = () => {
+    const newClientContact: ClientContact = {
+      id: '',
+      name: '',
+      type: 'other',
+    };
     setFormData(prev => ({
       ...prev,
-      contacts: [...prev.contacts, '']
+      clientContacts: [...prev.clientContacts, newClientContact],
     }));
   };
 
-  const removeContact = (contactId: string) => {
+  const removeClientContact = (index: number) => {
     setFormData(prev => ({
       ...prev,
-      contacts: prev.contacts.filter(id => id !== contactId)
+      clientContacts: prev.clientContacts.filter((_, i) => i !== index),
     }));
   };
 
-  const updateContact = (index: number, contactId: string) => {
+  const updateClientContact = (index: number, field: keyof ClientContact, value: string) => {
     setFormData(prev => {
-      const updated = [...prev.contacts];
-      updated[index] = contactId;
-      return { ...prev, contacts: updated };
+      const updated = [...prev.clientContacts];
+      if (field === 'id') {
+        // When a contact is selected, also populate the name from availableContacts
+        const selectedContact = availableContacts.find(c => c.id === value);
+        updated[index] = {
+          ...updated[index],
+          id: value,
+          name: selectedContact?.name || '',
+        };
+      } else {
+        updated[index] = { ...updated[index], [field]: value };
+      }
+      return { ...prev, clientContacts: updated };
     });
   };
 
-  // Get contact details by ID
-  const getContactById = (contactId: string) => {
-    return availableContacts.find(contact => contact.id === contactId);
-  };
-
-  // Get contacts that are not already assigned to another client
-  const getUnassignedContacts = () => {
-    return availableContacts.filter(contact => !contact.clientId);
-  };
-
-  const formatContactType = (type: string) => {
-    return type.split('_').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
+  // Returns contacts not already assigned to any client, and not already
+  // selected in another slot of this form (except the current slot)
+  const getAvailableClientContacts = (currentIndex: number) => {
+    const selectedIds = formData.clientContacts
+      .map((cc, i) => (i !== currentIndex ? cc.id : null))
+      .filter(Boolean);
+    const currentId = formData.clientContacts[currentIndex]?.id;
+    return availableContacts.filter(c =>
+      (!c.clientId || c.id === currentId) && !selectedIds.includes(c.id)
+    );
   };
 
   return (
@@ -323,17 +334,17 @@ export default function Form({
         </>
       )} 
 
-      {(showFullForm || showOnlyContacts) && (
+      {(showFullForm || showOnlyClientContacts) && (
         <>
           <div>
-            {(showFullForm &&
-              <label htmlFor="country" className={`${Theme.form.label}`}>
+            {showFullForm && (
+              <label className={`${Theme.form.label}`}>
                 Client Contacts
               </label>
             )}
             <button
               type="button"
-              onClick={addContact}
+              onClick={addClientContact}
               className={`${Theme.button.outline}`}
             >
               <UserPlus className={`${Theme.icon.sm}`} />
@@ -342,47 +353,58 @@ export default function Form({
           </div>
 
           <div className={`${Theme.form.layout}`}>
-            {formData.contacts.map((contactId, contactIndex) => (
-              <div key={contactIndex} className={`${Theme.form.index}`}>
+            {formData.clientContacts.map((clientContact, ccIndex) => (
+              <div key={ccIndex} className={`${Theme.form.index}`}>
                 <div className={`${Theme.form.sub_layout}`}>
-                  <div className="w-full">
+
+                  <div className="w-2/3">
+                    <label className={`${Theme.form.label}`}>Contact Name</label>
                     <select
-                      value={contactId}
-                      onChange={(e) => updateContact(contactIndex, e.target.value)}
+                      value={clientContact.id}
+                      onChange={(e) => updateClientContact(ccIndex, 'id', e.target.value)}
                       className={`${Theme.form.input}`}
                     >
                       <option value="">Select a contact...</option>
-                      {/* Show currently selected contact even if it has a clientId (for editing) */}
-                      {contactId && getContactById(contactId) && getContactById(contactId)?.clientId && (
-                        <option value={contactId}>
-                          {getContactById(contactId)?.name} - {formatContactType(getContactById(contactId)?.contactType || '')}
-                        </option>
-                      )}
-                      {/* Show all unassigned contacts */}
-                      {getUnassignedContacts().map(contact => (
-                        <option 
-                          key={contact.id} 
-                          value={contact.id}
-                          disabled={formData.contacts.includes(contact.id) && contact.id !== contactId}
-                        >
-                          {contact.name} - {formatContactType(contact.contactType)}
+                      {getAvailableClientContacts(ccIndex).map(contact => (
+                        <option key={contact.id} value={contact.id}>
+                          {contact.name}
                         </option>
                       ))}
                     </select>
                   </div>
+
+                  <div className="w-1/3">
+                    <label className={`${Theme.form.label}`}>Contact Type</label>
+                    <select
+                      value={clientContact.type}
+                      onChange={(e) => updateClientContact(ccIndex, 'type', e.target.value)}
+                      className={`${Theme.form.input}`}
+                    >
+                      <option value="primary">Primary</option>
+                      <option value="billing">Billing</option>
+                      <option value="operations">Operations</option>
+                      <option value="captain">Captain</option>
+                      <option value="stewardess">Stewardess</option>
+                      <option value="property_manager">Property Manager</option>
+                      <option value="owner">Owner</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+
                   <button
                     type="button"
-                    onClick={() => removeContact(contactId)}
+                    onClick={() => removeClientContact(ccIndex)}
                     className={`${Theme.button.icon}`}
                     title="Remove contact"
                   >
                     <Trash2 className={`${Theme.icon.sm}`} />
                   </button>
+
                 </div>
               </div>
             ))}
 
-            {formData.contacts.length === 0 && (
+            {formData.clientContacts.length === 0 && (
               <div className={`${Theme.system.notice}`}>
                 No contacts added yet. Click "Add Contact" to get started.
               </div>

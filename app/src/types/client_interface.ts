@@ -1,5 +1,4 @@
 import type { Address, Timestamp } from './shared_interface';
-import type { ContactType } from './contact_interface';
 
 export type ClientStatus =
   | 'active'
@@ -19,6 +18,16 @@ export type ClientType =
   | 'hotel-resort'
   | 'restaurant'
   | 'corporate'
+  | 'other';
+
+export type ContactType = 
+  | 'primary'
+  | 'billing'
+  | 'operations'
+  | 'captain'
+  | 'stewardess'
+  | 'property_manager'
+  | 'owner'
   | 'other';
 
 export type JobType = 
@@ -69,7 +78,6 @@ export interface Client {
   clientType: ClientType;
   clientJobs?: ClientJob[];
   clientContacts?: ClientContact[];
-  contacts?: string[]; //remove later when new clientContacts is working
   timestamp?: Timestamp;
   status: ClientStatus;
 };
