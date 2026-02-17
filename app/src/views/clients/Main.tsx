@@ -26,6 +26,14 @@ export default function View() {
     }
   };
 
+  if (error) {
+    return (
+      <div className={`${Theme.content.layout}`}>
+        <p className={`${Theme.system.error}`}>{error}</p>
+      </div>
+    );
+  };
+
   return (
     <div className={`${Theme.view.page}`}>
       <div className={`${Theme.view.header}`}>
@@ -44,21 +52,18 @@ export default function View() {
       </div>
       
       <div className={`${Theme.view.content}`}>
-        {error && (
-          <div className={`${Theme.content.layout}`}>
-            <p className={`${Theme.system.error}`}>{error}</p>
-          </div>
-        )}
         {showAddForm ? (
           <div className={`${Theme.content.layout}`}>
             <div className={`${Theme.card.layout}`}>
               <div className={`${Theme.card.header}`}>
                 <div className={`${Theme.card.title_layout}`}>
-                  <div className={`${Theme.card.profile_initial}`}>
-                    <p>N</p>
-                  </div>
-                  <div className={`${Theme.card.title_text}`}>
-                    <p>New Client</p>
+                  <div className={`${Theme.card.profile_layout}`}>
+                    <div className={`${Theme.card.profile_initial}`}>
+                      <p>N</p>
+                    </div>
+                    <div className={`${Theme.card.title_text}`}>
+                      <p>New Client</p>
+                    </div>
                   </div>
                 </div>
               </div>

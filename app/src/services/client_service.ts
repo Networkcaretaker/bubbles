@@ -78,7 +78,8 @@ export const clientService = {
         timestamp: {
           createdAt: now,
           updatedAt: now
-        }
+        },
+        status: clientData.status,
       };
       
       // Add the client

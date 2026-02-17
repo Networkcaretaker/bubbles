@@ -16,7 +16,7 @@ export interface Contact {
   email: string;
   phone: string;
   address: Address;
-  contactType: ContactType;
+  contactType: ContactType; // move this to client interface
   clientId?: string;
   timestamp?: Timestamp;
 };

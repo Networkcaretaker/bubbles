@@ -6,16 +6,13 @@ import type { Client } from '../../types/client_interface';
 //import type { Contact } from '../../types/contact_interface';
 import { Theme } from '../../components/ui/Theme';
 import { ProfileInitial } from '../../functions/user_functions';
-//import { contactService } from '../../services/contact_service';
+import { formatTagText, formatAddress, formatIcon } from '../../functions/shared_functions';
 
 interface CardProps {
   client: Client;
   isViewing: boolean;
   onView: () => void;
   onCancelView: () => void;
-  //isEditing: boolean;
-  //onUpdate: (data: Partial<Omit<Client, 'id'>>) => Promise<void>;
-  //onCancelEdit: () => void;
 }
 
 export default function Card({
@@ -24,49 +21,6 @@ export default function Card({
   onView,
   onCancelView,
 }: CardProps) {
-  //const [contacts, setContacts] = useState<Contact[]>([]);
-  //const [loadingContacts, setLoadingContacts] = useState(false);
-
-  // Fetch contacts when viewing or editing mode is activated
-  /*useEffect(() => {
-    const fetchContacts = async () => {
-      if (isViewing) {
-        try {
-          //setLoadingContacts(true);
-          const fetchedContacts = await contactService.getAllContacts();
-          setContacts(fetchedContacts);
-        } catch (error) {
-          console.error('Error fetching contacts:', error);
-        // } finally {
-          //setLoadingContacts(false);
-        }
-      }
-    };
-
-    fetchContacts();
-  }, [isViewing]);*/
-
-  const formatAddress = () => {
-    const parts = [
-      client.address.street,
-      client.address.city,
-      client.address.region,
-      client.address.postalCode,
-      client.address.country
-    ].filter(Boolean);
-    return parts.join(', ') || 'No address provided';
-  };
-
-  const formatJobType = (jobType: string) => {
-    return jobType.charAt(0).toUpperCase() + jobType.slice(1);
-  };
-
-  /*const formatContactType = (type: string) => {
-    return type.split('_').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
-  };*/
-
   return (
     <div className={`${Theme.card.layout}`}>
       <div className={`${Theme.card.header}`}>
@@ -93,6 +47,14 @@ export default function Card({
 
       {isViewing &&
         <div className={`${Theme.card.content}`}>
+          {client.status && (
+            <div className={`${Theme.card.content_section}`}>
+              <div className={`${Theme.card.icon_list}`}>
+                <p className={`${Theme.card.section_title}`}>Status: </p>
+                <p className={`${Theme.card.tag}`}>{formatTagText(client.status)}</p>
+              </div>
+            </div>
+          )}
 
           {/* Client Details */}
           <div className={`${Theme.card.content_section}`}>
@@ -106,7 +68,7 @@ export default function Card({
             </div>
             <div className={`${Theme.card.icon_list}`}>
               <MapPin className={`${Theme.icon.xs}`} />
-              <p>{formatAddress()}</p>
+              <p>{formatAddress(client.address)}</p>
             </div>
           </div>
 
@@ -119,10 +81,10 @@ export default function Card({
                   <div key={index} className={`${Theme.card.item_index}`}>
                     <div className={`${Theme.card.items}`}>
                       <p className={`${Theme.card.item_text}`}>
-                        {job.jobName}
+                        {formatIcon(job.jobType)} {job.jobName}
                       </p>
                       <p className={`${Theme.card.tags}`}>
-                        {formatJobType(job.jobType)}
+                        {formatTagText(job.jobType)}
                       </p>
                     </div>
                   </div>

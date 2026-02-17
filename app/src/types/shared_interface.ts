@@ -29,3 +29,9 @@ export interface Timestamp {
 };
 
 export interface Times { start: string; end: string };
+
+export type Status =
+  | 'active'
+  | 'inactive'
+  | 'prospect'
+  | 'suspended';

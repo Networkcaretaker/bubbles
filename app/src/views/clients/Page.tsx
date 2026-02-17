@@ -9,6 +9,7 @@ import Form from './Form';
 import { clientService } from '../../services/client_service';
 import { contactService } from '../../services/contact_service';
 import { ProfileInitial } from '../../functions/user_functions';
+import { formatDate, formatTagText, formatAddress, formatIcon } from '../../functions/shared_functions';
 
 export default function Page() {
   const { id } = useParams<{ id: string }>();
@@ -88,46 +89,13 @@ export default function Page() {
     }
   };
 
-  const formatAddress = () => {
-    if (!client) return 'N/A';
-    const parts = [
-      client.address.street,
-      client.address.city,
-      client.address.region,
-      client.address.postalCode,
-      client.address.country
-    ].filter(Boolean);
-    return parts.join(', ') || 'No address provided';
-  };
-
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  const formatJobType = (jobType: string) => {
-    return jobType.charAt(0).toUpperCase() + jobType.slice(1);
-  };
-
-  const formatContactType = (type: string) => {
-    return type.split('_').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
-  };
-
   if (loading) {
     return (
       <div className={`${Theme.content.layout}`}>
         <p className={`${Theme.system.notice}`}>Loading...</p>
       </div>
     );
-  }
+  };
 
   if (error || !client) {
     return (
@@ -135,7 +103,7 @@ export default function Page() {
         <p className={`${Theme.system.error}`}>{error || 'Client not found'}</p>
       </div>
     );
-  }
+  };
 
   return (
     <div className={`${Theme.view.page}`}>
@@ -175,6 +143,11 @@ export default function Page() {
                       </p>
                     </div>
                   </div>
+                  {client.status && (
+                    <div className={`${Theme.card.icon_list}`}>
+                      <p className={`${Theme.card.tag}`}>{formatTagText(client.status)}</p>
+                    </div>
+                  )}
                 </div>
                 <div className={`${Theme.card.selection_area}`} />
               </div>
@@ -216,11 +189,13 @@ export default function Page() {
                       address: client.address,
                       clientJobs: client.clientJobs,
                       contacts: client.contacts,
+                      status: client.status,
                     }}
                     onSubmit={handleUpdate}
                     onCancel={() => setIsEditing(false)}
                     availableContacts={allContacts}
                     submitLabel="Update"
+                    showFullForm={true}
                   />
                 </div>
               ) : (
@@ -237,7 +212,7 @@ export default function Page() {
                   <div className={`${Theme.card.content_section}`}>
 
                     <div className={`${Theme.card.items}`}>
-                      <p className={`${Theme.card.section_title}`}>Information</p>
+                      <p className={`${Theme.card.section_title}`}>Client Information</p>
                       <button
                         onClick={() => setIsEditingContact(!isEditingContact)}
                         className={`${Theme.button.icon}`}
@@ -278,7 +253,7 @@ export default function Page() {
                           </div>
                           <div className={`${Theme.card.icon_list}`}>
                             <MapPin className={`${Theme.icon.xs}`} />
-                            <p>{formatAddress()}</p>
+                            <p>{formatAddress(client.address)}</p>
                           </div>
                         </div>
                       )
@@ -333,7 +308,7 @@ export default function Page() {
                                           {contact.name}
                                       </p>
                                       <p className={`${Theme.card.tags}`}>
-                                          {formatContactType(contact.contactType)}
+                                          {formatTagText(contact.contactType)}
                                       </p>
                                     </div>
                                     <div className={`${Theme.card.item_sub_text}`}>
@@ -400,10 +375,10 @@ export default function Page() {
                                 <div key={index} className={`${Theme.card.item_index}`}>
                                   <div className={`${Theme.card.items}`}>
                                     <p className={`${Theme.card.item_text}`}>
-                                        {job.jobName}
+                                        {formatIcon(job.jobType)} {job.jobName}
                                     </p>
                                     <p className={`${Theme.card.tags}`}>
-                                        {formatJobType(job.jobType)}
+                                        {formatTagText(job.jobType)}
                                     </p>
                                   </div>
                                   {job.workOrderIds && job.workOrderIds.length > 0 && (

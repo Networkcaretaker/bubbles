@@ -42,7 +42,8 @@ export default function Form({
       country: initialData?.address?.country || '',
     },
     clientJobs: initialData?.clientJobs || [] as ClientJob[],
-    contacts: initialData?.contacts || [] as string[]
+    contacts: initialData?.contacts || [] as string[],
+    status: initialData?.status || 'prospect' as const,
   });
   const [submitting, setSubmitting] = useState(false);
 
@@ -77,7 +78,7 @@ export default function Form({
   const addClientJob = () => {
     const newClientJob: ClientJob = {
       jobName: '',
-      jobType: 'villa'
+      jobType: 'residential'
     };
     setFormData(prev => ({
       ...prev,
@@ -140,8 +141,8 @@ export default function Form({
 
   return (
     <form onSubmit={handleSubmit} className={`${Theme.form.layout}`} autoComplete="off">
-      {showFullForm && !showOnlyContactInfo && !showOnlyContacts && !showOnlyJobs && !showOnlyNew && (
-        <div>
+      {(showFullForm || showOnlyNew) && (
+        <>
           <div>
             <label htmlFor="clientType" className={`${Theme.form.label}`}>
               Client Type *
@@ -153,17 +154,36 @@ export default function Form({
               className={`${Theme.form.input}`}
               required
             >
-              <option value="Property Management">Property Management</option>
-              <option value="Yacht Charters">Yacht Charters</option>
-              <option value="Yacht Maintainence">Yacht Maintainence</option>
-              <option value="Golf Club">Golf Club</option>
-              <option value="yacht">Yacht</option>
-              <option value="villa">Villa</option>
+              <option value="residential">Residential</option>
+              <option value="individual">Individual</option>
+              <option value="private-yacht">Private Yacht</option>
+              <option value="property-management">Property Management</option>
+              <option value="yacht-charters">Yacht Charters</option>
+              <option value="yacht-maintainence">Yacht Maintainence</option>
+              <option value="sport-club">Sport Club</option>
               <option value="hotel">Hotel</option>
               <option value="restaurant">Restaurant</option>
-              <option value="residential">Residential</option>
               <option value="corporate">Corporate</option>
               <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="status" className={`${Theme.form.label}`}>
+              Client Status *
+            </label>
+            <select
+              id="status"
+              value={formData.status}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value as Client['status'] })}
+              className={`${Theme.form.input}`}
+              required
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="prospect">Prospect</option>
+              <option value="suspended">Suspended</option>
+              
             </select>
           </div>
 
@@ -181,7 +201,10 @@ export default function Form({
               required
             />
           </div>
-
+        </>
+      )}
+      {(showFullForm || showOnlyNew || showOnlyContactInfo) && (  
+        <>
           <div>
             <label htmlFor="phone" className={`${Theme.form.label}`}>
               Phone
@@ -208,120 +231,11 @@ export default function Form({
               className={`${Theme.form.input}`}
               autoComplete="new-email"
             />
-          </div>    
-        </div>
-      )}
-
-      {/*(showOnlyNew || (!showOnlyContacts && !showOnlyJobs && !showOnlyContactInfo )) && (
-        <>
-          <div>
-            <label htmlFor="clientType" className={`${Theme.form.label}`}>
-              Client Type *
-            </label>
-            <select
-              id="clientType"
-              value={formData.clientType}
-              onChange={(e) => setFormData({ ...formData, clientType: e.target.value as Client['clientType'] })}
-              className={`${Theme.form.input}`}
-              required
-            >
-              <option value="Property Management">Property Management</option>
-              <option value="Yacht Charters">Yacht Charters</option>
-              <option value="Yacht Maintainence">Yacht Maintainence</option>
-              <option value="Golf Club">Golf Club</option>
-              <option value="yacht">Yacht</option>
-              <option value="villa">Villa</option>
-              <option value="hotel">Hotel</option>
-              <option value="restaurant">Restaurant</option>
-              <option value="residential">Residential</option>
-              <option value="corporate">Corporate</option>
-              <option value="other">Other</option>
-            </select>
           </div>
-
-          <div>
-            <label htmlFor="name" className={`${Theme.form.label}`}>
-              Name *
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className={`${Theme.form.input}`}
-              autoComplete="off"
-              required
-            />
-          </div>
-
-          {showOnlyNew && (
-            <div>
-              <label htmlFor="phone" className={`${Theme.form.label}`}>
-                Phone
-              </label>
-              <input
-                type="tel"
-                id="phone"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className={`${Theme.form.input}`}
-                autoComplete="new-phone"
-              />
-            </div>
-          )}
-
-          {showOnlyNew && (
-            <div>
-              <label htmlFor="email" className={`${Theme.form.label}`}>
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className={`${Theme.form.input}`}
-                autoComplete="new-email"
-              />
-            </div>
-          )}
         </>
-      )*/}
-
-      {(showOnlyContactInfo || (!showOnlyContacts && !showOnlyJobs && !showOnlyNew )) && (
+      )}
+      {(showFullForm || showOnlyContactInfo) && (  
         <>
-          {showOnlyContactInfo && (
-            <div>
-              <label htmlFor="phone" className={`${Theme.form.label}`}>
-                Phone
-              </label>
-              <input
-                type="tel"
-                id="phone"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className={`${Theme.form.input}`}
-                autoComplete="new-phone"
-              />
-            </div>
-          )}
-
-          {showOnlyContactInfo && (
-            <div>
-              <label htmlFor="email" className={`${Theme.form.label}`}>
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className={`${Theme.form.input}`}
-                autoComplete="new-email"
-              />
-            </div>
-          )}
-
           <div>
             <label htmlFor="street" className={`${Theme.form.label}`}>
               Street Address
@@ -405,13 +319,18 @@ export default function Form({
               className={`${Theme.form.input}`}
               autoComplete="country-name"
             />
-          </div>
+          </div>   
         </>
-      )}
+      )} 
 
-      {(showOnlyContacts || (!showOnlyContactInfo && !showOnlyJobs && !showOnlyNew )) && (
-        <div>
-          <div className="flex items-center justify-between my-4">
+      {(showFullForm || showOnlyContacts) && (
+        <>
+          <div>
+            {(showFullForm &&
+              <label htmlFor="country" className={`${Theme.form.label}`}>
+                Client Contacts
+              </label>
+            )}
             <button
               type="button"
               onClick={addContact}
@@ -422,10 +341,10 @@ export default function Form({
             </button>
           </div>
 
-          <div className="space-y-3">
+          <div className={`${Theme.form.layout}`}>
             {formData.contacts.map((contactId, contactIndex) => (
-              <div key={contactIndex} className="p-3 rounded-lg bg-gray-800/30 border border-gray-700">
-                <div className="flex items-center gap-2 justify-between">
+              <div key={contactIndex} className={`${Theme.form.index}`}>
+                <div className={`${Theme.form.sub_layout}`}>
                   <div className="w-full">
                     <select
                       value={contactId}
@@ -454,44 +373,49 @@ export default function Form({
                   <button
                     type="button"
                     onClick={() => removeContact(contactId)}
-                    className="p-1 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded transition-colors"
+                    className={`${Theme.button.icon}`}
                     title="Remove contact"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className={`${Theme.icon.sm}`} />
                   </button>
                 </div>
               </div>
             ))}
 
             {formData.contacts.length === 0 && (
-              <p className="text-sm text-gray-400 text-center py-4">
+              <div className={`${Theme.system.notice}`}>
                 No contacts added yet. Click "Add Contact" to get started.
-              </p>
+              </div>
             )}
           </div>
-        </div>
+        </>
       )}
 
-      {(showOnlyJobs || (!showOnlyContactInfo && !showOnlyContacts && !showOnlyNew )) && (
-        <div>
-          <div className="flex items-center justify-between my-4">
+      {(showFullForm || showOnlyJobs) && (
+        <>
+          <div>
+            {(showFullForm &&
+              <label htmlFor="country" className={`${Theme.form.label}`}>
+                Client Jobs
+              </label>
+            )}
             <button
               type="button"
               onClick={addClientJob}
               className={`${Theme.button.outline}`}
             >
-              <Plus className="w-4 h-4" />
+              <Plus className={`${Theme.icon.sm}`} />
               <span>Add Job</span>
             </button>
           </div>
 
-          <div className="space-y-3">
+          <div className={`${Theme.form.layout}`}>
             {formData.clientJobs.map((job, jobIndex) => (
-              <div key={jobIndex} className="p-3 rounded-lg bg-gray-800/30 border border-gray-700">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 justify-between">
-                    <div className="w-full">
-                      <label className="block text-xs text-gray-400 mb-1">
+              <div key={jobIndex} className={`${Theme.form.index}`}>
+ 
+                  <div className={`${Theme.form.sub_layout}`}>
+                    <div className="w-2/3">
+                      <label className={`${Theme.form.label}`}>
                         Job Name
                       </label>
                       <input
@@ -504,8 +428,8 @@ export default function Form({
                       />
                     </div>
 
-                    <div>
-                      <label className="block text-xs text-gray-400 mb-1">
+                    <div className="w-1/3">
+                      <label className={`${Theme.form.label}`}>
                         Job Type
                       </label>
                       <select
@@ -514,31 +438,42 @@ export default function Form({
                         className={`${Theme.form.input}`}
                       >
                         <option value="villa">Villa</option>
-                        <option value="yatch">Yatch</option>
+                        <option value="yacht">Yacht</option>
                         <option value="personal">Personal</option>
                         <option value="sports">Sports</option>
+                        <option value="residential">🏠 Residential</option>
+                        <option value="mixed-apparel">🧳 Mixed Apparel</option>
+                        <option value="mens-apparel">👔 Mens Apparel</option>
+                        <option value="womens-apparel">👗 Womens Apparel</option>
+                        <option value="motor-yacht">🚤 Motor Yacht</option>
+                        <option value="sailing-yacht">⛵️ Sailing Yacht</option>
+                        <option value="golf-club">⛳️ Golf Club</option>
+                        <option value="tennis-club">🎾 Tennis Club</option>
+                        <option value="football-club">⚽️ Football Club</option>
+                        <option value="hotel-resort">🏨 Hotel Resort</option>
+                        <option value="restaurant">🍴 Restaurant</option>
                       </select>
                     </div>
                     <button
                       type="button"
                       onClick={() => removeClientJob(jobIndex)}
-                      className="p-1 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded transition-colors"
+                      className={`${Theme.button.icon}`}
                       title="Remove job"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className={`${Theme.icon.sm}`} />
                     </button>
                   </div>
-                </div>
+
               </div>
             ))}
 
             {formData.clientJobs.length === 0 && (
-              <p className="text-sm text-gray-400 text-center py-4">
+              <div className={`${Theme.system.notice}`}>
                 No jobs added yet. Click "Add Job" to get started.
-              </p>
+              </div>
             )}
           </div>
-        </div>
+        </>
       )}
 
       <div className={`${Theme.form.action}`}>

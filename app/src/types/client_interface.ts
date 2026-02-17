@@ -1,33 +1,63 @@
 import type { Address, Timestamp } from './shared_interface';
+import type { ContactType } from './contact_interface';
+
+export type ClientStatus =
+  | 'active'
+  | 'inactive'
+  | 'prospect'
+  | 'suspended';
 
 export type ClientType = 
-  | 'Property Management'
-  | 'Yacht Charters'
+  | 'residential'
+  | 'individual'
+  | 'private-yacht'
+  | 'property-management'
   | 'yacht-charters'
   | 'Yacht Maintainence'  
   | 'yacht-maintainence'  
-  | 'Golf Club'
-  | 'private-yacht'
-  | 'yacht'  
-  | 'villa'
-  | 'hotel'
+  | 'sport-club'
+  | 'hotel-resort'
   | 'restaurant'
-  | 'residential'
   | 'corporate'
   | 'other';
 
 export type JobType = 
-  | 'villa'
-  | 'yatch'
-  | 'personal'
-  | 'sports'
+  | 'residential'
+  | 'mixed-apparel'
+  | 'mens-apparel'
+  | 'womens-apparel'
+  | 'motor-yacht'
+  | 'sailing-yacht'
+  | 'golf-club'
+  | 'tennis-club'
+  | 'football-club'
+  | 'hotel-resort'
+  | 'restaurant'
+
+export const emojiMap: Record<JobType, string> = {
+  'residential': '🏠',
+  'mixed-apparel': '🧳',
+  'mens-apparel': '👔',
+  'womens-apparel': '👗',
+  'motor-yacht': '🚤',
+  'sailing-yacht': '⛵️',
+  'golf-club': '⛳️',
+  'tennis-club': '🎾',
+  'football-club': '⚽️',
+  'hotel-resort': '🏨',
+  'restaurant': '🍴',
+};
 
 export interface ClientJob {
   jobName: string;
   jobType: JobType;
   workOrderIds?: string[];
-  //jobLocation: string;
-  //quoteId: string;
+}
+
+export interface ClientContact {
+  id: string;
+  name: string;
+  type: ContactType;
 }
 
 export interface Client {
@@ -38,6 +68,8 @@ export interface Client {
   address: Address;
   clientType: ClientType;
   clientJobs?: ClientJob[];
-  contacts?: string[];
+  clientContacts?: ClientContact[];
+  contacts?: string[]; //remove later when new clientContacts is working
   timestamp?: Timestamp;
+  status: ClientStatus;
 };
