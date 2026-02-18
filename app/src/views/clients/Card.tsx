@@ -1,6 +1,6 @@
 //import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, PhoneIcon, MapPin, Eye } from 'lucide-react';
+import { Mail, PhoneIcon, MapPin, Info } from 'lucide-react';
 import { WhatsApp } from '../../components/ui/IconSets'; 
 import type { Client } from '../../types/client_interface';
 //import type { Contact } from '../../types/contact_interface';
@@ -60,11 +60,11 @@ export default function Card({
           <div className={`${Theme.card.content_section}`}>
             <div className={`${Theme.card.icon_list}`}>
               <PhoneIcon className={`${Theme.icon.xs}`} />
-              <p>{client.phone}</p>
+              {client.phone ? <p>{client.phone}</p> : <p>No phone number provided</p>}
             </div>
             <div className={`${Theme.card.icon_list}`}>
               <Mail className={`${Theme.icon.xs}`} />
-              <p>{client.email}</p>
+              {client.email ? <p>{client.email}</p> : <p>No email provided</p>}
             </div>
             <div className={`${Theme.card.icon_list}`}>
               <MapPin className={`${Theme.icon.xs}`} />
@@ -95,22 +95,28 @@ export default function Card({
 
           {/* Action Buttons */}
           <div className={`${Theme.card.action_grid}`}>
+            {client.phone &&
             <a className={`${Theme.button.outline}`} 
                 href={`tel:${client.phone}`}>
                 <PhoneIcon className={`${Theme.icon.lg}`} />
             </a>
+            }
+            {client.email &&
             <a className={`${Theme.button.outline}`}
               href={`mailto:${client.email}`}>
                 <Mail className={`${Theme.icon.lg}`} />
             </a>
+            }
+            {client.phone &&
             <a className={`${Theme.button.outline}`} 
               href={`https://wa.me/${client.phone.replace(/\D/g, '')}`}
               target="_blank"
               rel="noopener noreferrer">
                 <WhatsApp className={`${Theme.icon.lg}`} />
             </a>
+            }
             <Link to={`/clients/${client.id}`} className={`${Theme.button.outline}`}>
-              <Eye className={`${Theme.icon.lg}`} />
+              <Info className={`${Theme.icon.lg}`} />
             </Link>
           </div>
         </div>

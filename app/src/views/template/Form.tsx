@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import type { AuthUser } from '../../types/user_interface';
+import type { Contact } from '../../types/contact_interface';
 import { Theme } from '../../components/ui/Theme';
 
 interface FormProps {
-  initialData?: Partial<Omit<AuthUser, 'uid'>>;
-  onSubmit: (data: Omit<AuthUser, 'uid'> & { password?: string }) => Promise<void>;
+  initialData?: Partial<Omit<Contact, 'id'>>;
+  onSubmit: (data: Omit<Contact, 'id'>) => Promise<void>;
   onCancel: () => void;
   submitLabel?: string;
-  isEditMode?: boolean;
+  showFullForm?: boolean;
+  showOnlyContactInfo?: boolean; // Show only phone, email, address fields
+  showOnlyNew?: boolean; // Show only client type, name, phone, email
 }
 
 export default function Form({ 
@@ -15,49 +17,38 @@ export default function Form({
   onSubmit, 
   onCancel,
   submitLabel = 'Save',
-  isEditMode = false
+  showFullForm = false,
+  showOnlyContactInfo = false,
+  showOnlyNew = false,
 }: FormProps) {
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
     email: initialData?.email || '',
     phone: initialData?.phone || '',
-    role: initialData?.role || 'operator' as const,
-    password: '',
-    confirmPassword: '',
+    address: {
+      street: initialData?.address?.street || '',
+      city: initialData?.address?.city || '',
+      region: initialData?.address?.region || '',
+      postalCode: initialData?.address?.postalCode || '',
+      country: initialData?.address?.country || '',
+    },
   });
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name.trim() || !formData.email.trim()) {
-      alert('Please fill in all required fields');
-      return;
-    }
-
-    // Password validation for new users
-    if (!isEditMode) {
-      if (!formData.password || formData.password.length < 6) {
-        alert('Password must be at least 6 characters long');
-        return;
-      }
-      
-      if (formData.password !== formData.confirmPassword) {
-        alert('Passwords do not match');
+    // Only validate name if showing all fields or not in section-specific mode
+    if (!showOnlyContactInfo) {
+      if (!formData.name.trim()) {
+        alert('Please fill in all required fields');
         return;
       }
     }
 
     setSubmitting(true);
     try {
-      const submitData = {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        role: formData.role,
-        ...(isEditMode ? {} : { password: formData.password })
-      };
-      await onSubmit(submitData);
+      await onSubmit(formData);
     } finally {
       setSubmitting(false);
     }
@@ -65,106 +56,147 @@ export default function Form({
 
   return (
     <form onSubmit={handleSubmit} className={`${Theme.form.layout}`} autoComplete="off">
-      <div>
-        <label htmlFor="name" className={`${Theme.form.label}`}>
-          Name *
-        </label>
-        <input
-          type="text"
-          id="name"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className={`${Theme.form.input}`}
-          autoComplete="off"
-          required
-        />
-      </div>
-
-      <div>
-        <label htmlFor="email" className={`${Theme.form.label}`}>
-          Email *
-        </label>
-        <input
-          type="email"
-          id="email"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          className={`${Theme.form.input}`}
-          autoComplete="new-email"
-          required
-        />
-      </div>
-
-      <div>
-        <label htmlFor="phone" className={`${Theme.form.label}`}>
-          Phone
-        </label>
-        <input
-          type="phone"
-          id="phone"
-          value={formData.phone}
-          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-          className={`${Theme.form.input}`}
-          autoComplete="new-phone"
-        />
-      </div>
-
-      <div>
-        <label htmlFor="role" className={`${Theme.form.label}`}>
-          Role *
-        </label>
-        <select
-          id="role"
-          value={formData.role}
-          onChange={(e) => setFormData({ ...formData, role: e.target.value as AuthUser['role'] })}
-          className={`${Theme.form.input}`}
-          required
-        >
-          <option value="owner">Owner</option>
-          <option value="manager">Manager</option>
-          <option value="operator">Operator</option>
-          <option value="driver">Driver</option>
-          <option value="developer">Developer</option>
-        </select>
-      </div>
-
-      {!isEditMode && (
+      {(showFullForm || showOnlyNew) && (
         <>
           <div>
-            <label htmlFor="password" className={`${Theme.form.label}`}>
-              Password *
+            <label htmlFor="name" className={`${Theme.form.label}`}>
+              Name *
             </label>
             <input
-              type="password"
-              id="password"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              type="text"
+              id="name"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className={`${Theme.form.input}`}
-              minLength={6}
-              autoComplete="new-password"
+              autoComplete="off"
               required
-              placeholder="Minimum 6 characters"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="confirmPassword" className={`${Theme.form.label}`}>
-              Confirm Password *
-            </label>
-            <input
-              type="password"
-              id="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-              className={`${Theme.form.input}`}
-              minLength={6}
-              autoComplete="new-password"
-              required
-              placeholder="Re-enter password"
             />
           </div>
         </>
       )}
+      {(showFullForm || showOnlyNew || showOnlyContactInfo) && (  
+        <>
+          <div>
+            <label htmlFor="phone" className={`${Theme.form.label}`}>
+              Phone
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              className={`${Theme.form.input}`}
+              autoComplete="new-phone"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="email" className={`${Theme.form.label}`}>
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className={`${Theme.form.input}`}
+              autoComplete="new-email"
+            />
+          </div>
+        </>
+      )}
+      {(showFullForm || showOnlyContactInfo) && (  
+        <>
+          <div>
+            <label htmlFor="street" className={`${Theme.form.label}`}>
+              Street Address
+            </label>
+            <input
+              type="text"
+              id="street"
+              value={formData.address.street}
+              onChange={(e) => setFormData({ 
+                ...formData, 
+                address: { ...formData.address, street: e.target.value }
+              })}
+              className={`${Theme.form.input}`}
+              autoComplete="street-address"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="city" className={`${Theme.form.label}`}>
+              City
+            </label>
+            <input
+              type="text"
+              id="city"
+              value={formData.address.city}
+              onChange={(e) => setFormData({ 
+                ...formData, 
+                address: { ...formData.address, city: e.target.value }
+              })}
+              className={`${Theme.form.input}`}
+              autoComplete="address-level2"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="region" className={`${Theme.form.label}`}>
+              Region/State
+            </label>
+            <input
+              type="text"
+              id="region"
+              value={formData.address.region}
+              onChange={(e) => setFormData({ 
+                ...formData, 
+                address: { ...formData.address, region: e.target.value }
+              })}
+              className={`${Theme.form.input}`}
+              autoComplete="address-level1"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="postalCode" className={`${Theme.form.label}`}>
+              Postal Code
+            </label>
+            <input
+              type="text"
+              id="postalCode"
+              value={formData.address.postalCode}
+              onChange={(e) => setFormData({ 
+                ...formData, 
+                address: { ...formData.address, postalCode: e.target.value }
+              })}
+              className={`${Theme.form.input}`}
+              autoComplete="postal-code"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="country" className={`${Theme.form.label}`}>
+              Country
+            </label>
+            <input
+              type="text"
+              id="country"
+              value={formData.address.country}
+              onChange={(e) => setFormData({ 
+                ...formData, 
+                address: { ...formData.address, country: e.target.value }
+              })}
+              className={`${Theme.form.input}`}
+              autoComplete="country-name"
+            />
+          </div>   
+        </>
+      )} 
+
+      
+
+      
 
       <div className={`${Theme.form.action}`}>
         <button

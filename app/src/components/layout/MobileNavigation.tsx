@@ -14,9 +14,9 @@ import { auth } from '../../services/firebase/config';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'Jobs', href: '/jobs', icon: WashingMachine },
   { name: 'Clients', href: '/clients', icon: Users },
   { name: 'Contacts', href: '/contacts', icon: Users },
+  { name: 'Jobs', href: '/jobs', icon: WashingMachine },
   { name: 'Items', href: '/items', icon: WashingMachine },
   { name: 'Services', href: '/services', icon: WashingMachine },
   { name: 'Staff', href: '/staff', icon: Users },

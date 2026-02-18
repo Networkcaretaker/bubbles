@@ -236,11 +236,11 @@ export default function Page() {
                         <div className={`${Theme.card.content_section}`}>
                           <div className={`${Theme.card.icon_list}`}>
                             <PhoneIcon className={`${Theme.icon.xs}`} />
-                            <p>{client.phone}</p>
+                            {client.phone ? <p>{client.phone}</p> : <p>No phone number provided</p>}
                           </div>
                           <div className={`${Theme.card.icon_list}`}>
                             <Mail className={`${Theme.icon.xs}`} />
-                            <p>{client.email}</p>
+                            {client.email ? <p>{client.email}</p> : <p>No email provided</p>}
                           </div>
                           <div className={`${Theme.card.icon_list}`}>
                             <MapPin className={`${Theme.icon.xs}`} />

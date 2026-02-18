@@ -4,9 +4,9 @@ import { auth } from '../../services/firebase/config';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'Staff', href: '/staff', icon: Users },
   { name: 'Clients', href: '/clients', icon: Users },
   { name: 'Contacts', href: '/contacts', icon: Users },
+  { name: 'Staff', href: '/staff', icon: Users },
   { name: 'Services', href: '/services', icon: WashingMachine },
   { name: 'Items', href: '/items', icon: WashingMachine },
   { name: 'Jobs', href: '/jobs', icon: WashingMachine },
@@ -14,6 +14,7 @@ const navigation = [
   { name: 'Invoices', href: '/invoices', icon: FileText },
   { name: 'Quotes', href: '/quotes', icon: FileText },
   { name: 'Settings', href: '/settings', icon: Settings },
+  { name: 'Template', href: '/template', icon: Settings },
 ];
 
 export function Sidebar() {

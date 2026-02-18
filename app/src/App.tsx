@@ -10,12 +10,14 @@ import Staff from './views/staff/Main';
 import Clients from './views/clients/Main';
 import ClientPage from './views/clients/Page';
 import Contacts from './views/contacts/Main';
+import ContactsPage from './views/contacts/Page';
 import Services from './views/services/Main';
 import Items from './views/items/Main';
 import Jobs from './views/jobs/Main';
 import JobPage from './views/jobs/Page';
 import Settings from './views/Settings';
 import Template from './views/template/Main';
+import TemplatePage from './views/template/Page';
 import Batches from './views/Batches';
 import Invoices from './views/Invoices';
 import Quotes from './views/Quotes';
@@ -63,6 +65,7 @@ function App() {
               <Route path="clients" element={<Clients />} />
               <Route path="clients/:id" element={<ClientPage />} />
               <Route path="contacts" element={<Contacts />} />
+              <Route path="contacts/:id" element={<ContactsPage />} />
               <Route path="staff" element={<Staff />} />
               <Route path="services" element={<Services />} />
               <Route path="items" element={<Items />} />
@@ -70,6 +73,7 @@ function App() {
               <Route path="jobs/:id" element={<JobPage />} />
               <Route path="settings" element={<Settings />} />
               <Route path="template" element={<Template />} />
+              <Route path="template/:id" element={<TemplatePage />} />
               <Route path="batches" element={<Batches />} />
               <Route path="invoices" element={<Invoices />} />
               <Route path="quotes" element={<Quotes />} />
