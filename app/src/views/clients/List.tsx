@@ -45,7 +45,7 @@ export default function List() {
   }
 
   return (
-    <div className={`${Theme.content.layout}`}>
+    <>
       {clients.length === 0 ? (
         <p className={`${Theme.system.notice}`}>No clients found. Add your first client to get started.</p>
       ) : (
@@ -61,6 +61,6 @@ export default function List() {
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 }

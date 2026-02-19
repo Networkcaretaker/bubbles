@@ -315,9 +315,7 @@ export default function Page() {
                           </div>
                         </div>
                       ) : (
-                        <div className={`${Theme.system.notice}`}>
-                          No contacts added yet.
-                        </div>
+                        <div />
                       )}
                     </div>
                   )}

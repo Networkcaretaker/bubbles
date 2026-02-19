@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Users, UserPlus } from 'lucide-react';
+import { Users, UserPlus, Search } from 'lucide-react';
 import { Theme } from '../../components/ui/Theme';
 import List from './List';
 import Form from './Form';
@@ -11,6 +11,7 @@ const PAGE_ICON = Users
 
 export default function View() {
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showFilter, setShowFilter] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -42,12 +43,20 @@ export default function View() {
             <PAGE_ICON className={`${Theme.icon.md}`} />
             <h1>{PAGE_TITLE}</h1>
           </div>
-          <button
-            onClick={() => setShowAddForm(!showAddForm)}
-            className={`${Theme.button.icon}`}
-          >
-            <UserPlus className={`${Theme.icon.md}`} />
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowAddForm(!showAddForm)}
+              className={`${Theme.button.icon}`}
+            >
+              <UserPlus className={`${Theme.icon.md}`} />
+            </button>
+            <button
+              onClick={() => setShowFilter(!showFilter)}
+              className={`${Theme.button.icon}`}
+            >
+              <Search className={`${Theme.icon.md}`} />
+            </button>
+          </div>
         </div>
       </div>
       
@@ -77,7 +86,16 @@ export default function View() {
             </div>
           </div>
         ) : (
-          <List key={refreshTrigger} />
+          <div className={`${Theme.content.layout}`}>
+            {showFilter && (
+              <div className={`mb-2`}>
+                <div className={`${Theme.card.layout}`}>
+                    Search and filter goes here
+                </div>
+              </div>
+            )}
+            <List key={refreshTrigger} />
+          </div>
         )}
       </div>
     </div>
