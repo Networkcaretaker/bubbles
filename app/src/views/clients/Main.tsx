@@ -87,14 +87,14 @@ export default function View() {
           </div>
         ) : (
           <div className={`${Theme.content.layout}`}>
-            {showFilter && (
+            {/*showFilter && (
               <div className={`mb-2`}>
                 <div className={`${Theme.card.layout}`}>
                     Search and filter goes here
                 </div>
               </div>
-            )}
-            <List key={refreshTrigger} />
+            )*/}
+            <List key={refreshTrigger} showFilter={showFilter} />
           </div>
         )}
       </div>

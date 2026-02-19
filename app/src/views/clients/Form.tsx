@@ -170,7 +170,8 @@ export default function Form({
               <option value="private-yacht">Private Yacht</option>
               <option value="property-management">Property Management</option>
               <option value="yacht-charters">Yacht Charters</option>
-              <option value="yacht-maintainence">Yacht Maintainence</option>
+              <option value="yacht-maintenance">Yacht Maintenance</option>
+              <option value="yacht-cleaning">Yacht Cleaning</option>
               <option value="sport-club">Sport Club</option>
               <option value="hotel">Hotel</option>
               <option value="restaurant">Restaurant</option>

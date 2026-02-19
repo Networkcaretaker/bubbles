@@ -130,7 +130,7 @@ export default function Page() {
                         {client.name}
                       </p>
                       <p className={`${Theme.card.profile_tag}`}>
-                        {client.clientType.charAt(0).toUpperCase() + client.clientType.slice(1)}
+                        {formatTagText(client.clientType)}
                       </p>
                     </div>
                   </div>

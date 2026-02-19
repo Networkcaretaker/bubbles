@@ -12,8 +12,9 @@ export type ClientType =
   | 'private-yacht'
   | 'property-management'
   | 'yacht-charters'
-  | 'Yacht Maintainence'  
-  | 'yacht-maintainence'  
+  | 'Yacht Maintainence' //old
+  | 'yacht-cleaning' //spelling
+  | 'yacht-maintenance'
   | 'sport-club'
   | 'hotel-resort'
   | 'restaurant'
