@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Plus, Trash2, UserPlus } from 'lucide-react';
 import type { Client, ClientJob, JobType, ClientContact } from '../../types/client_interface';
 import type { Contact } from '../../types/contact_interface';
-import { Theme } from '../../components/ui/Theme';
+import { theme } from '../../components/styles/theme';
 
 interface FormProps {
   initialData?: Partial<Omit<Client, 'id'>>;
@@ -151,18 +151,18 @@ export default function Form({
   };
 
   return (
-    <form onSubmit={handleSubmit} className={`${Theme.form.layout}`} autoComplete="off">
+    <form onSubmit={handleSubmit} className={`${theme.form.layout}`} autoComplete="off">
       {(showFullForm || showOnlyNew) && (
         <>
           <div>
-            <label htmlFor="clientType" className={`${Theme.form.label}`}>
+            <label htmlFor="clientType" className={`${theme.form.label}`}>
               Client Type *
             </label>
             <select
               id="clientType"
               value={formData.clientType}
               onChange={(e) => setFormData({ ...formData, clientType: e.target.value as Client['clientType'] })}
-              className={`${Theme.form.input}`}
+              className={`${theme.form.input}`}
               required
             >
               <option value="residential">Residential</option>
@@ -181,14 +181,14 @@ export default function Form({
           </div>
 
           <div>
-            <label htmlFor="status" className={`${Theme.form.label}`}>
+            <label htmlFor="status" className={`${theme.form.label}`}>
               Client Status *
             </label>
             <select
               id="status"
               value={formData.status}
               onChange={(e) => setFormData({ ...formData, status: e.target.value as Client['status'] })}
-              className={`${Theme.form.input}`}
+              className={`${theme.form.input}`}
               required
             >
               <option value="active">Active</option>
@@ -200,7 +200,7 @@ export default function Form({
           </div>
 
           <div>
-            <label htmlFor="name" className={`${Theme.form.label}`}>
+            <label htmlFor="name" className={`${theme.form.label}`}>
               Name *
             </label>
             <input
@@ -208,7 +208,7 @@ export default function Form({
               id="name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className={`${Theme.form.input}`}
+              className={`${theme.form.input}`}
               autoComplete="off"
               required
             />
@@ -218,7 +218,7 @@ export default function Form({
       {(showFullForm || showOnlyNew || showOnlyContactInfo) && (  
         <>
           <div>
-            <label htmlFor="phone" className={`${Theme.form.label}`}>
+            <label htmlFor="phone" className={`${theme.form.label}`}>
               Phone
             </label>
             <input
@@ -226,13 +226,13 @@ export default function Form({
               id="phone"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className={`${Theme.form.input}`}
+              className={`${theme.form.input}`}
               autoComplete="new-phone"
             />
           </div>
 
           <div>
-            <label htmlFor="email" className={`${Theme.form.label}`}>
+            <label htmlFor="email" className={`${theme.form.label}`}>
               Email
             </label>
             <input
@@ -240,7 +240,7 @@ export default function Form({
               id="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className={`${Theme.form.input}`}
+              className={`${theme.form.input}`}
               autoComplete="new-email"
             />
           </div>
@@ -249,7 +249,7 @@ export default function Form({
       {(showFullForm || showOnlyContactInfo) && (  
         <>
           <div>
-            <label htmlFor="street" className={`${Theme.form.label}`}>
+            <label htmlFor="street" className={`${theme.form.label}`}>
               Street Address
             </label>
             <input
@@ -260,13 +260,13 @@ export default function Form({
                 ...formData, 
                 address: { ...formData.address, street: e.target.value }
               })}
-              className={`${Theme.form.input}`}
+              className={`${theme.form.input}`}
               autoComplete="street-address"
             />
           </div>
 
           <div>
-            <label htmlFor="city" className={`${Theme.form.label}`}>
+            <label htmlFor="city" className={`${theme.form.label}`}>
               City
             </label>
             <input
@@ -277,13 +277,13 @@ export default function Form({
                 ...formData, 
                 address: { ...formData.address, city: e.target.value }
               })}
-              className={`${Theme.form.input}`}
+              className={`${theme.form.input}`}
               autoComplete="address-level2"
             />
           </div>
 
           <div>
-            <label htmlFor="region" className={`${Theme.form.label}`}>
+            <label htmlFor="region" className={`${theme.form.label}`}>
               Region/State
             </label>
             <input
@@ -294,13 +294,13 @@ export default function Form({
                 ...formData, 
                 address: { ...formData.address, region: e.target.value }
               })}
-              className={`${Theme.form.input}`}
+              className={`${theme.form.input}`}
               autoComplete="address-level1"
             />
           </div>
 
           <div>
-            <label htmlFor="postalCode" className={`${Theme.form.label}`}>
+            <label htmlFor="postalCode" className={`${theme.form.label}`}>
               Postal Code
             </label>
             <input
@@ -311,13 +311,13 @@ export default function Form({
                 ...formData, 
                 address: { ...formData.address, postalCode: e.target.value }
               })}
-              className={`${Theme.form.input}`}
+              className={`${theme.form.input}`}
               autoComplete="postal-code"
             />
           </div>
 
           <div>
-            <label htmlFor="country" className={`${Theme.form.label}`}>
+            <label htmlFor="country" className={`${theme.form.label}`}>
               Country
             </label>
             <input
@@ -328,7 +328,7 @@ export default function Form({
                 ...formData, 
                 address: { ...formData.address, country: e.target.value }
               })}
-              className={`${Theme.form.input}`}
+              className={`${theme.form.input}`}
               autoComplete="country-name"
             />
           </div>   
@@ -339,31 +339,31 @@ export default function Form({
         <>
           <div>
             {showFullForm && (
-              <label className={`${Theme.form.label}`}>
+              <label className={`${theme.form.label}`}>
                 Client Contacts
               </label>
             )}
             <button
               type="button"
               onClick={addClientContact}
-              className={`${Theme.button.outline}`}
+              className={`${theme.button.outline}`}
             >
-              <UserPlus className={`${Theme.icon.sm}`} />
+              <UserPlus className={`${theme.icon.sm}`} />
               <span>Add Contact</span>
             </button>
           </div>
 
-          <div className={`${Theme.form.layout}`}>
+          <div className={`${theme.form.layout}`}>
             {formData.clientContacts.map((clientContact, ccIndex) => (
-              <div key={ccIndex} className={`${Theme.form.index}`}>
-                <div className={`${Theme.form.sub_layout}`}>
+              <div key={ccIndex} className={`${theme.form.index}`}>
+                <div className={`${theme.form.sub_layout}`}>
 
                   <div className="w-2/3">
-                    <label className={`${Theme.form.label}`}>Contact Name</label>
+                    <label className={`${theme.form.label}`}>Contact Name</label>
                     <select
                       value={clientContact.id}
                       onChange={(e) => updateClientContact(ccIndex, 'id', e.target.value)}
-                      className={`${Theme.form.input}`}
+                      className={`${theme.form.input}`}
                     >
                       <option value="">Select a contact...</option>
                       {getAvailableClientContacts(ccIndex).map(contact => (
@@ -375,11 +375,11 @@ export default function Form({
                   </div>
 
                   <div className="w-1/3">
-                    <label className={`${Theme.form.label}`}>Contact Type</label>
+                    <label className={`${theme.form.label}`}>Contact Type</label>
                     <select
                       value={clientContact.type}
                       onChange={(e) => updateClientContact(ccIndex, 'type', e.target.value)}
-                      className={`${Theme.form.input}`}
+                      className={`${theme.form.input}`}
                     >
                       <option value="primary">Primary</option>
                       <option value="billing">Billing</option>
@@ -395,10 +395,10 @@ export default function Form({
                   <button
                     type="button"
                     onClick={() => removeClientContact(ccIndex)}
-                    className={`${Theme.button.icon}`}
+                    className={`${theme.button.icon}`}
                     title="Remove contact"
                   >
-                    <Trash2 className={`${Theme.icon.sm}`} />
+                    <Trash2 className={`${theme.icon.sm}`} />
                   </button>
 
                 </div>
@@ -406,7 +406,7 @@ export default function Form({
             ))}
 
             {formData.clientContacts.length === 0 && (
-              <div className={`${Theme.system.notice}`}>
+              <div className={`${theme.system.notice}`}>
                 No contacts added yet. Click "Add Contact" to get started.
               </div>
             )}
@@ -418,47 +418,47 @@ export default function Form({
         <>
           <div>
             {(showFullForm &&
-              <label htmlFor="country" className={`${Theme.form.label}`}>
+              <label htmlFor="country" className={`${theme.form.label}`}>
                 Client Jobs
               </label>
             )}
             <button
               type="button"
               onClick={addClientJob}
-              className={`${Theme.button.outline}`}
+              className={`${theme.button.outline}`}
             >
-              <Plus className={`${Theme.icon.sm}`} />
+              <Plus className={`${theme.icon.sm}`} />
               <span>Add Job</span>
             </button>
           </div>
 
-          <div className={`${Theme.form.layout}`}>
+          <div className={`${theme.form.layout}`}>
             {formData.clientJobs.map((job, jobIndex) => (
-              <div key={jobIndex} className={`${Theme.form.index}`}>
+              <div key={jobIndex} className={`${theme.form.index}`}>
  
-                  <div className={`${Theme.form.sub_layout}`}>
+                  <div className={`${theme.form.sub_layout}`}>
                     <div className="w-2/3">
-                      <label className={`${Theme.form.label}`}>
+                      <label className={`${theme.form.label}`}>
                         Job Name
                       </label>
                       <input
                         type="text"
                         value={job.jobName}
                         onChange={(e) => updateClientJob(jobIndex, 'jobName', e.target.value)}
-                        className={`${Theme.form.input}`}
+                        className={`${theme.form.input}`}
                         placeholder="Enter job name"
                         autoComplete="off"
                       />
                     </div>
 
                     <div className="w-1/3">
-                      <label className={`${Theme.form.label}`}>
+                      <label className={`${theme.form.label}`}>
                         Job Type
                       </label>
                       <select
                         value={job.jobType}
                         onChange={(e) => updateClientJob(jobIndex, 'jobType', e.target.value as JobType)}
-                        className={`${Theme.form.input}`}
+                        className={`${theme.form.input}`}
                       >
                         <option value="villa">Villa</option>
                         <option value="yacht">Yacht</option>
@@ -480,10 +480,10 @@ export default function Form({
                     <button
                       type="button"
                       onClick={() => removeClientJob(jobIndex)}
-                      className={`${Theme.button.icon}`}
+                      className={`${theme.button.icon}`}
                       title="Remove job"
                     >
-                      <Trash2 className={`${Theme.icon.sm}`} />
+                      <Trash2 className={`${theme.icon.sm}`} />
                     </button>
                   </div>
 
@@ -491,7 +491,7 @@ export default function Form({
             ))}
 
             {formData.clientJobs.length === 0 && (
-              <div className={`${Theme.system.notice}`}>
+              <div className={`${theme.system.notice}`}>
                 No jobs added yet. Click "Add Job" to get started.
               </div>
             )}
@@ -499,11 +499,11 @@ export default function Form({
         </>
       )}
 
-      <div className={`${Theme.form.action}`}>
+      <div className={`${theme.form.action}`}>
         <button
           type="submit"
           disabled={submitting}
-          className={`${Theme.button.solid}`}
+          className={`${theme.button.solid}`}
         >
           {submitting ? 'Saving...' : submitLabel}
         </button>
@@ -511,7 +511,7 @@ export default function Form({
           type="button"
           onClick={onCancel}
           disabled={submitting}
-          className={`${Theme.button.outline}`}
+          className={`${theme.button.outline}`}
         >
           Cancel
         </button>

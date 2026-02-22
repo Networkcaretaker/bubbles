@@ -1,5 +1,5 @@
 import type { ClientStatus, ClientType } from '../../types/client_interface';
-import { Theme } from '../../components/ui/Theme';
+import { theme } from '../../components/styles/theme';
 
 export interface FilterState {
   search: string;
@@ -46,27 +46,27 @@ export default function Filter({ filters, onChange }: FilterProps) {
   };
 
   return (
-    <div className={`${Theme.card.layout}`}>
-      <div className={`${Theme.form.layout}`}>
+    <div className={`${theme.card.layout}`}>
+      <div className={`${theme.form.layout}`}>
 
         <div>
-          <label className={`${Theme.form.label}`}>Search</label>
+          <label className={`${theme.form.label}`}>Search</label>
           <input
             type="text"
             placeholder="Name, email or phone..."
             value={filters.search}
             onChange={(e) => handleChange('search', e.target.value)}
-            className={`${Theme.form.input}`}
+            className={`${theme.form.input}`}
           />
         </div>
 
-        <div className={`${Theme.form.sub_layout}`}>
+        <div className={`${theme.form.sub_layout}`}>
           <div className="flex-1">
-            <label className={`${Theme.form.label}`}>Status</label>
+            <label className={`${theme.form.label}`}>Status</label>
             <select
               value={filters.status}
               onChange={(e) => handleChange('status', e.target.value)}
-              className={`${Theme.form.input}`}
+              className={`${theme.form.input}`}
             >
               <option value="">All</option>
               {STATUS_OPTIONS.map(({ value, label }) => (
@@ -76,11 +76,11 @@ export default function Filter({ filters, onChange }: FilterProps) {
           </div>
 
           <div className="flex-1">
-            <label className={`${Theme.form.label}`}>Client Type</label>
+            <label className={`${theme.form.label}`}>Client Type</label>
             <select
               value={filters.clientType}
               onChange={(e) => handleChange('clientType', e.target.value)}
-              className={`${Theme.form.input}`}
+              className={`${theme.form.input}`}
             >
               <option value="">All</option>
               {CLIENT_TYPE_OPTIONS.map(({ value, label }) => (
@@ -91,7 +91,7 @@ export default function Filter({ filters, onChange }: FilterProps) {
         </div>
 
         {hasActiveFilters && (
-          <button onClick={clearFilters} className={`${Theme.button.outline}`}>
+          <button onClick={clearFilters} className={`${theme.button.outline}`}>
             Clear Filters
           </button>
         )}

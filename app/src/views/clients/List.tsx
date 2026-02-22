@@ -4,7 +4,7 @@ import type { Client } from '../../types/client_interface';
 import Card from './Card';
 import Filter from './Filter';
 import type { FilterState } from './Filter';
-import { Theme } from '../../components/ui/Theme';
+import { theme } from '../../components/styles/theme';
 
 const DEFAULT_FILTERS: FilterState = {
   search: '',
@@ -67,30 +67,30 @@ export default function List({ showFilter }: ListProps) {
 
   if (loading) {
     return (
-      <div className={`${Theme.content.layout}`}>
-        <p className={`${Theme.system.notice}`}>Loading...</p>
+      <div className={`${theme.outlet.page}`}>
+        <p className={`${theme.system.notice}`}>Loading...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className={`${Theme.content.layout}`}>
-        <p className={`${Theme.system.error}`}>{error}</p>
+      <div className={`${theme.outlet.page}`}>
+        <p className={`${theme.system.error}`}>{error}</p>
       </div>
     );
   }
 
   return (
-    <div className={`${Theme.content.list}`}>
+    <div className={`${theme.outlet.content}`}>
       {showFilter && (
         <Filter filters={filters} onChange={setFilters} />
       )}
 
       {clients.length === 0 ? (
-        <p className={`${Theme.system.notice}`}>No clients found. Add your first client to get started.</p>
+        <p className={`${theme.system.notice}`}>No clients found. Add your first client to get started.</p>
       ) : filteredClients.length === 0 ? (
-        <p className={`${Theme.system.notice}`}>No clients match your search or filters.</p>
+        <p className={`${theme.system.notice}`}>No clients match your search or filters.</p>
       ) : (
         <>
           {filteredClients.map((client) => (

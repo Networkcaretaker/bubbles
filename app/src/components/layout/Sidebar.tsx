@@ -24,7 +24,7 @@ export function Sidebar() {
               }`
             }
           >
-            <item.icon className={`${theme.icon.size.md}`} />
+            <item.icon className={`${theme.icon.md}`} />
             <p className={`${theme.text.sidebar}`}>{item.name}</p>
           </NavLink>
         ))}
@@ -34,7 +34,7 @@ export function Sidebar() {
           onClick={handleSignOut}
           className={`${theme.sidebar.navlink} w-full`}
         >
-          <LogOut className={`${theme.icon.size.md}`} />
+          <LogOut className={`${theme.icon.md}`} />
           <p className={`${theme.text.sidebar}`}>Sign Out</p>
         </button>
       </div>
