@@ -146,20 +146,26 @@ export default function Page() {
               {/* Action Buttons */}
               <div className={`${Theme.card.content}`}>
                 <div className={`${Theme.card.action_grid}`}>
+                  {client.phone &&
                   <a className={`${Theme.button.outline}`} 
-                    href={`tel:${client.phone}`}>
+                      href={`tel:${client.phone}`}>
                       <PhoneIcon className={`${Theme.icon.lg}`} />
                   </a>
-                  <a className={`${Theme.button.outline}`} 
+                  }
+                  {client.email &&
+                  <a className={`${Theme.button.outline}`}
                     href={`mailto:${client.email}`}>
                       <Mail className={`${Theme.icon.lg}`} />
                   </a>
+                  }
+                  {client.phone &&
                   <a className={`${Theme.button.outline}`} 
                     href={`https://wa.me/${client.phone.replace(/\D/g, '')}`}
                     target="_blank"
                     rel="noopener noreferrer">
                       <WhatsApp className={`${Theme.icon.lg}`} />
                   </a>
+                  }
                   <div className={`${Theme.button.outline}`} onClick={() => setIsEditing(!isEditing)}>
                     {isEditing ? <X className={`${Theme.icon.lg}`} /> : <Pencil className={`${Theme.icon.lg}`} />}
                   </div>
