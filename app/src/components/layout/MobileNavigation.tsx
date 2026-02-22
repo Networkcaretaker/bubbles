@@ -11,20 +11,8 @@ import {
   ChevronDown 
 } from 'lucide-react';
 import { auth } from '../../services/firebase/config';
-
-const navigation = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'Clients', href: '/clients', icon: Users },
-  { name: 'Contacts', href: '/contacts', icon: Users },
-  { name: 'Jobs', href: '/jobs', icon: WashingMachine },
-  { name: 'Items', href: '/items', icon: WashingMachine },
-  { name: 'Services', href: '/services', icon: WashingMachine },
-  { name: 'Staff', href: '/staff', icon: Users },
-  { name: 'Batches', href: '/batches', icon: WashingMachine },
-  { name: 'Invoices', href: '/invoices', icon: FileText },
-  { name: 'Quotes', href: '/quotes', icon: FileText },
-  { name: 'Settings', href: '/settings', icon: Settings },
-];
+import { navigation } from './navigation'
+import { theme } from '../styles/theme'
 
 export function MobileNavigation() {
   const [isExpanded, setIsExpanded] = useState(false);
