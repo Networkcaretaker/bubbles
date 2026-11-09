@@ -39,7 +39,7 @@ Old sections keep working on the old theme until they are rebuilt.
 - [x] Shared `PageHeader` component: icon, title, action buttons on the right
 - [x] Fixed header height (56px), content fills the rest
 - [x] `IconButton` for header actions (with tooltip/label)
-- [ ] Check the shell on phone and desktop in the browser
+- [x] Check the shell on phone and desktop in the browser
 - [ ] Loading and error states (replace `alert()` / `confirm()` with in-app messages and a confirm dialog)
 
 ## Phase 3 – Shared building blocks
