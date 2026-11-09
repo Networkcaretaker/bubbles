@@ -31,22 +31,22 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      <div className="max-w-md w-full bg-gradient-to-t from-blue-900/80 to-blue-500/90 rounded-xl shadow-lg p-6 space-y-6">
+      <div className="max-w-md w-full bg-gradient-to-t from-brand-900/80 to-brand-500/90 rounded-xl shadow-lg p-6 space-y-6">
         
         {/* Header / Logo */}
         <div className="text-center py-6 space-y-2">
           <div className="mx-auto h-20 w-20 flex items-center">
             <img src="/logo.png" />
           </div>
-          <h2 className="text-6xl text-cyan-400 font-bubble">BUBBLES</h2>
-          <p className="text-sm text-cyan-200">
+          <h2 className="text-6xl text-accent-400 font-bubble">BUBBLES</h2>
+          <p className="text-sm text-accent-200">
             Laundry Information Management System
           </p>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm text-center">
+          <div className="bg-danger-50 text-danger-600 p-3 rounded-md text-sm text-center">
             {error}
           </div>
         )}
@@ -63,7 +63,7 @@ export default function Login() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none block w-full px-3 py-2 border border-cyan-300 rounded-md shadow-sm placeholder-cyan-400 focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm"
+                className="appearance-none block w-full px-3 py-2 border border-accent-300 rounded-md shadow-sm placeholder-accent-400 focus:outline-none focus:ring-accent-500 focus:border-accent-500 sm:text-sm"
               />
             </div>
           </div>
@@ -78,7 +78,7 @@ export default function Login() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none block w-full px-3 py-2 border border-cyan-300 rounded-md shadow-sm placeholder-cyan-400 focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm"
+                className="appearance-none block w-full px-3 py-2 border border-accent-300 rounded-md shadow-sm placeholder-accent-400 focus:outline-none focus:ring-accent-500 focus:border-accent-500 sm:text-sm"
               />
             </div>
           </div>
@@ -87,7 +87,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={isSigningIn}
-              className="w-full flex items-center justify-center gap-3 bg-cyan-500 border border-transparent text-white font-medium py-3 px-4 rounded-lg hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-3 bg-accent-500 border border-transparent text-white font-medium py-3 px-4 rounded-lg hover:bg-accent-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSigningIn ? (
                 <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -100,7 +100,7 @@ export default function Login() {
         </form>
 
         {/* Footer */}
-        <div className="text-center text-xs text-cyan-400 mt-6">
+        <div className="text-center text-xs text-accent-400 mt-6">
           &copy; {new Date().getFullYear()} Bubbles LIMS
         </div>
       </div>

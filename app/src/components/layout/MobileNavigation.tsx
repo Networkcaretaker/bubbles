@@ -30,7 +30,7 @@ export function MobileNavigation() {
       )}
 
       <div 
-        className={`fixed inset-x-0 bottom-0 z-30 border-t border-cyan-500 bg-gradient-to-t from-blue-900/90 to-blue-700/90 transition-all duration-300 ease-in-out md:hidden ${
+        className={`fixed inset-x-0 bottom-0 z-30 border-t border-accent-500 bg-gradient-to-t from-brand-900/90 to-brand-700/90 transition-all duration-300 ease-in-out md:hidden ${
           isExpanded ? 'max-h-80 pb-6' : 'max-h-20'
         }`}
       >
@@ -38,7 +38,7 @@ export function MobileNavigation() {
         <div className="flex justify-center">
           <button 
             onClick={() => setIsExpanded(!isExpanded)}
-            className="flex h-6 w-full items-center justify-center text-cyan-500/50 hover:text-cyan-400"
+            className="flex h-6 w-full items-center justify-center text-accent-500/50 hover:text-accent-400"
           >
             {isExpanded ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
           </button>
@@ -53,8 +53,8 @@ export function MobileNavigation() {
               className={({ isActive }) =>
                 `flex flex-col items-center justify-center gap-1 py-2 mb-1 text-[10px] font-medium transition-colors ${
                   isActive
-                    ? 'text-cyan-400 bg-blue-500/20 rounded-lg'
-                    : 'text-cyan-500 hover:text-cyan-100'
+                    ? 'text-accent-400 bg-brand-500/20 rounded-lg'
+                    : 'text-accent-500 hover:text-accent-100'
                 }`
               }
             >
@@ -66,7 +66,7 @@ export function MobileNavigation() {
           {/* Sign Out Button always at the end */}
           <button
             onClick={handleSignOut}
-            className="flex flex-col items-center justify-center gap-1 py-2 text-[10px] font-medium transition-colors text-cyan-500 hover:text-cyan-100"
+            className="flex flex-col items-center justify-center gap-1 py-2 text-[10px] font-medium transition-colors text-accent-500 hover:text-accent-100"
           >
             <LogOut className="h-5 w-5" />
             <span>Sign Out</span>

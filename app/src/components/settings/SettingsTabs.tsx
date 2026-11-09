@@ -48,7 +48,7 @@ export default function SettingsTabs() {
   return (
     <div className="">
       <div className="p-4">
-        <div className="border-b border-cyan-200 mb-4">
+        <div className="border-b border-accent-200 mb-4">
           <nav className="-mb-px flex" aria-label="Tabs">
             {tabs.map((tab) => (
               <button
@@ -56,8 +56,8 @@ export default function SettingsTabs() {
                 onClick={() => handleTabClick(tab.id as 'general' | 'users')}
                 className={`${
                   activeTab === tab.id
-                    ? 'border-cyan-400 text-cyan-400 bg-blue-700/20'
-                    : 'border-transparent text-cyan-400 hover:text-cyan-500 hover:border-cyan-300 bg-blue-900/20'
+                    ? 'border-accent-400 text-accent-400 bg-brand-700/20'
+                    : 'border-transparent text-accent-400 hover:text-accent-500 hover:border-accent-300 bg-brand-900/20'
                 }  py-3 px-6 border-b-2 font-medium text-sm transition-colors`}
                 aria-current={activeTab === tab.id ? 'page' : undefined}
               >

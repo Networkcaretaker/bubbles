@@ -372,7 +372,7 @@ export default function Form({
 
           <div className="space-y-3">
             {formData.jobOverview.services.map((serviceId, index) => (
-              <div key={index} className="p-3 rounded-lg bg-gray-800/30 border border-gray-700">
+              <div key={index} className="p-3 rounded-lg bg-muted-800/30 border border-muted-700">
                 <div className="flex items-center gap-3">
                   <div className="flex-1">
                     <select
@@ -395,7 +395,7 @@ export default function Form({
                   <button
                     type="button"
                     onClick={() => removeService(index)}
-                    className="p-2 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded transition-colors"
+                    className="p-2 text-danger-400 hover:text-danger-300 hover:bg-danger-900/20 rounded transition-colors"
                     title="Remove service"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -406,7 +406,7 @@ export default function Form({
             ))}
 
             {formData.jobOverview.services.length === 0 && (
-              <p className="text-sm text-gray-400 text-center py-4 border border-dashed border-gray-700 rounded-lg">
+              <p className="text-sm text-muted-400 text-center py-4 border border-dashed border-muted-700 rounded-lg">
                 No services added yet. Click "Add Service" to start.
               </p>
             )}

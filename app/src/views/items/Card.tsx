@@ -65,7 +65,7 @@ export default function Card({
           {/* Profile Badge */}
           <div className={`${CARD.icon_list}`}>
             <div>
-              <div className={`${CONTACT.profile_initial} bg-gray-100 text-gray-800`}>
+              <div className={`${CONTACT.profile_initial} bg-muted-100 text-muted-800`}>
                 {ProfileInitial(item.name)}
               </div>
             </div>
@@ -74,7 +74,7 @@ export default function Card({
                 ? <h3 className={`${CARD.selected_name}`}>{item.name}</h3>
                 : <h3 className={`${CARD.name}`}>{item.name}</h3>
               }
-              <span className={`${CARD.tags} bg-gray-100 text-gray-800`}>
+              <span className={`${CARD.tags} bg-muted-100 text-muted-800`}>
                 {formatCategory(item.category)}
               </span>
             </div>
@@ -94,12 +94,12 @@ export default function Card({
             {item.sizes && item.sizes.length > 0 && (
               <div className={`${CARD.icon_list}`}>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-100 mb-1">Available Sizes</p>
+                  <p className="text-sm font-medium text-muted-100 mb-1">Available Sizes</p>
                   <div className="flex flex-wrap gap-1">
                     {item.sizes.map((size, index) => (
                       <span
                         key={index}
-                        className="px-2 py-1 text-xs rounded bg-cyan-700 text-cyan-100"
+                        className="px-2 py-1 text-xs rounded bg-accent-700 text-accent-100"
                       >
                         {formatSize(size)}
                       </span>
@@ -113,30 +113,30 @@ export default function Card({
             {item.services && item.services.length > 0 && (
               <div className={`${CARD.icon_list}`}>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-100 mb-2">Services & Pricing</p>
+                  <p className="text-sm font-medium text-muted-100 mb-2">Services & Pricing</p>
                   <div className="space-y-3">
                     {item.services.map((service, index) => (
-                      <div key={index} className="pl-3 border-l-2 border-cyan-500">
+                      <div key={index} className="pl-3 border-l-2 border-accent-500">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm font-bold text-cyan-500">
+                          <span className="text-sm font-bold text-accent-500">
                             {formatServiceCategory(service.service)}
                           </span>
-                          <span className="text-xs font-medium text-cyan-500">
+                          <span className="text-xs font-medium text-accent-500">
                             {formatPricingUnit(service.unit)}
                           </span>
                         </div>
                         
                         {service.unit !== 'per_item' ? (
                           <div className="flex justify-between items-center text-sm">
-                            <span className="text-gray-200">{formatPricingUnit(service.unit)}</span>
-                            <span className="text-gray-200 font-medium">€{service.price?.toFixed(2)}</span>
+                            <span className="text-muted-200">{formatPricingUnit(service.unit)}</span>
+                            <span className="text-muted-200 font-medium">€{service.price?.toFixed(2)}</span>
                           </div>
                         ) : (
                           <div className="space-y-1">
                             {service.prices?.map((priceItem, priceIndex) => (
                               <div key={priceIndex} className="flex justify-between items-center text-sm">
-                                <span className="text-gray-200 ">{formatSize(priceItem.size)}</span>
-                                <span className="text-gray-200 font-medium">€{priceItem.price.toFixed(2)}</span>
+                                <span className="text-muted-200 ">{formatSize(priceItem.size)}</span>
+                                <span className="text-muted-200 font-medium">€{priceItem.price.toFixed(2)}</span>
                               </div>
                             ))}
                           </div>
@@ -182,12 +182,12 @@ export default function Card({
             <div className="flex-1">
               <div className="space-y-1 text-xs">
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Created:</span>
-                  <span className="text-gray-300">{formatDate(item.timestamp?.createdAt)}</span>
+                  <span className="text-muted-400">Created:</span>
+                  <span className="text-muted-300">{formatDate(item.timestamp?.createdAt)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Updated:</span>
-                  <span className="text-gray-300">{formatDate(item.timestamp?.updatedAt)}</span>
+                  <span className="text-muted-400">Updated:</span>
+                  <span className="text-muted-300">{formatDate(item.timestamp?.updatedAt)}</span>
                 </div>
               </div>
             </div>

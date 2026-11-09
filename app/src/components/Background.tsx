@@ -21,11 +21,11 @@ const BUBBLE_COUNT: number = 50;
 const createBubble = (id: number): Bubble => {
   // Enhanced color palette
   const colors: string[] = [
-    'bg-blue-400', // Medium blue
-    'bg-blue-500', // Blue
-    'bg-cyan-400', // Turquoise
+    'bg-brand-400', // Medium blue
+    'bg-brand-500', // Blue
+    'bg-accent-400', // Turquoise
     'bg-teal-400', // Teal
-    'bg-blue-800', // Dark blue
+    'bg-brand-800', // Dark blue
     'bg-white', // White
   ];
 

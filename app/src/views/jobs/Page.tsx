@@ -139,11 +139,11 @@ export default function Page() {
 
   const getStatusColor = (status: LaundryJob['jobStatus']) => {
     const colors = {
-      new: 'bg-gray-500/20 text-gray-400 border-gray-500',
-      received: 'bg-blue-500/20 text-blue-400 border-blue-500',
+      new: 'bg-muted-500/20 text-muted-400 border-muted-500',
+      received: 'bg-brand-500/20 text-brand-400 border-brand-500',
       inspecting: 'bg-yellow-500/20 text-yellow-400 border-yellow-500',
       in_progress: 'bg-purple-500/20 text-purple-400 border-purple-500',
-      quality_check: 'bg-cyan-500/20 text-cyan-400 border-cyan-500',
+      quality_check: 'bg-accent-500/20 text-accent-400 border-accent-500',
       completed: 'bg-green-500/20 text-green-400 border-green-500',
     };
     return colors[status];
@@ -217,18 +217,18 @@ export default function Page() {
             <div className="flex items-start justify-between">
                 <div className={`${CARD.icon_list}`}>
                 <div>
-                    <div className={`${CONTACT.profile_initial} bg-cyan-500/20 text-cyan-400`}>
+                    <div className={`${CONTACT.profile_initial} bg-accent-500/20 text-accent-400`}>
                     <Package className="w-5 h-5" />
                     </div>
                 </div>
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-100">{job.jobReference}</h1>
+                    <h1 className="text-2xl font-bold text-muted-100">{job.jobReference}</h1>
                     <div className="flex gap-2 mt-2">
                     <span className={`${CARD.tags} ${getStatusColor(job.jobStatus)} border`}>
                         {formatStatusText(job.jobStatus)}
                     </span>
                     {client && (
-                        <span className={`${CARD.tags} bg-gray-700 text-gray-300`}>
+                        <span className={`${CARD.tags} bg-muted-700 text-muted-300`}>
                         {client.name}
                         </span>
                     )}
@@ -251,7 +251,7 @@ export default function Page() {
         {/* Job Content */}
         {isEditing ? (
             <div className={`${CARD.card}`}>
-            <h2 className="text-xl font-medium text-cyan-500 mb-4">Edit Job</h2>
+            <h2 className="text-xl font-medium text-accent-500 mb-4">Edit Job</h2>
             <Form
                 initialData={{
                 clientId: job.clientId,
@@ -271,18 +271,18 @@ export default function Page() {
             {/* Client Details */}
             {client && (
                 <div className={`${CARD.card}`}>
-                <h2 className="text-lg font-medium text-gray-100 mb-4">Client Details</h2>
+                <h2 className="text-lg font-medium text-muted-100 mb-4">Client Details</h2>
                 <div className={`${CARD.list_content}`}>
-                    <div className="pl-3 border-l-2 border-cyan-500">
+                    <div className="pl-3 border-l-2 border-accent-500">
                     <div className="flex items-center justify-between mb-2">
-                        <span className="text-base font-bold text-cyan-500">
+                        <span className="text-base font-bold text-accent-500">
                         {client.name}
                         </span>
-                        <span className="text-sm font-medium text-cyan-500">
+                        <span className="text-sm font-medium text-accent-500">
                         {client.clientType}
                         </span>
                     </div>
-                    <div className="text-sm text-gray-400 space-y-1">
+                    <div className="text-sm text-muted-400 space-y-1">
                         <div>Job: {job.clientJob}</div>
                         <div>{client.email}</div>
                         <div>{client.phone}</div>
@@ -294,7 +294,7 @@ export default function Page() {
 
             {/* Action Buttons */}
             <div className={`${CARD.card}`}>
-              <h2 className="text-lg font-medium text-gray-100 mb-4">Job Actions</h2>
+              <h2 className="text-lg font-medium text-muted-100 mb-4">Job Actions</h2>
               <div className="grid grid-cols-4 gap-3">
                 <button
                   onClick={handleReceivedClick}
@@ -327,7 +327,7 @@ export default function Page() {
             {/* Received Editing Form */}
             {isEditingReceived && (
               <div className={`${CARD.card}`}>
-                <h2 className="text-xl font-medium text-cyan-500 mb-4">Mark as Received</h2>
+                <h2 className="text-xl font-medium text-accent-500 mb-4">Mark as Received</h2>
                 <Form
                   initialData={{
                     clientId: job.clientId,
@@ -348,20 +348,20 @@ export default function Page() {
 
             {/* Timeline */}
             <div className={`${CARD.card}`}>
-                <h2 className="text-lg font-medium text-gray-100 mb-4">Timeline</h2>
+                <h2 className="text-lg font-medium text-muted-100 mb-4">Timeline</h2>
                 <div className={`${CARD.list_content}`}>
                 <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Received:</span>
-                    <span className="text-gray-300">{formatDate(job.jobOverview.dateReceived)}</span>
+                    <span className="text-muted-400">Received:</span>
+                    <span className="text-muted-300">{formatDate(job.jobOverview.dateReceived)}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Required:</span>
-                    <span className="text-gray-300 font-medium">{formatDate(job.jobOverview.dateRequired)}</span>
+                    <span className="text-muted-400">Required:</span>
+                    <span className="text-muted-300 font-medium">{formatDate(job.jobOverview.dateRequired)}</span>
                     </div>
                     {job.jobOverview.dateComplete && (
                     <div className="flex justify-between items-center">
-                        <span className="text-gray-400">Completed:</span>
+                        <span className="text-muted-400">Completed:</span>
                         <span className="text-green-400 font-medium">{formatDate(job.jobOverview.dateComplete)}</span>
                     </div>
                     )}
@@ -372,18 +372,18 @@ export default function Page() {
             {/* Quantities */}
             {(job.jobOverview.bagsCount !== undefined || job.jobOverview.itemsCount !== undefined) && (
                 <div className={`${CARD.card}`}>
-                <h2 className="text-lg font-medium text-gray-100 mb-4">Quantities</h2>
+                <h2 className="text-lg font-medium text-muted-100 mb-4">Quantities</h2>
                 <div className="grid grid-cols-2 gap-4">
                     {job.jobOverview.bagsCount !== undefined && (
-                    <div className="p-4 rounded bg-gray-800/50 border border-gray-700">
-                        <div className="text-sm text-gray-400 mb-1">Bags</div>
-                        <div className="text-2xl font-bold text-cyan-400">{job.jobOverview.bagsCount}</div>
+                    <div className="p-4 rounded bg-muted-800/50 border border-muted-700">
+                        <div className="text-sm text-muted-400 mb-1">Bags</div>
+                        <div className="text-2xl font-bold text-accent-400">{job.jobOverview.bagsCount}</div>
                     </div>
                     )}
                     {job.jobOverview.itemsCount !== undefined && (
-                    <div className="p-4 rounded bg-gray-800/50 border border-gray-700">
-                        <div className="text-sm text-gray-400 mb-1">Items</div>
-                        <div className="text-2xl font-bold text-cyan-400">{job.jobOverview.itemsCount}</div>
+                    <div className="p-4 rounded bg-muted-800/50 border border-muted-700">
+                        <div className="text-sm text-muted-400 mb-1">Items</div>
+                        <div className="text-2xl font-bold text-accent-400">{job.jobOverview.itemsCount}</div>
                     </div>
                     )}
                 </div>
@@ -393,7 +393,7 @@ export default function Page() {
             {/* Services */}
             {job.jobOverview.services && job.jobOverview.services.length > 0 && (
                 <div className={`${CARD.card}`}>
-                <h2 className="text-lg font-medium text-gray-100 mb-4">Services</h2>
+                <h2 className="text-lg font-medium text-muted-100 mb-4">Services</h2>
                 <div className={`${CARD.list_content}`}>
                     <div className="space-y-3">
                     {job.jobOverview.services.map((serviceId, index) => {
@@ -401,12 +401,12 @@ export default function Page() {
                         if (!service) return null;
                         
                         return (
-                        <div key={index} className="pl-3 border-l-2 border-cyan-500">
+                        <div key={index} className="pl-3 border-l-2 border-accent-500">
                             <div className="flex items-center justify-between mb-1">
-                            <span className="text-base font-bold text-cyan-500">
+                            <span className="text-base font-bold text-accent-500">
                                 {service.name}
                             </span>
-                            <span className="text-sm font-medium text-cyan-500">
+                            <span className="text-sm font-medium text-accent-500">
                                 {service.service}
                             </span>
                             </div>
@@ -420,16 +420,16 @@ export default function Page() {
 
             {/* Timestamps */}
             <div className={`${CARD.card}`}>
-                <h2 className="text-lg font-medium text-gray-100 mb-4">Record Info</h2>
+                <h2 className="text-lg font-medium text-muted-100 mb-4">Record Info</h2>
                 <div className={`${CARD.list_content}`}>
                 <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                    <span className="text-gray-400">Created:</span>
-                    <span className="text-gray-300">{formatDate(job.timestamp?.createdAt)}</span>
+                    <span className="text-muted-400">Created:</span>
+                    <span className="text-muted-300">{formatDate(job.timestamp?.createdAt)}</span>
                     </div>
                     <div className="flex justify-between">
-                    <span className="text-gray-400">Updated:</span>
-                    <span className="text-gray-300">{formatDate(job.timestamp?.updatedAt)}</span>
+                    <span className="text-muted-400">Updated:</span>
+                    <span className="text-muted-300">{formatDate(job.timestamp?.updatedAt)}</span>
                     </div>
                 </div>
                 </div>

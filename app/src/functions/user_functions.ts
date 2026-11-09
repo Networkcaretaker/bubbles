@@ -71,10 +71,10 @@ export function getDefaultPermissions(role: UserRole): RolePermissions {
 export const getRoleBadgeColor = (role: UserRole) => {
     const colors = {
       owner: 'bg-purple-100 text-purple-800',
-      manager: 'bg-blue-100 text-blue-800',
+      manager: 'bg-brand-100 text-brand-800',
       operator: 'bg-green-100 text-green-800',
       driver: 'bg-yellow-100 text-yellow-800',
-      developer: 'bg-gray-100 text-gray-800',
+      developer: 'bg-muted-100 text-muted-800',
     };
     return colors[role];
 };

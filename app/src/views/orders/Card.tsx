@@ -42,11 +42,11 @@ export default function Card({
 
   const getStatusColor = (status: LaundryJob['jobStatus']) => {
     const colors = {
-      new: 'bg-gray-500/20 text-gray-400 border-gray-500',
-      received: 'bg-blue-500/20 text-blue-400 border-blue-500',
+      new: 'bg-muted-500/20 text-muted-400 border-muted-500',
+      received: 'bg-brand-500/20 text-brand-400 border-brand-500',
       inspecting: 'bg-yellow-500/20 text-yellow-400 border-yellow-500',
       in_progress: 'bg-purple-500/20 text-purple-400 border-purple-500',
-      quality_check: 'bg-cyan-500/20 text-cyan-400 border-cyan-500',
+      quality_check: 'bg-accent-500/20 text-accent-400 border-accent-500',
       completed: 'bg-green-500/20 text-green-400 border-green-500',
     };
     return colors[status];
@@ -79,7 +79,7 @@ export default function Card({
         <div className={`${CARD.title}`}>
           <div className={`${CARD.icon_list}`}>
             <div>
-              <div className={`${CONTACT.profile_initial} bg-cyan-500/20 text-cyan-400`}>
+              <div className={`${CONTACT.profile_initial} bg-accent-500/20 text-accent-400`}>
                 <Package className="w-5 h-5" />
               </div>
             </div>
@@ -93,7 +93,7 @@ export default function Card({
                   {formatStatusText(job.jobStatus)}
                 </span>
                 {job.clientName && (
-                  <span className={`${CARD.tags} bg-gray-700 text-gray-300`}>
+                  <span className={`${CARD.tags} bg-muted-700 text-muted-300`}>
                     {job.clientName}
                   </span>
                 )}
@@ -113,27 +113,27 @@ export default function Card({
             {/* Client Info */}
             <div className={`${CARD.icon_list}`}>
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-100 mb-2">Client Details</p>
-                <div className="pl-3 border-l-2 border-cyan-500">
+                <p className="text-sm font-medium text-muted-100 mb-2">Client Details</p>
+                <div className="pl-3 border-l-2 border-accent-500">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium text-gray-400">
-                      Client: <span className="text-sm text-cyan-500 font-bold">{job.clientName}</span>
+                    <span className="text-xs font-medium text-muted-400">
+                      Client: <span className="text-sm text-accent-500 font-bold">{job.clientName}</span>
                     </span>
                   </div>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium text-gray-400">
-                      Job: <span className="text-sm text-cyan-500 font-bold">{job.clientJob}</span>
+                    <span className="text-xs font-medium text-muted-400">
+                      Job: <span className="text-sm text-accent-500 font-bold">{job.clientJob}</span>
                     </span>
                   </div>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium text-gray-400">
-                      Order: <span className="text-sm text-cyan-500 font-bold">{job.jobReference}</span>
+                    <span className="text-xs font-medium text-muted-400">
+                      Order: <span className="text-sm text-accent-500 font-bold">{job.jobReference}</span>
                     </span>
                   </div>
                   {job.jobOverview.dateRequired && (
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-medium text-gray-400">
-                        Date Required: <span className="text-sm text-cyan-500 font-bold">{formatDate(job.jobOverview.dateRequired)}</span>
+                      <span className="text-xs font-medium text-muted-400">
+                        Date Required: <span className="text-sm text-accent-500 font-bold">{formatDate(job.jobOverview.dateRequired)}</span>
                       </span>
                     </div>
                   )}
@@ -145,18 +145,18 @@ export default function Card({
             {(job.jobOverview.bagsCount !== undefined || job.jobOverview.itemsCount !== undefined) && (
               <div className={`${CARD.icon_list}`}>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-100 mb-2">Quantities</p>
+                  <p className="text-sm font-medium text-muted-100 mb-2">Quantities</p>
                   {job.jobOverview.bagsCount !== undefined && (
-                  <div className="pl-3 border-l-2 border-cyan-500">
-                    <span className="text-xs font-medium text-gray-400">
-                      Bags: <span className="text-sm text-cyan-500 font-bold">{job.jobOverview.bagsCount}</span>
+                  <div className="pl-3 border-l-2 border-accent-500">
+                    <span className="text-xs font-medium text-muted-400">
+                      Bags: <span className="text-sm text-accent-500 font-bold">{job.jobOverview.bagsCount}</span>
                     </span>
                   </div>
                   )}
                   {job.jobOverview.itemsCount !== undefined && (
-                  <div className="pl-3 border-l-2 border-cyan-500">
-                    <span className="text-xs font-medium text-gray-400">
-                      Items: <span className=" text-sm text-cyan-500 font-bold">{job.jobOverview.itemsCount}</span>
+                  <div className="pl-3 border-l-2 border-accent-500">
+                    <span className="text-xs font-medium text-muted-400">
+                      Items: <span className=" text-sm text-accent-500 font-bold">{job.jobOverview.itemsCount}</span>
                     </span>
                   </div>
                   )}
@@ -168,16 +168,16 @@ export default function Card({
             {job.jobOverview.services && job.jobOverview.services.length > 0 && (
               <div className={`${CARD.icon_list}`}>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-100 mb-2">Services</p>
+                  <p className="text-sm font-medium text-muted-100 mb-2">Services</p>
                   <div className="space-y-2">
                     {job.jobOverview.services.map((serviceId, index) => {
                       const service = getServiceById(serviceId);
                       if (!service) return null;
                       
                       return (
-                        <div key={index} className="pl-3 border-l-2 border-cyan-500">
+                        <div key={index} className="pl-3 border-l-2 border-accent-500">
                           <div className="flex items-center justify-between mb-1">
-                            <span className="text-sm font-bold text-cyan-500">
+                            <span className="text-sm font-bold text-accent-500">
                               {service.name}
                             </span>
                           </div>

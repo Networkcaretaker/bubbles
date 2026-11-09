@@ -89,13 +89,13 @@ export default function List() {
       }
 
       {showAddForm && (
-        <div className="mb-6 p-4 rounded-lg border border-cyan-500 bg-gradient-to-r from-blue-900/80 to-blue-500/90">
+        <div className="mb-6 p-4 rounded-lg border border-accent-500 bg-gradient-to-r from-brand-900/80 to-brand-500/90">
           <div className="flex gap-2 items-center mb-4">
-            <div className="rounded-full h-12 w-12 flex items-center justify-center bg-cyan-200 text-cyan-600">
+            <div className="rounded-full h-12 w-12 flex items-center justify-center bg-accent-200 text-accent-600">
               <Briefcase className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-cyan-500">New Job</h3>
+              <h3 className="text-xl font-medium text-accent-500">New Job</h3>
             </div>
           </div>
           <Form

@@ -129,7 +129,7 @@ export default function Form({
           {formData.default_prices.map((priceOption, index) => (
             <div key={index} className="flex gap-2 items-start">
               <div className="flex-1">
-                <label htmlFor={`unit-${index}`} className="block text-xs text-gray-400 mb-1">
+                <label htmlFor={`unit-${index}`} className="block text-xs text-muted-400 mb-1">
                   Unit
                 </label>
                 <select
@@ -154,7 +154,7 @@ export default function Form({
               {priceOption.unit !== "per_item" && priceOption.unit !== "free" && priceOption.unit !== "per_quote" && (
                 <div className="flex-1">
                   <div>
-                    <label htmlFor={`price-${index}`} className="block text-xs text-gray-400 mb-1">
+                    <label htmlFor={`price-${index}`} className="block text-xs text-muted-400 mb-1">
                       Price (€)
                     </label>
                     <input
@@ -175,7 +175,7 @@ export default function Form({
                 <button
                   type="button"
                   onClick={() => removePriceOption(index)}
-                  className="mt-6 p-2 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded transition-colors"
+                  className="mt-6 p-2 text-danger-400 hover:text-danger-300 hover:bg-danger-900/20 rounded transition-colors"
                   title="Remove price option"
                 >
                   <Trash2 className="w-5 h-5" />

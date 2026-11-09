@@ -240,15 +240,15 @@ export default function Form({
           {ALL_SIZES.map(size => (
             <label
               key={size}
-              className="flex items-center gap-2 p-2 rounded bg-gray-800/50 hover:bg-gray-700/50 cursor-pointer transition-colors"
+              className="flex items-center gap-2 p-2 rounded bg-muted-800/50 hover:bg-muted-700/50 cursor-pointer transition-colors"
             >
               <input
                 type="checkbox"
                 checked={formData.sizes.includes(size)}
                 onChange={() => toggleSize(size)}
-                className="w-4 h-4 rounded border-gray-600 text-cyan-500 focus:ring-cyan-500"
+                className="w-4 h-4 rounded border-muted-600 text-accent-500 focus:ring-accent-500"
               />
-              <span className="text-sm text-gray-300">{formatSize(size)}</span>
+              <span className="text-sm text-muted-300">{formatSize(size)}</span>
             </label>
           ))}
         </div>
@@ -272,13 +272,13 @@ export default function Form({
 
         <div className="space-y-4">
           {formData.services.map((service, serviceIndex) => (
-            <div key={serviceIndex} className="p-4 rounded-lg bg-gray-800/30 border border-gray-700">
+            <div key={serviceIndex} className="p-4 rounded-lg bg-muted-800/30 border border-muted-700">
               <div className="flex items-center justify-between mb-3">
-                <h4 className="text-sm font-medium text-gray-300">Service {serviceIndex + 1}</h4>
+                <h4 className="text-sm font-medium text-muted-300">Service {serviceIndex + 1}</h4>
                 <button
                   type="button"
                   onClick={() => removeService(serviceIndex)}
-                  className="p-1 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded transition-colors"
+                  className="p-1 text-danger-400 hover:text-danger-300 hover:bg-danger-900/20 rounded transition-colors"
                   title="Remove service"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -288,7 +288,7 @@ export default function Form({
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1">
+                    <label className="block text-xs text-muted-400 mb-1">
                       Service Type
                     </label>
                     <select
@@ -309,7 +309,7 @@ export default function Form({
                   </div>
 
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1">
+                    <label className="block text-xs text-muted-400 mb-1">
                       Pricing Unit
                     </label>
                     <select
@@ -328,7 +328,7 @@ export default function Form({
 
                 {service.unit !== 'per_item' ? (
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1">
+                    <label className="block text-xs text-muted-400 mb-1">
                       Price (€)
                     </label>
                     <input
@@ -343,13 +343,13 @@ export default function Form({
                   </div>
                 ) : (
                   <div>
-                    <label className="block text-xs text-gray-400 mb-2">
+                    <label className="block text-xs text-muted-400 mb-2">
                       Size-Specific Pricing (€)
                     </label>
                     <div className="space-y-2 max-h-48 overflow-y-auto">
                       {service.prices?.map((priceItem, priceIndex) => (
                         <div key={priceIndex} className="flex items-center gap-2">
-                          <span className="text-sm text-gray-400 w-24">{formatSize(priceItem.size)}</span>
+                          <span className="text-sm text-muted-400 w-24">{formatSize(priceItem.size)}</span>
                           <input
                             type="number"
                             value={priceItem.price}
@@ -370,7 +370,7 @@ export default function Form({
           ))}
 
           {formData.services.length === 0 && (
-            <p className="text-sm text-gray-400 text-center py-4">
+            <p className="text-sm text-muted-400 text-center py-4">
               No services added yet. Click "Add Service" to get started.
             </p>
           )}

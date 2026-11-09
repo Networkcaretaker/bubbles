@@ -55,7 +55,7 @@ export default function Card({
           {/* Profile Badge */}
           <div className={`${CARD.icon_list}`}>
             <div>
-              <div className={`${CONTACT.profile_initial} bg-gray-100 text-gray-800`}>
+              <div className={`${CONTACT.profile_initial} bg-muted-100 text-muted-800`}>
                 {ProfileInitial(service.name)}
               </div>
             </div>
@@ -64,7 +64,7 @@ export default function Card({
                 ? <h3 className={`${CARD.selected_name}`}>{service.name}</h3>
                 : <h3 className={`${CARD.name}`}>{service.name}</h3>
               }
-              <span className={`${CARD.tags} bg-gray-100 text-gray-800`}>
+              <span className={`${CARD.tags} bg-muted-100 text-muted-800`}>
                 {formatServiceCategory(service.service)}
               </span>
             </div>
@@ -83,12 +83,12 @@ export default function Card({
             <div className={`${CARD.icon_list}`}>
 
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-300 mb-2">Default Pricing Options</p>
+                <p className="text-sm font-medium text-muted-300 mb-2">Default Pricing Options</p>
                 <div className="space-y-1">
                   {service.default_prices.map((price, index) => (
                     <div key={index} className="flex justify-between items-center text-sm">
-                      <span className="text-gray-400">{formatPricingUnit(price.unit)}</span>
-                      {price.price > 0 ? <span className="text-gray-200 font-medium">€{price.price.toFixed(2)}</span> : <span className="text-gray-200 font-medium">€ {formatPricingUnit(price.unit)}</span>}
+                      <span className="text-muted-400">{formatPricingUnit(price.unit)}</span>
+                      {price.price > 0 ? <span className="text-muted-200 font-medium">€{price.price.toFixed(2)}</span> : <span className="text-muted-200 font-medium">€ {formatPricingUnit(price.unit)}</span>}
                     </div>
                   ))}
                 </div>
@@ -128,12 +128,12 @@ export default function Card({
             <div className="flex-1">
               <div className="space-y-1 text-xs">
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Created:</span>
-                  <span className="text-gray-300">{formatDate(service.timestamp?.createdAt)}</span>
+                  <span className="text-muted-400">Created:</span>
+                  <span className="text-muted-300">{formatDate(service.timestamp?.createdAt)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Updated:</span>
-                  <span className="text-gray-300">{formatDate(service.timestamp?.updatedAt)}</span>
+                  <span className="text-muted-400">Updated:</span>
+                  <span className="text-muted-300">{formatDate(service.timestamp?.updatedAt)}</span>
                 </div>
               </div>
             </div>
