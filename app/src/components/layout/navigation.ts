@@ -1,4 +1,4 @@
-import { LayoutDashboard, Settings, LogOut, WashingMachine, Users, FileText } from 'lucide-react';
+import { LayoutDashboard, Settings, WashingMachine, Users, FileText } from 'lucide-react';
 
 export const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },

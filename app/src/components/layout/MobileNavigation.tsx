@@ -1,18 +1,13 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
-  LayoutDashboard, 
-  LogOut, 
-  Users, 
-  WashingMachine, 
-  Settings, 
-  FileText, 
+  LogOut,  
   ChevronUp, 
   ChevronDown 
 } from 'lucide-react';
 import { auth } from '../../services/firebase/config';
 import { navigation } from './navigation'
-import { theme } from '../styles/theme'
+// import { theme } from '../styles/theme'
 
 export function MobileNavigation() {
   const [isExpanded, setIsExpanded] = useState(false);

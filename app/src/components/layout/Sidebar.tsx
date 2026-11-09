@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Settings, LogOut, WashingMachine, Users, FileText } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { auth } from '../../services/firebase/config';
 import { navigation } from './navigation'
 import { theme } from '../styles/theme'
