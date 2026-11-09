@@ -29,15 +29,21 @@ Old sections keep working on the old theme until they are rebuilt.
 - [ ] Remove `components/ui/Theme.tsx` and `components/styles/theme.ts` once nothing uses them (after all sections are rebuilt)
 
 ## Phase 2 – App shell
-- [ ] Rebuild `AppShell` layout (sidebar on desktop, bottom nav on mobile)
-- [ ] Sidebar and MobileNavigation share one nav list and one sign-out function
-- [ ] Give each nav item its own icon (several are using the same one)
-- [ ] Shared `PageHeader` component: icon, title, action buttons on the right
-- [ ] Keep the fixed header/content heights for consistent mobile ratios
+- [x] Rebuild `AppShell` layout (sidebar on desktop, bottom nav on mobile)
+  - Shell owns the screen height (`h-dvh`); pages fill it and scroll inside
+- [x] Sidebar and MobileNavigation share one nav list and one sign-out function
+- [x] Give each nav item its own icon (several are using the same one)
+- [x] Sidebar: grouped sections, logo at top, signed-in email above Sign Out
+- [x] Mobile: 4 pinned tabs (Dashboard, Jobs, Clients, Invoices) + More sheet
+- [x] Fix Dashboard always showing as active in the nav
+- [x] Shared `PageHeader` component: icon, title, action buttons on the right
+- [x] Fixed header height (56px), content fills the rest
+- [x] `IconButton` for header actions (with tooltip/label)
+- [ ] Check the shell on phone and desktop in the browser
 - [ ] Loading and error states (replace `alert()` / `confirm()` with in-app messages and a confirm dialog)
 
 ## Phase 3 – Shared building blocks
-- [ ] `Page` – header + scrollable content area
+- [x] `Page` – header + scrollable content area (built early; used by Dashboard, Batches, Invoices, Quotes)
 - [ ] `Card` – header (initial/icon, title, tag), content sections, actions
 - [ ] `List` – search, filters, empty state, renders cards
 - [ ] Form parts – `Field`, `Input`, `Select`, `FormActions` (save/cancel)

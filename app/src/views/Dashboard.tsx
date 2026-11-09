@@ -1,22 +1,11 @@
 import { LayoutDashboard } from 'lucide-react';
-import { Theme } from '../components/ui/Theme';
+import { Page } from '../components/ui/Page';
 import { ContentPlaceholder } from '../components/dev/ContentPlaceholder';
-
-const PAGE_TITLE = "Dashboard"
-const PAGE_ICON = LayoutDashboard
 
 export default function View() {
   return (
-    <div className={`${Theme.view.page}`}>
-      <div className={`${Theme.view.header}`}>
-        <div className={`${Theme.view.title}`}>
-          <PAGE_ICON className="w-6 h-6" />
-          <h1>{PAGE_TITLE}</h1>
-        </div>
-      </div>
-      <div className={`${Theme.view.content}`}>
-        <ContentPlaceholder title={PAGE_TITLE} />
-      </div>
-    </div>
+    <Page title="Dashboard" icon={LayoutDashboard}>
+      <ContentPlaceholder title="Dashboard" />
+    </Page>
   );
 }

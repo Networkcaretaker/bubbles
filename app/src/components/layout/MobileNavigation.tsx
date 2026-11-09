@@ -1,77 +1,70 @@
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { 
-  LogOut,  
-  ChevronUp, 
-  ChevronDown 
-} from 'lucide-react';
-import { auth } from '../../services/firebase/config';
-import { navigation } from './navigation'
-// import { theme } from '../styles/theme'
+import { NavLink, matchPath, useLocation } from 'react-router-dom';
+import { Ellipsis, LogOut } from 'lucide-react';
+import { navItems } from './navigation';
+import { authService } from '../../services/auth_service';
+
+const pinnedItems = navItems.filter((item) => item.pinned);
+const moreItems = navItems.filter((item) => !item.pinned);
+
+const tabClass = (isActive: boolean) =>
+  `flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors ${
+    isActive ? 'bg-brand-500/20 text-accent-300' : 'text-accent-500 hover:text-accent-100'
+  }`;
+
+const sheetItemClass = (isActive: boolean) =>
+  `flex flex-col items-center justify-center gap-1 rounded-lg py-3 text-xs font-medium transition-colors ${
+    isActive ? 'bg-brand-500/30 text-accent-300' : 'text-accent-400 hover:bg-brand-500/20 hover:text-accent-100'
+  }`;
 
 export function MobileNavigation() {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const { pathname } = useLocation();
 
-  const handleSignOut = () => {
-    auth.signOut();
-  };
-
-  // Combine nav items and the sign-out button into one array for the grid
-  const allActions = [...navigation];
+  // Highlight "More" when the current page lives inside it
+  const onMorePage = moreItems.some((item) => matchPath({ path: item.href, end: false }, pathname));
+  const close = () => setMoreOpen(false);
 
   return (
     <>
-      {/* Backdrop to close the menu when tapping outside */}
-      {isExpanded && (
-        <div 
-          className="fixed inset-0 z-20 bg-black/20 backdrop-blur-sm md:hidden" 
-          onClick={() => setIsExpanded(false)}
-        />
+      {moreOpen && (
+        <div className="fixed inset-0 z-20 bg-black/30 backdrop-blur-sm md:hidden" onClick={close} />
       )}
 
-      <div 
-        className={`fixed inset-x-0 bottom-0 z-30 border-t border-accent-500 bg-gradient-to-t from-brand-900/90 to-brand-700/90 transition-all duration-300 ease-in-out md:hidden ${
-          isExpanded ? 'max-h-80 pb-6' : 'max-h-20'
-        }`}
-      >
-        {/* Pull Handle / Toggle Button */}
-        <div className="flex justify-center">
-          <button 
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="flex h-6 w-full items-center justify-center text-accent-500/50 hover:text-accent-400"
-          >
-            {isExpanded ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
-          </button>
-        </div>
+      <div className="relative z-30 md:hidden">
+        {moreOpen && (
+          <div className="absolute inset-x-0 bottom-full grid grid-cols-3 gap-2 rounded-t-2xl border-t border-accent-500 bg-brand-900/95 p-4">
+            {moreItems.map((item) => (
+              <NavLink key={item.href} to={item.href} onClick={close} className={({ isActive }) => sheetItemClass(isActive)}>
+                <item.icon className="h-5 w-5" />
+                <span>{item.name}</span>
+              </NavLink>
+            ))}
+            <button onClick={authService.signOut} className={sheetItemClass(false)}>
+              <LogOut className="h-5 w-5" />
+              <span>Sign Out</span>
+            </button>
+          </div>
+        )}
 
-        <div className="grid grid-cols-5 gap-y-4 px-2 pb-4">
-          {allActions.map((item) => (
+        <nav className="grid grid-cols-5 border-t border-accent-500 bg-gradient-to-t from-brand-900/90 to-brand-700/90 pb-[env(safe-area-inset-bottom)]">
+          {pinnedItems.map((item) => (
             <NavLink
-              key={item.name}
+              key={item.href}
               to={item.href}
-              onClick={() => setIsExpanded(false)}
-              className={({ isActive }) =>
-                `flex flex-col items-center justify-center gap-1 py-2 mb-1 text-[10px] font-medium transition-colors ${
-                  isActive
-                    ? 'text-accent-400 bg-brand-500/20 rounded-lg'
-                    : 'text-accent-500 hover:text-accent-100'
-                }`
-              }
+              end={item.href === '/'}
+              onClick={close}
+              className={({ isActive }) => tabClass(isActive)}
             >
               <item.icon className="h-5 w-5" />
-              <span className="truncate w-full text-center">{item.name}</span>
+              <span>{item.name}</span>
             </NavLink>
           ))}
-
-          {/* Sign Out Button always at the end */}
-          <button
-            onClick={handleSignOut}
-            className="flex flex-col items-center justify-center gap-1 py-2 text-[10px] font-medium transition-colors text-accent-500 hover:text-accent-100"
-          >
-            <LogOut className="h-5 w-5" />
-            <span>Sign Out</span>
+          <button onClick={() => setMoreOpen(!moreOpen)} className={tabClass(moreOpen || onMorePage)}>
+            <Ellipsis className="h-5 w-5" />
+            <span>More</span>
           </button>
-        </div>
+        </nav>
       </div>
     </>
   );
