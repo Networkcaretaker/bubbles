@@ -12,15 +12,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(user);
       setLoading(false);
       
-      if (user) {
-        console.log('User signed in:', user.email);
-        user.getIdToken().then((token) => {
-          // Fix: Actually use the variable so linter is happy
-          console.log('Auth Token retrieved:', token);
-        });
-      } else {
-        console.log('User signed out');
-      }
     });
 
     // Cleanup subscription on unmount

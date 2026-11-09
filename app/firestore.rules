@@ -1,0 +1,36 @@
+rules_version = '2';
+
+// DRAFT – not deployed. Compare with the rules in the Firebase console first.
+// Only signed-in staff (people with a document in /users) can read or write data.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isStaff() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function isAdmin() {
+      return isStaff()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['owner', 'manager'];
+    }
+
+    // Staff list. Only owners and managers can add, change or remove users,
+    // so nobody can change their own role.
+    // Note: creating a user from the app will fail under this rule
+    // until user creation is fixed in Phase 4 (see docs/Tasks.md notes).
+    match /users/{uid} {
+      allow read: if isStaff();
+      allow write: if isAdmin();
+    }
+
+    match /{collection}/{docId} {
+      allow read, write: if isStaff()
+        && collection in ['clients', 'contacts', 'items', 'jobs', 'services'];
+    }
+  }
+}
