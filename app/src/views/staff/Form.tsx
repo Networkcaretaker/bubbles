@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from '../../stores/toastStore';
 import type { AuthUser } from '../../types/user_interface';
 import { Theme } from '../../components/ui/Theme';
 
@@ -31,19 +32,19 @@ export default function Form({
     e.preventDefault();
     
     if (!formData.name.trim() || !formData.email.trim()) {
-      alert('Please fill in all required fields');
+      toast.error('Please fill in all required fields');
       return;
     }
 
     // Password validation for new users
     if (!isEditMode) {
       if (!formData.password || formData.password.length < 6) {
-        alert('Password must be at least 6 characters long');
+        toast.error('Password must be at least 6 characters long');
         return;
       }
       
       if (formData.password !== formData.confirmPassword) {
-        alert('Passwords do not match');
+        toast.error('Passwords do not match');
         return;
       }
     }

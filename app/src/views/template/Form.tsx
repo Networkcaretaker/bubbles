@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from '../../stores/toastStore';
 import type { Contact } from '../../types/contact_interface';
 import { Theme } from '../../components/ui/Theme';
 
@@ -41,7 +42,7 @@ export default function Form({
     // Only validate name if showing all fields or not in section-specific mode
     if (!showOnlyContactInfo) {
       if (!formData.name.trim()) {
-        alert('Please fill in all required fields');
+        toast.error('Please fill in all required fields');
         return;
       }
     }

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from '../../stores/toastStore';
 import { Plus, Trash2 } from 'lucide-react';
 import type { DefaultServices, ServicePrice, PricingUnit } from '../../types/service_interface';
 import { Theme } from '../../components/ui/Theme';
@@ -27,17 +28,17 @@ export default function Form({
     e.preventDefault();
     
     if (!formData.name.trim()) {
-      alert('Please fill in all required fields');
+      toast.error('Please fill in all required fields');
       return;
     }
 
     if (formData.default_prices.length === 0) {
-      alert('Please add at least one pricing option');
+      toast.error('Please add at least one pricing option');
       return;
     }
 
     /*if (formData.default_prices.some(p => p.price <= 0)) {
-      alert('All prices must be greater than 0');
+      toast.error('All prices must be greater than 0');
       return;
     }*/
 

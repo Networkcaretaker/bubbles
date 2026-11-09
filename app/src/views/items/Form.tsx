@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from '../../stores/toastStore';
 import { Plus, Trash2 } from 'lucide-react';
 import type { CatalogItem, ItemSize, ItemService } from '../../types/item_interface';
 import type { ServiceCategory } from '../../types/service_interface';
@@ -45,17 +46,17 @@ export default function Form({
     e.preventDefault();
     
     if (!formData.name.trim()) {
-      alert('Please enter an item name');
+      toast.error('Please enter an item name');
       return;
     }
 /*
     if (formData.sizes.length === 0) {
-      alert('Please select at least one size');
+      toast.error('Please select at least one size');
       return;
     }
 */
     if (formData.services.length === 0) {
-      alert('Please add at least one service');
+      toast.error('Please add at least one service');
       return;
     }
 
@@ -63,7 +64,7 @@ export default function Form({
     const cleanedServices = formData.services.map(service => {
       if (service.unit === 'per_item') {
         if (!service.prices || service.prices.length === 0) {
-          alert('Per item services must have size-specific pricing');
+          toast.error('Per item services must have size-specific pricing');
           throw new Error('Invalid prices');
         }
         // Ensure all prices are valid numbers
@@ -72,7 +73,7 @@ export default function Form({
           price: Number(p.price) || 0
         }));
         if (cleanedPrices.some(p => p.price <= 0)) {
-          alert('All prices must be greater than 0');
+          toast.error('All prices must be greater than 0');
           throw new Error('Invalid prices');
         }
         return {
@@ -83,7 +84,7 @@ export default function Form({
       } else {
         const cleanPrice = Number(service.price) || 0;
         if (cleanPrice <= 0) {
-          alert('All prices must be greater than 0');
+          toast.error('All prices must be greater than 0');
           throw new Error('Invalid prices');
         }
         return {

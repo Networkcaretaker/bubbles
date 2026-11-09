@@ -40,7 +40,11 @@ Old sections keep working on the old theme until they are rebuilt.
 - [x] Fixed header height (56px), content fills the rest
 - [x] `IconButton` for header actions (with tooltip/label)
 - [x] Check the shell on phone and desktop in the browser
-- [ ] Loading and error states (replace `alert()` / `confirm()` with in-app messages and a confirm dialog)
+- [x] Loading and error states (replace `alert()` / `confirm()` with in-app messages and a confirm dialog)
+  - `toast.success/error/info()` messages (`stores/toastStore.ts`, `ui/Toaster.tsx`)
+  - `await confirmDialog({...})` for deletes and risky actions (`stores/confirmStore.ts`, `ui/ConfirmDialog.tsx`)
+  - `Spinner`, `LoadingState`, `ErrorState`, `EmptyState` (`ui/States.tsx`), used from Phase 3 on
+  - All 18 form `alert()`s now use `toast.error()`
 
 ## Phase 3 – Shared building blocks
 - [x] `Page` – header + scrollable content area (built early; used by Dashboard, Batches, Invoices, Quotes)

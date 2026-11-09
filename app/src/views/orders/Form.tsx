@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { toast } from '../../stores/toastStore';
 import { CheckCircle, Plus, Trash2 } from 'lucide-react';
 import type { LaundryJob } from '../../types/job_interface';
 import type { Client } from '../../types/client_interface';
@@ -63,7 +64,7 @@ export default function Form({
     e.preventDefault();
     
     if (!isReceivedMode && (!formData.clientId || !formData.clientName || !formData.clientJob)) {
-      alert('Please select a client and job');
+      toast.error('Please select a client and job');
       return;
     }
 

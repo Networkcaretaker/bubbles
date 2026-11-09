@@ -3,6 +3,9 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './stores/authStore';
 import BubbleAnimation from './components/Background';
 import { AppShell } from './components/layout/AppShell';
+import { Toaster } from './components/ui/Toaster';
+import { ConfirmDialog } from './components/ui/ConfirmDialog';
+import { Spinner } from './components/ui/States';
 // Import Views
 import Login from './views/Login';
 import Dashboard from './views/Dashboard';
@@ -28,8 +31,8 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-brand-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600"></div>
+      <div className="flex h-dvh items-center justify-center">
+        <Spinner className="h-12 w-12" />
       </div>
     );
   }
@@ -83,6 +86,8 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
+        <Toaster />
+        <ConfirmDialog />
       </div>
     </BrowserRouter>
   );

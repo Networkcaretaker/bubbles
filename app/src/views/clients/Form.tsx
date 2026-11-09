@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from '../../stores/toastStore';
 import { Plus, Trash2, UserPlus } from 'lucide-react';
 import type { Client, ClientJob, JobType, ClientContact } from '../../types/client_interface';
 import type { Contact } from '../../types/contact_interface';
@@ -53,7 +54,7 @@ export default function Form({
     // Only validate name if showing all fields or not in section-specific mode
     if (!showOnlyContactInfo && !showOnlyClientContacts && !showOnlyJobs) {
       if (!formData.name.trim()) {
-        alert('Please fill in all required fields');
+        toast.error('Please fill in all required fields');
         return;
       }
     }
@@ -62,7 +63,7 @@ export default function Form({
     if (formData.clientJobs.length > 0) {
       const invalidJobs = formData.clientJobs.filter(job => !job.jobName.trim());
       if (invalidJobs.length > 0) {
-        alert('Please fill in all job names or remove empty jobs');
+        toast.error('Please fill in all job names or remove empty jobs');
         return;
       }
     }
