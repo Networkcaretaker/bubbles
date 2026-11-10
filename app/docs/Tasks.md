@@ -48,20 +48,35 @@ Old sections keep working on the old theme until they are rebuilt.
 
 ## Phase 3 – Shared building blocks
 - [x] `Page` – header + scrollable content area (built early; used by Dashboard, Batches, Invoices, Quotes)
-- [ ] `Card` – header (initial/icon, title, tag), content sections, actions
-- [ ] `List` – search, filters, empty state, renders cards
-- [ ] Form parts – `Field`, `Input`, `Select`, `FormActions` (save/cancel)
-- [ ] Shared Firestore helpers (get all, get one, add, update, delete) so each service only adds what's special to it
-- [ ] Set up React Query for loading and refreshing data (replaces `refreshTrigger`)
+- [x] `Card` – header (avatar, title, subtitle, badge), tap to expand, `CardSection`, `DetailRow`, `CardActions`/`CardAction`, plus `Panel` (`ui/Card.tsx`)
+- [x] `Badge` and `Avatar` (`ui/Badge.tsx`)
+- [x] `DataList` – loading, error + retry, empty, "no matches", renders items (`ui/DataList.tsx`); `matchesSearch()` helper (`lib/search.ts`)
+- [x] Form parts – `Field`, `Input`, `Select`, `Textarea`, `FieldRow`, `FormActions` (`ui/Form.tsx`) and `Button` (`ui/Button.tsx`)
+- [x] Shared Firestore helpers: `createCrudService()` with friendly error messages (`services/firebase/crud.ts`)
+- [x] Firestore set to ignore `undefined` fields when saving
+- [x] React Query set up (`lib/queryClient.ts`); `createCrudHooks()` gives each section `useList/useOne/useCreate/useUpdate/useRemove` (`hooks/createCrudHooks.ts`)
+- [x] Failed saves/deletes show an error message automatically; loaded data is cleared on sign-out
+- [ ] Try the pieces out for real in the Users section (Phase 4) and adjust
+- [ ] Rebuild `views/template/` from the finished Users section as the starter for new sections
 
 ## Phase 4 – Users (first section on the new setup)
-- [ ] Rename "Staff" to "Users" consistently (route, folder, nav)
-- [ ] List, card and page views using the shared components
-- [ ] Create/edit user form
-- [ ] Fix user creation with a Cloud Function: create, update and delete logins (see notes)
-- [ ] Admin vs normal user access using custom claims on the login token (set by the Cloud Function)
-- [ ] Deploy the stricter `firestore.rules` (staff only; only owners/managers can change users)
-- [ ] Use roles/permissions to show or hide actions
+- [x] Rename "Staff" to "Users" consistently (route, folder, nav); `/staff` redirects to `/users`
+- [x] List and cards using the shared components, with search and role filter
+- [x] Add/edit user form with errors shown under each field
+- [x] Cloud Functions `createUser`, `updateUser`, `deleteUser` (`functions/src/index.ts`, region europe-west1)
+  - Check the caller's permissions; only owners can add, change or delete owners; nobody can change their own role or delete themselves
+- [x] Role saved on each login token as a custom claim (`role`) when a user is added or their role changes
+- [x] Show/hide Add, Edit and Delete buttons by the signed-in person's permissions
+- [x] Delete asks for confirmation first
+- [x] User page (`/users/:id`) with Edit, Delete and Back in the header; list cards link to it
+- [x] My Profile (`/profile`) from the sidebar email and the mobile More menu
+- [x] Everyone can edit their own name and phone; email and role need user-edit permission (checked in `updateUser`)
+- [ ] Later: activity log and personal settings on the user page
+- [ ] Later: who can see the Users list and other people's pages (role rules task)
+- [ ] Deploy the functions: `firebase deploy --only functions` (from `app/`)
+- [ ] Test add, edit and delete in the app
+- [ ] Deploy the stricter `firestore.rules` (staff only; nobody writes `users` directly)
+- [ ] Existing users get their role claim the next time their role is changed (only matters once rules use claims)
 - [ ] Review what we learned and adjust the shared components before moving on
 
 ## Phase 5 – Clients
@@ -84,6 +99,6 @@ Old sections keep working on the old theme until they are rebuilt.
 ---
 
 ## Notes
-- **User creation:** public sign-up is now turned off, so `createUserWithEmailAndPassword` in the app is blocked. Users will be created, changed and deleted by a Cloud Function using the Firebase Admin SDK, which is allowed to do this. It will check the caller is an admin first.
-- **Admin/normal tokens:** the same Cloud Function can add a custom claim (e.g. `role: 'owner'`) to each user's login token. The app and the Firestore rules can then check the role straight from the token, without reading the `users` collection.
+- **Users:** public sign-up is turned off. Users are added, edited and deleted only through the Cloud Functions in `functions/src/index.ts`, which check permissions first. The role/permission table is copied in `functions/src/permissions.ts` – keep it in step with `src/functions/user_functions.ts`.
+- **Admin/normal tokens:** each login token carries a `role` custom claim. The app and the Firestore rules can check it straight from the token, without reading the `users` collection.
 - **Cloud Functions** need the Firebase Blaze (pay-as-you-go) plan. Usage at this size should stay within the free allowance.

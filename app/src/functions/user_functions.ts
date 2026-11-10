@@ -1,4 +1,5 @@
-import type { AuthUser, UserRole, RolePermissions } from '../types/user_interface'
+import type { UserRole, RolePermissions } from '../types/user_interface'
+import type { BadgeTone } from '../components/ui/Badge'
 
 // Helper function to get default permissions based on role
 export function getDefaultPermissions(role: UserRole): RolePermissions {
@@ -68,18 +69,29 @@ export function getDefaultPermissions(role: UserRole): RolePermissions {
   }
 };
 
-export const getRoleBadgeColor = (role: UserRole) => {
-    const colors = {
-      owner: 'bg-purple-100 text-purple-800',
-      manager: 'bg-brand-100 text-brand-800',
-      operator: 'bg-green-100 text-green-800',
-      driver: 'bg-yellow-100 text-yellow-800',
-      developer: 'bg-muted-100 text-muted-800',
-    };
-    return colors[role];
+// Role names and badge colours for lists, forms and filters
+export const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
+  { value: 'owner', label: 'Owner' },
+  { value: 'manager', label: 'Manager' },
+  { value: 'operator', label: 'Operator' },
+  { value: 'driver', label: 'Driver' },
+  { value: 'developer', label: 'Developer' },
+];
+
+export const ROLE_TONES: Record<UserRole, BadgeTone> = {
+  owner: 'purple',
+  manager: 'brand',
+  operator: 'success',
+  driver: 'warning',
+  developer: 'muted',
 };
 
-export const ProfileInitial = (name: AuthUser['name']) => {
-    const firstNameInitial = name[0];
-    return firstNameInitial;
-  };
+export const roleLabel = (role: UserRole) =>
+  ROLE_OPTIONS.find((option) => option.value === role)?.label ?? role;
+
+// Saved permissions, or the role's defaults for older records that don't have any
+export const permissionsFor = (user: { role: UserRole; permissions?: RolePermissions }): RolePermissions =>
+  user.permissions ?? getDefaultPermissions(user.role);
+
+// Used by older sections; new screens use <Avatar name={...} />
+export const ProfileInitial = (name: string) => name[0];

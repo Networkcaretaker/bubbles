@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { LogOut } from 'lucide-react';
+import { CircleUser, LogOut } from 'lucide-react';
 import { navigation } from './navigation';
 import { authService } from '../../services/auth_service';
 import { useAuthStore } from '../../stores/authStore';
@@ -38,7 +38,10 @@ export function Sidebar() {
       </nav>
 
       <div className="mt-4 space-y-1 border-t border-accent-500/40 pt-4">
-        {email && <p className="truncate px-3 pb-1 text-xs text-accent-200">{email}</p>}
+        <NavLink to="/profile" className={linkClass} title="My profile">
+          <CircleUser className="h-5 w-5 shrink-0" />
+          <span className="truncate">{email ?? 'My Profile'}</span>
+        </NavLink>
         <button onClick={authService.signOut} className={`${linkClass({ isActive: false })} w-full`}>
           <LogOut className="h-5 w-5" />
           <span>Sign Out</span>

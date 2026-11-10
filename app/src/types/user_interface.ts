@@ -20,7 +20,9 @@ export interface RolePermissions {
   canDeleteClients: boolean;
 };
 
-export interface AuthUser {
+// A person who can sign in to the app. The document id is the same as their login uid.
+export interface AppUser {
+  id: string;
   uid: string;
   name: string;
   email: string;

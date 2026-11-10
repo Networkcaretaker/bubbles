@@ -9,7 +9,9 @@ import { Spinner } from './components/ui/States';
 // Import Views
 import Login from './views/Login';
 import Dashboard from './views/Dashboard';
-import Staff from './views/staff/Main';
+import Users from './views/users/Main';
+import UserPage from './views/users/Page';
+import Profile from './views/users/Profile';
 import Clients from './views/clients/Main';
 import ClientPage from './views/clients/Page';
 import Contacts from './views/contacts/Main';
@@ -69,7 +71,10 @@ function App() {
               <Route path="clients/:id" element={<ClientPage />} />
               <Route path="contacts" element={<Contacts />} />
               <Route path="contacts/:id" element={<ContactsPage />} />
-              <Route path="staff" element={<Staff />} />
+              <Route path="users" element={<Users />} />
+              <Route path="users/:id" element={<UserPage />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="staff" element={<Navigate to="/users" replace />} />
               <Route path="services" element={<Services />} />
               <Route path="items" element={<Items />} />
               <Route path="jobs" element={<Jobs />} />

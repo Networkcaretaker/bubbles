@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink, matchPath, useLocation } from 'react-router-dom';
-import { Ellipsis, LogOut } from 'lucide-react';
+import { CircleUser, Ellipsis, LogOut } from 'lucide-react';
 import { navItems } from './navigation';
 import { authService } from '../../services/auth_service';
 
@@ -40,6 +40,10 @@ export function MobileNavigation() {
                 <span>{item.name}</span>
               </NavLink>
             ))}
+            <NavLink to="/profile" onClick={close} className={sheetItemClass(false)}>
+              <CircleUser className="h-5 w-5" />
+              <span>My Profile</span>
+            </NavLink>
             <button onClick={authService.signOut} className={sheetItemClass(false)}>
               <LogOut className="h-5 w-5" />
               <span>Sign Out</span>

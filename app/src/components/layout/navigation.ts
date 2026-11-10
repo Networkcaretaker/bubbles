@@ -59,7 +59,7 @@ export const navigation: NavGroup[] = [
     items: [
       { name: 'Services', href: '/services', icon: WashingMachine },
       { name: 'Items', href: '/items', icon: Shirt },
-      { name: 'Staff', href: '/staff', icon: UserCog },
+      { name: 'Users', href: '/users', icon: UserCog },
       { name: 'Settings', href: '/settings', icon: Settings },
     ],
   },
