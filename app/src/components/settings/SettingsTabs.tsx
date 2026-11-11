@@ -2,6 +2,10 @@ import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 //import { Settings } from 'lucide-react';
 import { CARD } from '../ui/Theme';
+import DataExport from './DataExport';
+
+const TABS = ['general', 'users', 'data'] as const;
+type TabId = (typeof TABS)[number];
 
 //const PAGE_TITLE = "Settings"
 //const LAYOUT = PageLayout
@@ -27,9 +31,9 @@ function UserSettingsPlaceholder() {
 
 export default function SettingsTabs() {
   const [searchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState<'general' | 'users'>(() => {
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
     const tab = searchParams.get('tab');
-    return (tab === 'general' || tab === 'users') ? tab : 'general';
+    return TABS.includes(tab as TabId) ? (tab as TabId) : 'general';
   });
   //const [isDirty, setIsDirty] = useState(false);
   //const [showUnsavedPopup, setShowUnsavedPopup] = useState(false);
@@ -38,9 +42,10 @@ export default function SettingsTabs() {
   const tabs = [
     { id: 'general', name: 'General' },
     { id: 'users', name: 'Users' },
+    { id: 'data', name: 'Data' },
   ];
 
-  const handleTabClick = (tabId: 'general' | 'users') => {
+  const handleTabClick = (tabId: TabId) => {
     if (activeTab === tabId) return;
     setActiveTab(tabId);
   };
@@ -53,7 +58,7 @@ export default function SettingsTabs() {
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => handleTabClick(tab.id as 'general' | 'users')}
+                onClick={() => handleTabClick(tab.id as TabId)}
                 className={`${
                   activeTab === tab.id
                     ? 'border-accent-400 text-accent-400 bg-brand-700/20'
@@ -71,6 +76,7 @@ export default function SettingsTabs() {
         <div>
           {activeTab === 'general' && <GeneralSettingsPlaceholder />}
           {activeTab === 'users' && <UserSettingsPlaceholder />}
+          {activeTab === 'data' && <DataExport />}
         </div>
       </div>
     </div>
