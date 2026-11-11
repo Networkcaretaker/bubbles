@@ -154,6 +154,12 @@ export const updateUser = onCall<UpdateUserData>(async (request) => {
     }
   }
 
+  // Only owners can change another owner's details. Otherwise a manager could
+  // change an owner's email, reset the password and take over their login.
+  if (target.role === 'owner' && caller.role !== 'owner' && id !== caller.uid) {
+    throw new HttpsError('permission-denied', "Only an owner can change another owner's details.");
+  }
+
   const update: Record<string, unknown> = {};
   const loginUpdate: { email?: string; displayName?: string } = {};
 

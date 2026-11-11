@@ -73,9 +73,11 @@ Old sections keep working on the old theme until they are rebuilt.
 - [x] Everyone can edit their own name and phone; email and role need user-edit permission (checked in `updateUser`)
 - [ ] Later: activity log and personal settings on the user page
 - [ ] Later: who can see the Users list and other people's pages (role rules task)
-- [ ] Deploy the functions: `firebase deploy --only functions` (from `app/`)
-- [ ] Test add, edit and delete in the app
-- [ ] Deploy the stricter `firestore.rules` (staff only; nobody writes `users` directly)
+- [x] Deploy the functions: `firebase deploy --only functions` (from `app/`)
+- [x] Test add, edit and delete in the app
+- [x] Automated checks with the Claude test accounts: 33/33 pass (permissions, owner protection, validation, email change, delete, direct-write blocked)
+- [x] Fix: managers could change an owner's email (login takeover risk) – now only owners can change owners' details
+- [x] Deploy the stricter `firestore.rules` (staff only; nobody writes `users` directly) – live since 2026-11-11
 - [ ] Existing users get their role claim the next time their role is changed (only matters once rules use claims)
 - [ ] Review what we learned and adjust the shared components before moving on
 
@@ -95,6 +97,11 @@ Old sections keep working on the old theme until they are rebuilt.
 - [ ] Dashboard
 - [ ] Remove `views/template/` once all sections are rebuilt
 - [ ] Write a proper README
+- [ ] Safe test setup so Claude can sign in and test without touching live data
+  - Option A: Firebase Emulator Suite (Auth, Firestore, Functions) on this computer – needs Java
+  - Option B: a separate free "dev" Firebase project in the cloud, if the emulators are too heavy for this machine
+  - Test accounts for each role; password kept in a git-ignored file (e.g. `app/.env.test.local`)
+  - Optional: Playwright for testing the screens with screenshots
 
 ---
 
