@@ -1,17 +1,8 @@
-import type { Timestamp } from './shared_interface';
+import type { CreatedBy, PricingUnit, Timestamp } from './shared_interface';
 
-export type PricingUnit = 
-  | 'per_item'
-  | 'per_kg'
-  | 'per_load'
-  | 'per_sqm'
-  | 'per_batch'
-  | 'per_quote'
-  | 'per_km'
-  | 'fixed'
-  | 'free';
+export type { PricingUnit };
 
-export type ServiceCategory = 
+export type ServiceCategory =
   | 'cleaning-service'
   | 'machine-service'
   | 'specialist-cleaning'
@@ -21,15 +12,25 @@ export type ServiceCategory =
   | 'logistics-and-storage'
   | 'other-services';
 
+export type ServiceStatus = 'active' | 'inactive';
+
+// A default price for a service, e.g. €7.50 per kg. Always a number.
 export interface ServicePrice {
   unit: PricingUnit;
   price: number;
-};
+}
 
-export interface DefaultServices {
+// Something the laundry offers, e.g. "Wash & Dry" or "Hand Ironing". Stored in 'services'.
+export interface Service {
   id: string;
-  service: ServiceCategory;
   name: string;
-  default_prices: ServicePrice[]
+  category: ServiceCategory;
+  status: ServiceStatus;
+  description?: string;
+  prices: ServicePrice[];
   timestamp?: Timestamp;
-};
+  createdBy?: CreatedBy;
+}
+
+// Older name, still used by the Jobs section until it's rebuilt
+export type DefaultServices = Service;

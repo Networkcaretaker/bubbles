@@ -392,7 +392,7 @@ export default function Form({
                           value={service.id}
                           disabled={formData.jobOverview.services.includes(service.id) && serviceId !== service.id}
                         >
-                          {service.name} ({service.service})
+                          {service.name} ({service.category})
                         </option>
                       ))}
                     </select>

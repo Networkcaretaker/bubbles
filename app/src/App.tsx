@@ -19,7 +19,9 @@ import ClientJobPage from './views/client-jobs/Page';
 import Contacts from './views/contacts/Main';
 import ContactsPage from './views/contacts/Page';
 import Services from './views/services/Main';
+import ServicePage from './views/services/Page';
 import Items from './views/items/Main';
+import ItemPage from './views/items/Page';
 import Jobs from './views/jobs/Main';
 import JobPage from './views/jobs/Page';
 import Settings from './views/Settings';
@@ -80,7 +82,9 @@ function App() {
               <Route path="profile" element={<Profile />} />
               <Route path="staff" element={<Navigate to="/users" replace />} />
               <Route path="services" element={<Services />} />
+              <Route path="services/:id" element={<ServicePage />} />
               <Route path="items" element={<Items />} />
+              <Route path="items/:id" element={<ItemPage />} />
               <Route path="jobs" element={<Jobs />} />
               <Route path="jobs/:id" element={<JobPage />} />
               <Route path="settings" element={<Settings />} />

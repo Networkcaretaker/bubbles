@@ -1,209 +1,143 @@
 import { useState } from 'react';
-import { toast } from '../../stores/toastStore';
+import type { FormEvent } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import type { DefaultServices, ServicePrice, PricingUnit } from '../../types/service_interface';
-import { Theme } from '../../components/ui/Theme';
+import type { PricingUnit, ServiceCategory, ServicePrice, ServiceStatus } from '../../types/service_interface';
+import { Field, FieldRow, FormActions, Input, Select, Textarea } from '../../components/ui/Form';
+import { Button } from '../../components/ui/Button';
+import { IconButton } from '../../components/ui/IconButton';
+import {
+  PRICING_UNIT_OPTIONS,
+  SERVICE_CATEGORY_OPTIONS,
+  STATUS_OPTIONS,
+  toPrice,
+  unitHasNoPrice,
+} from '../../functions/catalog_functions';
 
-interface FormProps {
-  initialData?: Partial<Omit<DefaultServices, 'id'>>;
-  onSubmit: (data: Omit<DefaultServices, 'id'>) => Promise<void>;
+interface SectionFormProps<Values> {
+  initial: Values;
+  onSubmit: (values: Values) => Promise<void>;
   onCancel: () => void;
   submitLabel?: string;
+  submitting?: boolean;
 }
 
-export default function Form({ 
-  initialData, 
-  onSubmit, 
-  onCancel,
-  submitLabel = 'Save',
-}: FormProps) {
-  const [formData, setFormData] = useState({
-    name: initialData?.name || '',
-    service: initialData?.service || 'other-services' as const,
-    default_prices: initialData?.default_prices || [{ unit: 'per_load' as PricingUnit, price: 0 }]
-  });
-  const [submitting, setSubmitting] = useState(false);
+// ---------- Details: name, category, status, description (also used to add a service) ----------
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!formData.name.trim()) {
-      toast.error('Please fill in all required fields');
+export interface ServiceDetailsValues {
+  name: string;
+  category: ServiceCategory;
+  status: ServiceStatus;
+  description: string;
+}
+
+export function ServiceDetailsForm({ initial, onSubmit, onCancel, submitLabel = 'Save', submitting }: SectionFormProps<ServiceDetailsValues>) {
+  const [values, setValues] = useState(initial);
+  const [nameError, setNameError] = useState<string>();
+
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!values.name.trim()) {
+      setNameError('Enter a name, e.g. Wash & Dry');
       return;
     }
-
-    if (formData.default_prices.length === 0) {
-      toast.error('Please add at least one pricing option');
-      return;
-    }
-
-    /*if (formData.default_prices.some(p => p.price <= 0)) {
-      toast.error('All prices must be greater than 0');
-      return;
-    }*/
-
-    setSubmitting(true);
-    try {
-      await onSubmit(formData);
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const addPriceOption = () => {
-    setFormData({
-      ...formData,
-      default_prices: [...formData.default_prices, { unit: 'per_item', price: 0 }]
-    });
-  };
-
-  const removePriceOption = (index: number) => {
-    if (formData.default_prices.length > 1) {
-      setFormData({
-        ...formData,
-        default_prices: formData.default_prices.filter((_, i) => i !== index)
-      });
-    }
-  };
-
-  const updatePriceOption = (index: number, field: keyof ServicePrice, value: string | number) => {
-    const updated = [...formData.default_prices];
-    updated[index] = { ...updated[index], [field]: value };
-    setFormData({ ...formData, default_prices: updated });
+    await onSubmit({ ...values, name: values.name.trim(), description: values.description.trim() });
   };
 
   return (
-    <form onSubmit={handleSubmit} className={`${Theme.form.layout}`} autoComplete="off">
-      <div>
-        <label htmlFor="name" className={`${Theme.form.label}`}>
-          Service Name *
-        </label>
-        <input
-          type="text"
-          id="name"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className={`${Theme.form.input}`}
-          autoComplete="off"
-          required
-        />
-      </div>
+    <form onSubmit={handleSubmit} noValidate className="space-y-3">
+      <Field label="Name" required error={nameError}>
+        <Input value={values.name} onChange={(e) => setValues({ ...values, name: e.target.value })} aria-invalid={Boolean(nameError)} />
+      </Field>
+      <FieldRow>
+        <Field label="Category">
+          <Select
+            options={SERVICE_CATEGORY_OPTIONS}
+            value={values.category}
+            onChange={(e) => setValues({ ...values, category: e.target.value as ServiceCategory })}
+          />
+        </Field>
+        <Field label="Status" hint="Inactive services are kept but no longer offered">
+          <Select
+            options={STATUS_OPTIONS}
+            value={values.status}
+            onChange={(e) => setValues({ ...values, status: e.target.value as ServiceStatus })}
+          />
+        </Field>
+      </FieldRow>
+      <Field label="Description">
+        <Textarea value={values.description} onChange={(e) => setValues({ ...values, description: e.target.value })} />
+      </Field>
+      <FormActions onCancel={onCancel} submitting={submitting} submitLabel={submitLabel} />
+    </form>
+  );
+}
 
-      <div>
-        <label htmlFor="service" className={`${Theme.form.label}`}>
-          Service Category *
-        </label>
-        <select
-          id="service"
-          value={formData.service}
-          onChange={(e) => setFormData({ ...formData, service: e.target.value as DefaultServices['service'] })}
-          className={`${Theme.form.input}`}
-          required
-        >
-          <option value="cleaning-service">Cleaning Service</option>
-          <option value="machine-service">Machine Service</option>
-          <option value="ironing-and-pressing">Ironing & Pressing</option>
-          <option value="specialist-cleaning">Specialist Cleaning</option>
-          <option value="specialist-treatment">Specialist Treatment</option>
-          <option value="alteration-and-repair">Alteration & Repair</option>
-          <option value="logistics-and-storage">Logistics & Storage</option>
-          <option value="other-services">Other Service</option>
-        </select>
-      </div>
+// ---------- Prices: a list of unit + price ----------
 
-      <div>
-        <label className={`${Theme.form.label}`}>
-          Pricing Options *
-        </label>
-        <div className="flex items-center justify-between mb-2">
-          <button
-            type="button"
-            onClick={addPriceOption}
-            className={`${Theme.button.outline}`}
-          >
-            <Plus className="w-4 h-4" />
-            <span>Add Price</span>
-          </button>
+interface PriceRow {
+  unit: PricingUnit;
+  price: string; // Text while typing, turned into a number on save
+}
+
+export function ServicePricesForm({ initial, onSubmit, onCancel, submitting }: SectionFormProps<ServicePrice[]>) {
+  const [rows, setRows] = useState<PriceRow[]>(initial.map((p) => ({ unit: p.unit, price: String(p.price) })));
+  const [error, setError] = useState<string>();
+
+  const update = (index: number, changes: Partial<PriceRow>) =>
+    setRows((current) => current.map((row, i) => (i === index ? { ...row, ...changes } : row)));
+
+  const usedUnits = rows.map((row) => row.unit);
+
+  const addRow = () => {
+    const unit = PRICING_UNIT_OPTIONS.find((option) => !usedUnits.includes(option.value))?.value;
+    if (unit) setRows((current) => [...current, { unit, price: '' }]);
+  };
+
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    if (new Set(usedUnits).size !== usedUnits.length) {
+      setError('Each unit can only have one price');
+      return;
+    }
+    const prices: ServicePrice[] = [];
+    for (const row of rows) {
+      const price = unitHasNoPrice(row.unit) ? 0 : toPrice(row.price);
+      if (price === null) {
+        setError('Enter a price for every unit (0 or more), or remove the row');
+        return;
+      }
+      prices.push({ unit: row.unit, price });
+    }
+    setError(undefined);
+    await onSubmit(prices);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} noValidate className="space-y-3">
+      {rows.length === 0 && <p className="text-sm text-muted-300">No prices yet.</p>}
+      {rows.map((row, index) => (
+        <div key={index} className="flex items-end gap-2">
+          <Field label="Unit" className="flex-1">
+            <Select options={PRICING_UNIT_OPTIONS} value={row.unit} onChange={(e) => update(index, { unit: e.target.value as PricingUnit })} />
+          </Field>
+          <Field label="Price (€)" className="w-28">
+            <Input
+              type="text"
+              inputMode="decimal"
+              placeholder={unitHasNoPrice(row.unit) ? '—' : '0.00'}
+              value={unitHasNoPrice(row.unit) ? '' : row.price}
+              onChange={(e) => update(index, { price: e.target.value })}
+              disabled={unitHasNoPrice(row.unit)}
+            />
+          </Field>
+          <IconButton icon={Trash2} label="Remove price" onClick={() => setRows((current) => current.filter((_, i) => i !== index))} />
         </div>
-
-        <div className="space-y-3">
-          {formData.default_prices.map((priceOption, index) => (
-            <div key={index} className="flex gap-2 items-start">
-              <div className="flex-1">
-                <label htmlFor={`unit-${index}`} className="block text-xs text-muted-400 mb-1">
-                  Unit
-                </label>
-                <select
-                  id={`unit-${index}`}
-                  value={priceOption.unit}
-                  onChange={(e) => updatePriceOption(index, 'unit', e.target.value)}
-                  className={`${Theme.form.input}`}
-                  required
-                >
-                  <option value="per_item">Per Item</option>
-                  <option value="per_kg">Per Kg</option>
-                  <option value="per_load">Per Load</option>
-                  <option value="per_sqm">Per Sqm</option>
-                  <option value="per_batch">Per Batch</option>
-                  <option value="per_quote">Per Quote</option>
-                  <option value="per_km">Per Km</option>
-                  <option value="fixed">Fixed Price</option>
-                  <option value="free">Free</option>
-                </select>
-              </div>
-
-              {priceOption.unit !== "per_item" && priceOption.unit !== "free" && priceOption.unit !== "per_quote" && (
-                <div className="flex-1">
-                  <div>
-                    <label htmlFor={`price-${index}`} className="block text-xs text-muted-400 mb-1">
-                      Price (€)
-                    </label>
-                    <input
-                      type="number"
-                      id={`price-${index}`}
-                      value={priceOption.price}
-                      onChange={(e) => updatePriceOption(index, 'price', parseFloat(e.target.value) || 0)}
-                      className={`${Theme.form.input}`}
-                      step="0.25"
-                      min="0"
-                      required
-                    />
-                  </div>
-                </div>)
-              }
-
-              {formData.default_prices.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removePriceOption(index)}
-                  className="mt-6 p-2 text-danger-400 hover:text-danger-300 hover:bg-danger-900/20 rounded transition-colors"
-                  title="Remove price option"
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className={`${Theme.form.action}`}>
-        <button
-          type="submit"
-          disabled={submitting}
-          className={`${Theme.button.solid}`}
-        >
-          {submitting ? 'Saving...' : submitLabel}
-        </button>
-        <button
-          type="button"
-          onClick={onCancel}
-          disabled={submitting}
-          className={`${Theme.button.outline}`}
-        >
-          Cancel
-        </button>
-      </div>
+      ))}
+      {error && <p className="text-xs text-danger-300">{error}</p>}
+      <Button variant="secondary" icon={Plus} onClick={addRow} disabled={usedUnits.length >= PRICING_UNIT_OPTIONS.length}>
+        Add price
+      </Button>
+      <FormActions onCancel={onCancel} submitting={submitting} />
     </form>
   );
 }

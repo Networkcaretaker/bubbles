@@ -1,16 +1,14 @@
-import type { Timestamp, PricingUnit } from './shared_interface';
-import type { ServiceCategory } from './service_interface';
+import type { CreatedBy, PricingUnit, Timestamp } from './shared_interface';
 
-export type ItemCategory = 
+export type ItemCategory =
   | 'bed-linen'
   | 'bedding'
   | 'clothing'
-  | 'towel' 
+  | 'towel'
   | 'dining'
   | 'service';
-  
 
-export type ItemSize = 
+export type ItemSize =
   | 'standard'
   | 'single'
   | 'double'
@@ -24,23 +22,30 @@ export type ItemSize =
   | 'xl'
   | 'xxl';
 
-export interface ItemPrice {
+export type ItemStatus = 'active' | 'inactive';
+
+export interface ItemSizePrice {
   size: ItemSize;
   price: number;
-};
+}
 
-export interface ItemService {
-  service: ServiceCategory;
+// What one service costs for this item, e.g. Pillow → Hand Ironing → €5 (Large €8).
+// The price for a size is: its size price, else `price`, else the service's default for this unit.
+export interface ItemServicePrice {
+  serviceId: string;
   unit: PricingUnit;
-  price?: number;
-  prices?: ItemPrice[];
-};
+  price?: number | null; // Applies to every size unless a size has its own price
+  sizePrices?: ItemSizePrice[];
+}
 
+// A type of thing that gets laundered, e.g. "Pillow" or "Bath Towel". Stored in 'items'.
 export interface CatalogItem {
   id: string;
   name: string;
   category: ItemCategory;
-  sizes?: ItemSize[];
-  services?: ItemService[];
+  status: ItemStatus;
+  sizes: ItemSize[];
+  prices: ItemServicePrice[];
   timestamp?: Timestamp;
-};
+  createdBy?: CreatedBy;
+}

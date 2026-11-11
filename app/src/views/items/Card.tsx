@@ -1,199 +1,44 @@
-import { Pencil } from 'lucide-react';
+import { Info, Ruler, Tag } from 'lucide-react';
 import type { CatalogItem } from '../../types/item_interface';
-import { CARD, CONTACT, Theme } from '../../components/ui/Theme';
-import Form from './Form';
-import { ProfileInitial } from '../../functions/user_functions';
+import type { Service } from '../../types/service_interface';
+import { Card as BaseCard, CardAction, CardActions, CardSection, DetailRow } from '../../components/ui/Card';
+import { Avatar, Badge } from '../../components/ui/Badge';
+import { itemCategoryLabel, itemSizeLabel, pricingUnitLabel } from '../../functions/catalog_functions';
 
 interface CardProps {
   item: CatalogItem;
-  isViewing: boolean;
-  onView: () => void;
-  onCancelView: () => void;
-  isEditing: boolean;
-  onEdit: () => void;
-  onUpdate: (data: Partial<Omit<CatalogItem, 'id'>>) => Promise<void>;
-  onCancelEdit: () => void;
+  services: Map<string, Service>;
+  expanded: boolean;
+  onToggle: () => void;
 }
 
-export default function Card({
-  item,
-  isViewing,
-  onView,
-  onCancelView,
-  isEditing,
-  onEdit,
-  onUpdate,
-  onCancelEdit,
-}: CardProps) {
-  const formatCategory = (category: string) => {
-    return category.split('-').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
-  };
-
-  const formatServiceCategory = (category: string) => {
-    return category.split('-').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
-  };
-
-  const formatPricingUnit = (unit: string) => {
-    return unit.split('_').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
-  };
-
-  const formatSize = (size: string) => {
-    return size.charAt(0).toUpperCase() + size.slice(1);
-  };
-
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
+export default function Card({ item, services, expanded, onToggle }: CardProps) {
+  const sizes = item.sizes ?? [];
+  const prices = item.prices ?? [];
 
   return (
-    <div className={`${CARD.card}`}>
-      <div className={`${CARD.header}`}>
-        <div className={`${CARD.title}`}>
-          {/* Profile Badge */}
-          <div className={`${CARD.icon_list}`}>
-            <div>
-              <div className={`${CONTACT.profile_initial} bg-muted-100 text-muted-800`}>
-                {ProfileInitial(item.name)}
-              </div>
-            </div>
-            <div>
-              {isViewing 
-                ? <h3 className={`${CARD.selected_name}`}>{item.name}</h3>
-                : <h3 className={`${CARD.name}`}>{item.name}</h3>
-              }
-              <span className={`${CARD.tags} bg-muted-100 text-muted-800`}>
-                {formatCategory(item.category)}
-              </span>
-            </div>
-          </div>
-        </div>
-        {isViewing 
-          ? <div className={`${CARD.selection}`} onClick={onCancelView}></div> 
-          : <div className={`${CARD.selection}`} onClick={onView}></div>
-        }
-      </div>
-
-      {isViewing &&
-        <div>
-          
-          <div className={`${CARD.list_content}`}>
-            {/* Sizes */}
-            {item.sizes && item.sizes.length > 0 && (
-              <div className={`${CARD.icon_list}`}>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-muted-100 mb-1">Available Sizes</p>
-                  <div className="flex flex-wrap gap-1">
-                    {item.sizes.map((size, index) => (
-                      <span
-                        key={index}
-                        className="px-2 py-1 text-xs rounded bg-accent-700 text-accent-100"
-                      >
-                        {formatSize(size)}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Services */}
-            {item.services && item.services.length > 0 && (
-              <div className={`${CARD.icon_list}`}>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-muted-100 mb-2">Services & Pricing</p>
-                  <div className="space-y-3">
-                    {item.services.map((service, index) => (
-                      <div key={index} className="pl-3 border-l-2 border-accent-500">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm font-bold text-accent-500">
-                            {formatServiceCategory(service.service)}
-                          </span>
-                          <span className="text-xs font-medium text-accent-500">
-                            {formatPricingUnit(service.unit)}
-                          </span>
-                        </div>
-                        
-                        {service.unit !== 'per_item' ? (
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="text-muted-200">{formatPricingUnit(service.unit)}</span>
-                            <span className="text-muted-200 font-medium">€{service.price?.toFixed(2)}</span>
-                          </div>
-                        ) : (
-                          <div className="space-y-1">
-                            {service.prices?.map((priceItem, priceIndex) => (
-                              <div key={priceIndex} className="flex justify-between items-center text-sm">
-                                <span className="text-muted-200 ">{formatSize(priceItem.size)}</span>
-                                <span className="text-muted-200 font-medium">€{priceItem.price.toFixed(2)}</span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="flex gap-2 sm:flex-col sm:w-auto mt-4">
-            {!isEditing &&
-              <button
-                onClick={onEdit}
-                className={`${Theme.button.solid}`}
-                title="Edit Item"
-              >
-                <Pencil className="w-5 h-5" />
-                <span>Edit Item</span>
-              </button>
-            }
-          </div>
-
-          {isEditing &&
-            <div>
-              <Form
-                initialData={{
-                  name: item.name,
-                  category: item.category,
-                  sizes: item.sizes,
-                  services: item.services,
-                }}
-                onSubmit={onUpdate}
-                onCancel={onCancelEdit}
-                submitLabel="Update"
-              />
-            </div>
-          }
-          {/* Timestamps */}
-          <div className={`${CARD.icon_list} pt-4`}>
-            <div className="flex-1">
-              <div className="space-y-1 text-xs">
-                <div className="flex justify-between">
-                  <span className="text-muted-400">Created:</span>
-                  <span className="text-muted-300">{formatDate(item.timestamp?.createdAt)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-400">Updated:</span>
-                  <span className="text-muted-300">{formatDate(item.timestamp?.updatedAt)}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      }
-    </div>
+    <BaseCard
+      title={item.name}
+      subtitle={itemCategoryLabel(item.category)}
+      avatar={<Avatar name={item.name} />}
+      badge={item.status === 'inactive' ? <Badge tone="muted">Inactive</Badge> : undefined}
+      expanded={expanded}
+      onToggle={onToggle}
+    >
+      <CardSection>
+        <DetailRow icon={Ruler}>{sizes.length ? sizes.map(itemSizeLabel).join(', ') : 'No sizes'}</DetailRow>
+      </CardSection>
+      <CardSection title="Services">
+        {prices.length === 0 && <p className="text-muted-300">No prices yet.</p>}
+        {prices.map((entry) => (
+          <DetailRow key={`${entry.serviceId}-${entry.unit}`} icon={Tag}>
+            {services.get(entry.serviceId)?.name ?? 'Deleted service'} · {pricingUnitLabel(entry.unit).toLowerCase()}
+          </DetailRow>
+        ))}
+      </CardSection>
+      <CardActions>
+        <CardAction icon={Info} label={`Open ${item.name}`} to={`/items/${item.id}`} />
+      </CardActions>
+    </BaseCard>
   );
 }

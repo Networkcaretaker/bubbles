@@ -407,7 +407,7 @@ export default function Page() {
                                 {service.name}
                             </span>
                             <span className="text-sm font-medium text-accent-500">
-                                {service.service}
+                                {service.category}
                             </span>
                             </div>
                         </div>

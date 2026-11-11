@@ -126,8 +126,37 @@ keep the name "Client Jobs".
 - [ ] Check the Jobs section still loads with the new clients
 - [ ] Remove old client/contact views and the `theme.ts` styles they used
 
+## Phase 6 – Services and Items
+Decisions (2026-11-11): item prices link to a specific service by id (like Jobs already do);
+convert the 19 existing services in place; delete and re-add the 2 items (Pillow, Pillow Case).
+
+**Data**
+- [x] Service: `name, category, status (active/inactive), description?, prices[{unit, price}]` – prices always saved as numbers
+- [x] Item: `name, category, status, sizes[], prices[{serviceId, unit, price? | sizePrices[{size, price}]}]`
+- [x] Item price falls back to the service's default price when the item has none
+- [x] One-off conversion of the 19 services: text prices → numbers, `default_prices` → `prices`, status active
+- [x] Delete the 2 old items (they're in the export)
+- [ ] Re-add Pillow Case (and check the "Pillow (test)" example) in the new screens
+- [x] Services and hooks on `createCrudService` / `createCrudHooks`; keep `getAllServices` working for the Jobs section
+
+**Services screens**
+- [x] List grouped or filtered by category, with search and status filter; add service
+- [x] Service page with sections: Details (name, category, status, description) · Prices (unit + price list) · Items that use it · Record
+
+**Items screens**
+- [x] List with search, category and status filters; add item
+- [x] Item page with sections: Details (name, category, status) · Sizes · Prices per service (one price, or a price per size) · Record
+
+**Copy**
+- [x] Copy button on item and service pages: opens a New item/service form with the details filled in; the copy also gets the sizes and prices (item) or default prices (service)
+
+**Finish**
+- [x] Automated checks with the test accounts (create, prices as numbers, item ↔ service link, fallback price): 20/20 pass
+- [x] Jobs section still loads services (`getAllServices` kept; category field renamed `service` → `category`)
+- [ ] Remove old service/item views and unused theme styles
+
 ## Later
-- [ ] Services, Items, Jobs
+- [ ] Review everything built so far (after Phase 6)
 - [ ] Rename the current Jobs section and `jobs` collection to Work Orders (`work-orders`), booked against a Client Job
 - [ ] Batches, Invoices, Quotes (currently placeholders)
 - [ ] Dashboard
