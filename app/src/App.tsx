@@ -14,6 +14,8 @@ import UserPage from './views/users/Page';
 import Profile from './views/users/Profile';
 import Clients from './views/clients/Main';
 import ClientPage from './views/clients/Page';
+import ClientJobs from './views/client-jobs/Main';
+import ClientJobPage from './views/client-jobs/Page';
 import Contacts from './views/contacts/Main';
 import ContactsPage from './views/contacts/Page';
 import Services from './views/services/Main';
@@ -69,6 +71,8 @@ function App() {
               <Route index element={<Dashboard />} />
               <Route path="clients" element={<Clients />} />
               <Route path="clients/:id" element={<ClientPage />} />
+              <Route path="client-jobs" element={<ClientJobs />} />
+              <Route path="client-jobs/:id" element={<ClientJobPage />} />
               <Route path="contacts" element={<Contacts />} />
               <Route path="contacts/:id" element={<ContactsPage />} />
               <Route path="users" element={<Users />} />

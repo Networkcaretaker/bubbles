@@ -1,413 +1,178 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Pencil, X, Mail, PhoneIcon, MapPin, Users, Briefcase } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ArrowLeft, Building2, Mail, MapPin, Pencil, Phone, Trash2, X } from 'lucide-react';
+import { Page as BasePage } from '../../components/ui/Page';
+import { IconButton } from '../../components/ui/IconButton';
+import { CardAction, CardActions, DetailRow, Panel, Section } from '../../components/ui/Card';
+import { Avatar, Badge } from '../../components/ui/Badge';
+import { ErrorState, LoadingState } from '../../components/ui/States';
+import { RecordSection } from '../../components/ui/RecordSection';
 import { WhatsApp } from '../../components/ui/IconSets';
 import type { Client } from '../../types/client_interface';
-import type { Contact } from '../../types/contact_interface';
-import { theme } from '../../components/styles/theme';
-import Form from './Form';
-import { clientService } from '../../services/client_service';
-import { contactService } from '../../services/contact_service';
-import { ProfileInitial } from '../../functions/user_functions';
-import { formatDate, formatTagText, formatAddress, formatIcon } from '../../functions/shared_functions';
+import { CLIENT_STATUS_TONES, clientStatusLabel, clientTypeLabel, whatsappNumber } from '../../functions/client_functions';
+import { formatAddress } from '../../functions/shared_functions';
+import { clientHooks, clientJobHooks, contactHooks } from '../../hooks/clientHooks';
+import { toast } from '../../stores/toastStore';
+import { confirmDialog } from '../../stores/confirmStore';
+import { ContactInfoForm, DetailsForm } from './Form';
+import ContactsSection from './ContactsSection';
+import ClientJobsSection from './ClientJobsSection';
+
+type EditingSection = 'details' | 'contactInfo' | null;
 
 export default function Page() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  
-  const [client, setClient] = useState<Client | null>(null);
-  const [allContacts, setAllContacts] = useState<Contact[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [isEditingContact, setIsEditingContact] = useState(false);
-  const [isEditingClientContacts, setIsEditingClientContacts] = useState(false);
-  const [isEditingJobs, setIsEditingJobs] = useState(false);
+  const clientQuery = clientHooks.useOne(id);
+  const client = clientQuery.data;
+  const { data: linkedContacts = [] } = contactHooks.useForClient(id);
+  const { data: linkedJobs = [] } = clientJobHooks.useForClient(id);
+  const updateClient = clientHooks.useUpdate();
+  const removeClient = clientHooks.useRemove();
+  const [editing, setEditing] = useState<EditingSection>(null);
 
-  useEffect(() => {
-    if (id) {
-      loadClientData(id);
-    }
-  }, [id]);
+  const backButton = <IconButton icon={ArrowLeft} label="Back to clients" onClick={() => navigate('/clients')} />;
 
-  const loadClientData = async (clientId: string) => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Fetch the client
-      const fetchedClient = await clientService.getClient(clientId);
-      setClient(fetchedClient);
-
-      // Fetch all contacts for the form and display
-      const fetchedAllContacts = await contactService.getAllContacts();
-      setAllContacts(fetchedAllContacts);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to load client';
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleUpdate = async (clientData: Partial<Omit<Client, 'id'>>) => {
-    if (!id || !client) return;
-
-    try {
-      setError(null);
-      const updateData: Partial<Omit<Client, 'id'>> = {
-        ...clientData,
-      };
-
-      // Preserve creation timestamp
-      if (client.timestamp?.createdAt) {
-        updateData.timestamp = {
-          createdAt: client.timestamp.createdAt,
-          updatedAt: new Date().toISOString(),
-        };
-      } else {
-        updateData.timestamp = {
-          updatedAt: new Date().toISOString(),
-        };
-      }
-
-      await clientService.updateClient(id, updateData);
-      await loadClientData(id);
-      setIsEditing(false);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to update client';
-      setError(message);
-    }
-  };
-
-  if (loading) {
+  if (clientQuery.isLoading) {
     return (
-      <div className={`${theme.outlet.page}`}>
-        <p className={`${theme.system.notice}`}>Loading...</p>
-      </div>
+      <BasePage title="Client" icon={Building2} actions={backButton}>
+        <LoadingState />
+      </BasePage>
     );
+  }
+  if (clientQuery.error || !client) {
+    return (
+      <BasePage title="Client" icon={Building2} actions={backButton}>
+        <ErrorState message={clientQuery.error?.message ?? 'Client not found.'} onRetry={() => clientQuery.refetch()} />
+      </BasePage>
+    );
+  }
+
+  // Saves one section's changes and closes its form
+  const save = async (changes: Partial<Omit<Client, 'id' | 'timestamp'>>, message: string) => {
+    try {
+      await updateClient.mutateAsync({ id: client.id, changes });
+    } catch {
+      return; // The error message is shown automatically; keep the form open
+    }
+    toast.success(message);
+    setEditing(null);
   };
 
-  if (error || !client) {
-    return (
-      <div className={`${theme.outlet.page}`}>
-        <p className={`${theme.system.error}`}>{error || 'Client not found'}</p>
-      </div>
-    );
+  const handleDelete = async () => {
+    const contactCount = linkedContacts.length;
+    const jobCount = linkedJobs.length;
+    const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
+    const confirmed = await confirmDialog({
+      title: `Delete ${client.name}?`,
+      message:
+        (jobCount > 0 ? `Its ${plural(jobCount, 'client job')} will be deleted too. ` : '') +
+        (contactCount > 0 ? `Its ${plural(contactCount, 'contact')} will be kept but unlinked. ` : '') +
+        'This can’t be undone.',
+      confirmLabel: 'Delete',
+      danger: true,
+    });
+    if (!confirmed) return;
+    try {
+      await removeClient.mutateAsync(client.id);
+    } catch {
+      return;
+    }
+    toast.success(`${client.name} deleted`);
+    navigate('/clients');
   };
+
+  // Pencil / close button for a section's header
+  const editButton = (section: Exclude<EditingSection, null>, label: string) => (
+    <IconButton
+      icon={editing === section ? X : Pencil}
+      label={editing === section ? 'Cancel' : label}
+      active={editing === section}
+      onClick={() => setEditing(editing === section ? null : section)}
+    />
+  );
+
+  const whatsapp = whatsappNumber(client.phone);
 
   return (
-    <div className={`${theme.outlet.page}`}>
-      {/* Header */}
-      <div className={`${theme.outlet.header}`}>
-        <div className={`${theme.header.layout}`}>
-          <div className={`${theme.header.title}`}>
-            <Users className={`${theme.icon.md}`} />
-            <h1>{client.name}</h1>
+    <BasePage
+      title={client.name}
+      icon={Building2}
+      actions={
+        <>
+          <IconButton icon={Trash2} label="Delete client" onClick={handleDelete} disabled={removeClient.isPending} />
+          {backButton}
+        </>
+      }
+    >
+      {/* Summary */}
+      <Panel>
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <Avatar name={client.name} />
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-lg font-bold text-white">{client.name}</p>
+              <p className="truncate text-xs font-medium text-accent-300">{clientTypeLabel(client.clientType)}</p>
+            </div>
+            <Badge tone={CLIENT_STATUS_TONES[client.status]}>{clientStatusLabel(client.status)}</Badge>
           </div>
-          <button
-            onClick={() => navigate('/clients')}
-            className={`${theme.button.icon}`}
-          >
-            <ArrowLeft className={`${theme.icon.md}`} />
-          </button>
+          {(client.phone || client.email) && (
+            <CardActions>
+              {client.phone && <CardAction icon={Phone} label={`Call ${client.name}`} href={`tel:${client.phone}`} />}
+              {client.email && <CardAction icon={Mail} label={`Email ${client.name}`} href={`mailto:${client.email}`} />}
+              {whatsapp && <CardAction icon={WhatsApp} label={`WhatsApp ${client.name}`} href={`https://wa.me/${whatsapp}`} />}
+            </CardActions>
+          )}
         </div>
-      </div>
+      </Panel>
 
-      <div className={`${theme.outlet.content}`}>
-        
-            {/* Top Section */}
-            <div className={`${theme.card.layout}`}>
-              <div className={`${theme.card.header}`}>
-                <div className={`${theme.card.title_layout}`}>
-                  <div className={`${theme.card.profile_layout}`}>
-                    <div className={`${theme.card.profile_initial}`}>
-                      {ProfileInitial(client.name)}
-                    </div>
-                    <div>
-                      <p className={`${theme.card.title_text_xp}`}>
-                        {client.name}
-                      </p>
-                      <p className={`${theme.card.profile_tag}`}>
-                        {formatTagText(client.clientType)}
-                      </p>
-                    </div>
-                  </div>
-                  {client.status && (
-                    <div className={`${theme.card.icon_list}`}>
-                      <p className={`${theme.card.tag}`}>{formatTagText(client.status)}</p>
-                    </div>
-                  )}
-                </div>
-                <div className={`${theme.card.selection_area}`} />
-              </div>
-            
-              {/* Action Buttons */}
-                <div className={`${theme.card.action_grid}`}>
-                  {client.phone &&
-                  <a className={`${theme.button.outline}`} 
-                      href={`tel:${client.phone}`}>
-                      <PhoneIcon className={`${theme.icon.lg}`} />
-                  </a>
-                  }
-                  {client.email &&
-                  <a className={`${theme.button.outline}`}
-                    href={`mailto:${client.email}`}>
-                      <Mail className={`${theme.icon.lg}`} />
-                  </a>
-                  }
-                  {client.phone &&
-                  <a className={`${theme.button.outline}`} 
-                    href={`https://wa.me/${client.phone.replace(/\D/g, '')}`}
-                    target="_blank"
-                    rel="noopener noreferrer">
-                      <WhatsApp className={`${theme.icon.lg}`} />
-                  </a>
-                  }
-                  <div className={`${theme.button.outline}`} onClick={() => setIsEditing(!isEditing)}>
-                    {isEditing ? <X className={`${theme.icon.lg}`} /> : <Pencil className={`${theme.icon.lg}`} />}
-                  </div>
-                </div>
+      {/* Details */}
+      <Section title="Details" actions={editButton('details', 'Edit details')}>
+        {editing === 'details' ? (
+          <DetailsForm
+            initial={{ name: client.name, clientType: client.clientType, status: client.status }}
+            onSubmit={(values) => save(values, 'Details saved')}
+            onCancel={() => setEditing(null)}
+            submitting={updateClient.isPending}
+          />
+        ) : (
+          <>
+            <p>
+              <span className="text-muted-300">Type:</span> {clientTypeLabel(client.clientType)}
+            </p>
+            <p>
+              <span className="text-muted-300">Status:</span> {clientStatusLabel(client.status)}
+            </p>
+          </>
+        )}
+      </Section>
 
-            </div>
+      {/* Contact info */}
+      <Section title="Contact info" actions={editButton('contactInfo', 'Edit contact info')}>
+        {editing === 'contactInfo' ? (
+          <ContactInfoForm
+            initial={{ phone: client.phone ?? '', email: client.email ?? '', address: client.address ?? {} }}
+            onSubmit={(values) => save(values, 'Contact info saved')}
+            onCancel={() => setEditing(null)}
+            submitting={updateClient.isPending}
+          />
+        ) : (
+          <>
+            <DetailRow icon={Phone}>{client.phone || 'No phone number'}</DetailRow>
+            <DetailRow icon={Mail}>{client.email || 'No email'}</DetailRow>
+            <DetailRow icon={MapPin}>{formatAddress(client.address)}</DetailRow>
+          </>
+        )}
+      </Section>
 
-            {/* Edit Client */}
-            {isEditing 
-              ? (
-                <div className={`${theme.card.layout}`}>
-                  <Form
-                    initialData={{
-                      name: client.name,
-                      email: client.email,
-                      phone: client.phone,
-                      clientType: client.clientType,
-                      address: client.address,
-                      clientJobs: client.clientJobs,
-                      clientContacts: client.clientContacts,
-                      status: client.status,
-                    }}
-                    onSubmit={handleUpdate}
-                    onCancel={() => setIsEditing(false)}
-                    availableContacts={allContacts}
-                    submitLabel="Update"
-                    showFullForm={true}
-                  />
-                </div>
-              ) : (
-                <div />
-              )
-            }
+      {/* Contacts */}
+      <ContactsSection client={client} />
 
-            {/* Client Information */}
-            {isEditing 
-              ? (
-                <div />
-              ) : (
-                <div className={`${theme.card.layout}`}>
-                  <div className={`${theme.card.content_section}`}>
+      {/* Client Jobs */}
+      <ClientJobsSection client={client} />
 
-                    <div className={`${theme.card.items}`}>
-                      <p className={`${theme.card.section_title}`}>Client Information</p>
-                      <button
-                        onClick={() => setIsEditingContact(!isEditingContact)}
-                        className={`${theme.button.icon}`}
-                      >
-                        {isEditingContact ? <X className={`${theme.icon.sm}`} /> : <Pencil className={`${theme.icon.sm}`} />}
-                      </button>
-                    </div>
-
-                    {isEditingContact 
-                      ? (
-                        <Form
-                          initialData={{
-                            phone: client.phone,
-                            email: client.email,
-                            address: client.address,
-                          }}
-                          onSubmit={async (data) => {
-                            await handleUpdate({
-                              phone: data.phone,
-                              email: data.email,
-                              address: data.address,
-                            });
-                            setIsEditingContact(false);
-                          }}
-                          onCancel={() => setIsEditingContact(false)}
-                          submitLabel="Update"
-                          showOnlyContactInfo={true}
-                        />
-                      ) : (
-                        <div className={`${theme.card.content_section}`}>
-                          <div className={`${theme.card.icon_list}`}>
-                            <PhoneIcon className={`${theme.icon.xs}`} />
-                            {client.phone ? <p>{client.phone}</p> : <p>No phone number provided</p>}
-                          </div>
-                          <div className={`${theme.card.icon_list}`}>
-                            <Mail className={`${theme.icon.xs}`} />
-                            {client.email ? <p>{client.email}</p> : <p>No email provided</p>}
-                          </div>
-                          <div className={`${theme.card.icon_list}`}>
-                            <MapPin className={`${theme.icon.xs}`} />
-                            <p>{formatAddress(client.address)}</p>
-                          </div>
-                        </div>
-                      )
-                    }
-                  </div>
-                </div>
-              )
-            }
-
-            {/* Client Contacts */}
-            {!isEditing && (
-              <div className={`${theme.card.layout}`}>
-                <div className={`${theme.card.content_section}`}>
-                  <div className={`${theme.card.items}`}>
-                    <p className={`${theme.card.section_title}`}>Client Contacts</p>
-                    <button
-                      onClick={() => setIsEditingClientContacts(!isEditingClientContacts)}
-                      className={`${theme.button.icon}`}
-                    >
-                      {isEditingClientContacts ? <X className={`${theme.icon.sm}`} /> : <Pencil className={`${theme.icon.sm}`} />}
-                    </button>
-                  </div>
-
-                  {isEditingClientContacts ? (
-                    <Form
-                      initialData={{
-                        clientContacts: client.clientContacts,
-                      }}
-                      onSubmit={async (data) => {
-                        await handleUpdate({
-                          clientContacts: data.clientContacts,
-                        });
-                        setIsEditingClientContacts(false);
-                      }}
-                      onCancel={() => setIsEditingClientContacts(false)}
-                      availableContacts={allContacts}
-                      submitLabel="Update"
-                      showOnlyClientContacts={true}
-                    />
-                  ) : (
-                    <div>
-                      {client.clientContacts && client.clientContacts.length > 0 ? (
-                        <div className={`${theme.card.content_section}`}>
-                          <div className={`${theme.card.item_list}`}>
-                            {client.clientContacts.map((cc) => {
-                              const fullContact = allContacts.find(c => c.id === cc.id);
-                              return (
-                                <div key={cc.id} className={`${theme.card.item_index}`}>
-                                  <div className={`${theme.card.items}`}>
-                                    <p className={`${theme.card.item_text}`}>{cc.name}</p>
-                                    <p className={`${theme.card.tags}`}>{formatTagText(cc.type)}</p>
-                                  </div>
-                                  {fullContact && (
-                                    <div className={`${theme.card.item_sub_text}`}>
-                                      <div className={`${theme.card.icon_list}`}>
-                                        <PhoneIcon className={`${theme.icon.xs}`} />
-                                        <p>{fullContact.phone}</p>
-                                      </div>
-                                      <div className={`${theme.card.icon_list}`}>
-                                        <Mail className={`${theme.icon.xs}`} />
-                                        <p>{fullContact.email}</p>
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      ) : (
-                        <div />
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Client Jobs */}
-            {isEditing 
-              ? (
-                <div />
-              ) : (
-                <div className={`${theme.card.layout}`}>
-                  <div className={`${theme.card.content_section}`}>
-                    <div className={`${theme.card.items}`}>
-                      <p className={`${theme.card.section_title}`}>Client Jobs</p>
-                      <button
-                        onClick={() => setIsEditingJobs(!isEditingJobs)}
-                        className={`${theme.button.icon}`}
-                      >
-                        {isEditingJobs ? <X className={`${theme.icon.sm}`} /> : <Pencil className={`${theme.icon.sm}`} />}
-                      </button>
-                    </div>
-                    {isEditingJobs 
-                      ? (
-                          <Form
-                          initialData={{
-                            clientJobs: client.clientJobs,
-                          }}
-                          onSubmit={async (data) => {
-                            await handleUpdate({
-                              clientJobs: data.clientJobs,
-                            });
-                            setIsEditingJobs(false);
-                          }}
-                          onCancel={() => setIsEditingJobs(false)}
-                          submitLabel="Update"
-                          showOnlyJobs={true}
-                        />
-                      ) : (
-                        <div>
-                          {((client.clientJobs && client.clientJobs.length > 0) || isEditingJobs) && (
-                            <div className={`${theme.card.content_section}`}>
-                              <div className={`${theme.card.item_list}`}>
-                                {client.clientJobs && client.clientJobs.map((job, index) => (
-                                <div key={index} className={`${theme.card.item_index}`}>
-                                  <div className={`${theme.card.items}`}>
-                                    <p className={`${theme.card.item_text}`}>
-                                        {formatIcon(job.jobType)} {job.jobName}
-                                    </p>
-                                    <p className={`${theme.card.tags}`}>
-                                        {formatTagText(job.jobType)}
-                                    </p>
-                                  </div>
-                                  {job.workOrderIds && job.workOrderIds.length > 0 && (
-                                    <div className={`${theme.card.item_sub_text}`}>
-                                      <div className={`${theme.card.icon_list}`}>
-                                        <Briefcase className={`${theme.icon.xs}`} />
-                                        <p>{job.workOrderIds.length} work order{job.workOrderIds.length !== 1 ? 's' : ''}</p>
-                                      </div>
-                                    </div>
-                                    )}
-                                </div>
-                                ))} 
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )
-                    }
-                  </div>
-                </div>
-              )
-            }
-
-            {/* Record Info */}
-            <div className={`${theme.card.layout}`}>
-              <div className={`${theme.card.timestamp}`}>
-                <p>Created:</p>
-                <p>{formatDate(client.timestamp?.createdAt)}</p>
-              </div>
-              <div className={`${theme.card.timestamp}`}>
-                <p>Updated:</p>
-                <p>{formatDate(client.timestamp?.updatedAt)}</p>
-              </div>
-            </div>
-
-      </div>
-    </div>
+      {/* Record */}
+      <RecordSection timestamp={client.timestamp} createdBy={client.createdBy} />
+    </BasePage>
   );
 }

@@ -7,20 +7,35 @@ import {
   query,
   setDoc,
   updateDoc,
+  where,
 } from 'firebase/firestore';
 import type { QueryConstraint, UpdateData, DocumentData } from 'firebase/firestore';
 import { FirebaseError } from 'firebase/app';
-import { db } from './config';
-import type { Timestamp } from '../../types/shared_interface';
+import { auth, db } from './config';
+import type { CreatedBy, Timestamp } from '../../types/shared_interface';
 
-// Every saved record has an id (the Firestore document id) and timestamps
+// Every saved record has an id (the Firestore document id), timestamps and who created it
 export interface BaseRecord {
   id: string;
   timestamp?: Timestamp;
+  createdBy?: CreatedBy;
 }
 
-// What you pass in to create a record: everything except id and timestamps
-export type NewRecord<T extends BaseRecord> = Omit<T, 'id' | 'timestamp'>;
+// What you pass in to create a record: everything except what's filled in automatically
+export type NewRecord<T extends BaseRecord> = Omit<T, 'id' | 'timestamp' | 'createdBy'>;
+
+// The signed-in person, with the name from their user record (falls back to their login details)
+async function currentUserStamp(): Promise<CreatedBy | undefined> {
+  const user = auth.currentUser;
+  if (!user) return undefined;
+  let name = '';
+  try {
+    name = ((await getDoc(doc(db, 'users', user.uid))).data()?.name as string) ?? '';
+  } catch {
+    // Not critical: fall back below
+  }
+  return { uid: user.uid, name: name || user.displayName || user.email || 'Unknown' };
+}
 
 // What you pass in to update a record: any of the fields
 export type RecordChanges<T extends BaseRecord> = Partial<NewRecord<T>>;
@@ -92,7 +107,8 @@ export function createCrudService<T extends BaseRecord>(
       try {
         const ref = doc(collectionRef);
         const now = new Date().toISOString();
-        const record = { ...data, id: ref.id, timestamp: { createdAt: now, updatedAt: now } } as T;
+        const createdBy = await currentUserStamp();
+        const record = { ...data, id: ref.id, timestamp: { createdAt: now, updatedAt: now }, createdBy } as T;
         await setDoc(ref, record as DocumentData);
         return record;
       } catch (error) {
@@ -123,4 +139,22 @@ export function createCrudService<T extends BaseRecord>(
   };
 
   return service;
+}
+
+// Records where one field equals a value, e.g. contacts where clientId = 'abc'.
+// Sorted by name here rather than in Firestore, so no extra index is needed.
+export async function listWhere<T extends BaseRecord & { name?: string }>(
+  collectionName: string,
+  field: string,
+  value: unknown,
+  action: string,
+): Promise<T[]> {
+  try {
+    const snapshot = await getDocs(query(collection(db, collectionName), where(field, '==', value)));
+    return snapshot.docs
+      .map((snap) => ({ ...snap.data(), id: snap.id }) as T)
+      .sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''));
+  } catch (error) {
+    throw friendlyError(action, error);
+  }
 }

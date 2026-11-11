@@ -136,3 +136,16 @@ export function CardAction(props: CardActionProps) {
     </button>
   );
 }
+
+// Titled panel for one part of a page, e.g. "Contact info" with an edit button on the right
+export function Section({ title, actions, children }: { title: string; actions?: ReactNode; children: ReactNode }) {
+  return (
+    <div className={panelClass}>
+      <div className="mb-2 flex min-h-9 items-center justify-between gap-2">
+        <p className="text-sm font-medium text-accent-400">{title}</p>
+        {actions && <div className="flex shrink-0 items-center gap-1">{actions}</div>}
+      </div>
+      <div className="space-y-2 text-xs text-accent-50">{children}</div>
+    </div>
+  );
+}

@@ -1,221 +1,201 @@
 import { useState } from 'react';
-import { toast } from '../../stores/toastStore';
-import type { Contact } from '../../types/contact_interface';
-import { Theme } from '../../components/ui/Theme';
+import type { FormEvent } from 'react';
+import type { Contact, ContactRole } from '../../types/contact_interface';
+import type { Client } from '../../types/client_interface';
+import type { Address } from '../../types/shared_interface';
+import { Field, FieldRow, FormActions, Input, Select } from '../../components/ui/Form';
+import { AddressFields } from '../../components/forms/AddressFields';
+import { CONTACT_ROLE_OPTIONS } from '../../functions/client_functions';
 
-interface FormProps {
-  initialData?: Partial<Omit<Contact, 'id'>>;
-  onSubmit: (data: Omit<Contact, 'id'>) => Promise<void>;
-  onCancel: () => void;
-  submitLabel?: string;
-  showFullForm?: boolean;
-  showOnlyContactInfo?: boolean; // Show only phone, email, address fields
-  showOnlyNew?: boolean; // Show only client type, name, phone, email
+export interface ContactFormValues {
+  name: string;
+  email: string;
+  phone: string;
+  address: Address;
+  clientId: string | null;
+  role: ContactRole | null;
 }
 
-export default function Form({ 
-  initialData, 
-  onSubmit, 
-  onCancel,
-  submitLabel = 'Save',
-  showFullForm = false,
-  showOnlyContactInfo = false,
-  showOnlyNew = false,
-}: FormProps) {
-  const [formData, setFormData] = useState({
-    name: initialData?.name || '',
-    email: initialData?.email || '',
-    phone: initialData?.phone || '',
-    address: {
-      street: initialData?.address?.street || '',
-      city: initialData?.address?.city || '',
-      region: initialData?.address?.region || '',
-      postalCode: initialData?.address?.postalCode || '',
-      country: initialData?.address?.country || '',
-    },
-  });
-  const [submitting, setSubmitting] = useState(false);
+interface FormProps {
+  initial?: Partial<Contact>;
+  clients?: Client[]; // For the client dropdown. Leave out to hide it (e.g. adding from a client's page).
+  fixedClientId?: string; // Link to this client without asking
+  onSubmit: (values: ContactFormValues) => Promise<void>;
+  onCancel: () => void;
+  submitLabel?: string;
+  submitting?: boolean;
+}
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Only validate name if showing all fields or not in section-specific mode
-    if (!showOnlyContactInfo) {
-      if (!formData.name.trim()) {
-        toast.error('Please fill in all required fields');
-        return;
-      }
-    }
+export default function Form({ initial, clients, fixedClientId, onSubmit, onCancel, submitLabel = 'Save', submitting = false }: FormProps) {
+  const [name, setName] = useState(initial?.name ?? '');
+  const [email, setEmail] = useState(initial?.email ?? '');
+  const [phone, setPhone] = useState(initial?.phone ?? '');
+  const [address, setAddress] = useState<Address>(initial?.address ?? {});
+  const [clientId, setClientId] = useState(fixedClientId ?? initial?.clientId ?? '');
+  const [role, setRole] = useState<string>(initial?.role ?? '');
+  const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
 
-    setSubmitting(true);
-    try {
-      await onSubmit(formData);
-    } finally {
-      setSubmitting(false);
-    }
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    const found: typeof errors = {};
+    if (!name.trim()) found.name = 'Enter a name';
+    if (email.trim() && !/^\S+@\S+\.\S+$/.test(email.trim())) found.email = 'Enter a valid email address';
+    setErrors(found);
+    if (Object.keys(found).length > 0) return;
+
+    const linkedClient = clientId || null;
+    await onSubmit({
+      name: name.trim(),
+      email: email.trim(),
+      phone: phone.trim(),
+      address,
+      clientId: linkedClient,
+      // A role only makes sense when linked to a client
+      role: linkedClient ? ((role || 'other') as ContactRole) : null,
+    });
+  };
+
+  const showClientPicker = Boolean(clients) && !fixedClientId;
+
+  return (
+    <form onSubmit={handleSubmit} noValidate className="space-y-3">
+      <Field label="Name" required error={errors.name}>
+        <Input value={name} onChange={(e) => setName(e.target.value)} aria-invalid={Boolean(errors.name)} />
+      </Field>
+
+      <FieldRow>
+        <Field label="Email" error={errors.email}>
+          <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} aria-invalid={Boolean(errors.email)} />
+        </Field>
+        <Field label="Phone">
+          <Input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+        </Field>
+      </FieldRow>
+
+      {(showClientPicker || fixedClientId) && (
+        <FieldRow>
+          {showClientPicker && (
+            <Field label="Client">
+              <Select
+                placeholder="No client"
+                options={(clients ?? []).map((client) => ({ value: client.id, label: client.name }))}
+                value={clientId}
+                onChange={(e) => setClientId(e.target.value)}
+              />
+            </Field>
+          )}
+          <Field label="Role at client">
+            <Select
+              placeholder="Choose…"
+              options={CONTACT_ROLE_OPTIONS}
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              disabled={!clientId}
+            />
+          </Field>
+        </FieldRow>
+      )}
+
+      <AddressFields value={address} onChange={setAddress} />
+
+      <FormActions onCancel={onCancel} submitting={submitting} submitLabel={submitLabel} />
+    </form>
+  );
+}
+
+// ---------- Contact page section forms ----------
+
+interface SectionFormProps<Values> {
+  initial: Values;
+  onSubmit: (values: Values) => Promise<void>;
+  onCancel: () => void;
+  submitting?: boolean;
+}
+
+export interface ContactLinkValues {
+  clientId: string | null;
+  role: ContactRole | null;
+}
+
+// Client section: which client, and the contact's role there
+export function ContactLinkForm({ initial, clients, onSubmit, onCancel, submitting }: SectionFormProps<ContactLinkValues> & { clients: Client[] }) {
+  const [clientId, setClientId] = useState(initial.clientId ?? '');
+  const [role, setRole] = useState<string>(initial.role ?? '');
+
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    const linkedClient = clientId || null;
+    await onSubmit({ clientId: linkedClient, role: linkedClient ? ((role || 'other') as ContactRole) : null });
   };
 
   return (
-    <form onSubmit={handleSubmit} className={`${Theme.form.layout}`} autoComplete="off">
-      {(showFullForm || showOnlyNew) && (
-        <>
-          <div>
-            <label htmlFor="name" className={`${Theme.form.label}`}>
-              Name *
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className={`${Theme.form.input}`}
-              autoComplete="off"
-              required
-            />
-          </div>
-        </>
-      )}
-      {(showFullForm || showOnlyNew || showOnlyContactInfo) && (  
-        <>
-          <div>
-            <label htmlFor="phone" className={`${Theme.form.label}`}>
-              Phone
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className={`${Theme.form.input}`}
-              autoComplete="new-phone"
-            />
-          </div>
+    <form onSubmit={handleSubmit} noValidate className="space-y-3">
+      <FieldRow>
+        <Field label="Client">
+          <Select
+            placeholder="No client"
+            options={clients.map((client) => ({ value: client.id, label: client.name }))}
+            value={clientId}
+            onChange={(e) => setClientId(e.target.value)}
+          />
+        </Field>
+        <Field label="Role at client">
+          <Select
+            placeholder="Choose…"
+            options={CONTACT_ROLE_OPTIONS}
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            disabled={!clientId}
+          />
+        </Field>
+      </FieldRow>
+      <FormActions onCancel={onCancel} submitting={submitting} />
+    </form>
+  );
+}
 
-          <div>
-            <label htmlFor="email" className={`${Theme.form.label}`}>
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className={`${Theme.form.input}`}
-              autoComplete="new-email"
-            />
-          </div>
-        </>
-      )}
-      {(showFullForm || showOnlyContactInfo) && (  
-        <>
-          <div>
-            <label htmlFor="street" className={`${Theme.form.label}`}>
-              Street Address
-            </label>
-            <input
-              type="text"
-              id="street"
-              value={formData.address.street}
-              onChange={(e) => setFormData({ 
-                ...formData, 
-                address: { ...formData.address, street: e.target.value }
-              })}
-              className={`${Theme.form.input}`}
-              autoComplete="street-address"
-            />
-          </div>
+export interface ContactDetailsValues {
+  name: string;
+  email: string;
+  phone: string;
+  address: Address;
+}
 
-          <div>
-            <label htmlFor="city" className={`${Theme.form.label}`}>
-              City
-            </label>
-            <input
-              type="text"
-              id="city"
-              value={formData.address.city}
-              onChange={(e) => setFormData({ 
-                ...formData, 
-                address: { ...formData.address, city: e.target.value }
-              })}
-              className={`${Theme.form.input}`}
-              autoComplete="address-level2"
-            />
-          </div>
+// Details section: name, email, phone and address
+export function ContactDetailsForm({ initial, onSubmit, onCancel, submitting }: SectionFormProps<ContactDetailsValues>) {
+  const [values, setValues] = useState(initial);
+  const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
 
-          <div>
-            <label htmlFor="region" className={`${Theme.form.label}`}>
-              Region/State
-            </label>
-            <input
-              type="text"
-              id="region"
-              value={formData.address.region}
-              onChange={(e) => setFormData({ 
-                ...formData, 
-                address: { ...formData.address, region: e.target.value }
-              })}
-              className={`${Theme.form.input}`}
-              autoComplete="address-level1"
-            />
-          </div>
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    const found: typeof errors = {};
+    if (!values.name.trim()) found.name = 'Enter a name';
+    if (values.email.trim() && !/^\S+@\S+\.\S+$/.test(values.email.trim())) found.email = 'Enter a valid email address';
+    setErrors(found);
+    if (Object.keys(found).length > 0) return;
+    await onSubmit({ ...values, name: values.name.trim(), email: values.email.trim(), phone: values.phone.trim() });
+  };
 
-          <div>
-            <label htmlFor="postalCode" className={`${Theme.form.label}`}>
-              Postal Code
-            </label>
-            <input
-              type="text"
-              id="postalCode"
-              value={formData.address.postalCode}
-              onChange={(e) => setFormData({ 
-                ...formData, 
-                address: { ...formData.address, postalCode: e.target.value }
-              })}
-              className={`${Theme.form.input}`}
-              autoComplete="postal-code"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="country" className={`${Theme.form.label}`}>
-              Country
-            </label>
-            <input
-              type="text"
-              id="country"
-              value={formData.address.country}
-              onChange={(e) => setFormData({ 
-                ...formData, 
-                address: { ...formData.address, country: e.target.value }
-              })}
-              className={`${Theme.form.input}`}
-              autoComplete="country-name"
-            />
-          </div>   
-        </>
-      )} 
-
-      
-
-      
-
-      <div className={`${Theme.form.action}`}>
-        <button
-          type="submit"
-          disabled={submitting}
-          className={`${Theme.button.solid}`}
-        >
-          {submitting ? 'Saving...' : submitLabel}
-        </button>
-        <button
-          type="button"
-          onClick={onCancel}
-          disabled={submitting}
-          className={`${Theme.button.outline}`}
-        >
-          Cancel
-        </button>
-      </div>
+  return (
+    <form onSubmit={handleSubmit} noValidate className="space-y-3">
+      <Field label="Name" required error={errors.name}>
+        <Input value={values.name} onChange={(e) => setValues({ ...values, name: e.target.value })} aria-invalid={Boolean(errors.name)} />
+      </Field>
+      <FieldRow>
+        <Field label="Email" error={errors.email}>
+          <Input
+            type="email"
+            value={values.email}
+            onChange={(e) => setValues({ ...values, email: e.target.value })}
+            aria-invalid={Boolean(errors.email)}
+          />
+        </Field>
+        <Field label="Phone">
+          <Input type="tel" value={values.phone} onChange={(e) => setValues({ ...values, phone: e.target.value })} />
+        </Field>
+      </FieldRow>
+      <AddressFields value={values.address} onChange={(address) => setValues({ ...values, address })} />
+      <FormActions onCancel={onCancel} submitting={submitting} />
     </form>
   );
 }

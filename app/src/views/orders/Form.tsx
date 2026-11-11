@@ -3,6 +3,7 @@ import { toast } from '../../stores/toastStore';
 import { CheckCircle, Plus, Trash2 } from 'lucide-react';
 import type { LaundryJob } from '../../types/job_interface';
 import type { Client } from '../../types/client_interface';
+import { clientJobHooks } from '../../hooks/clientHooks';
 import type { DefaultServices } from '../../types/service_interface';
 import { Theme } from '../../components/ui/Theme';
 
@@ -28,6 +29,9 @@ export default function Form({
   isReceivedMode = false,
 }: FormProps) {
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  // The selected client's active Client Jobs (from the client-jobs collection)
+  const { data: allClientJobs = [] } = clientJobHooks.useForClient(selectedClient?.id);
+  const clientJobs = allClientJobs.filter((job) => job.status !== 'inactive');
   const [formData, setFormData] = useState({
     clientId: initialData?.clientId || '',
     clientName: initialData?.clientName || '',
@@ -222,19 +226,19 @@ export default function Form({
             value={formData.clientJob}
             onChange={(e) => setFormData({ ...formData, clientJob: e.target.value })}
             className={`${Theme.form.input}`}
-            disabled={!selectedClient || !selectedClient.clientJobs || selectedClient.clientJobs.length === 0}
+            disabled={!selectedClient || clientJobs.length === 0}
             required
           >
             <option value="">
               {!selectedClient 
                 ? 'Select a client first...' 
-                : (!selectedClient.clientJobs || selectedClient.clientJobs.length === 0)
+                : clientJobs.length === 0
                   ? 'No jobs available for this client'
                   : 'Select a job...'}
             </option>
-            {selectedClient?.clientJobs?.map((job, index) => (
-              <option key={index} value={job.jobName}>
-                {job.jobName} ({job.jobType})
+            {clientJobs.map((job) => (
+              <option key={job.id} value={job.name}>
+                {job.name} ({job.jobType})
               </option>
             ))}
           </select>

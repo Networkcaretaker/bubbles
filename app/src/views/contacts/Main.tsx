@@ -1,85 +1,129 @@
-import { useState } from 'react';
-import { Users, UserPlus } from 'lucide-react';
-import { Theme } from '../../components/ui/Theme';
-import List from './List';
+import { useMemo, useState } from 'react';
+import { Contact as ContactIcon, Search, UserPlus } from 'lucide-react';
+import { Page } from '../../components/ui/Page';
+import { IconButton } from '../../components/ui/IconButton';
+import { Panel } from '../../components/ui/Card';
+import { DataList } from '../../components/ui/DataList';
+import { EmptyState } from '../../components/ui/States';
+import { Field, FieldRow, Input, Select } from '../../components/ui/Form';
+import { matchesSearch } from '../../lib/search';
+import { clientHooks, contactHooks } from '../../hooks/clientHooks';
+import { toast } from '../../stores/toastStore';
+import Card from './Card';
 import Form from './Form';
-import { contactService } from '../../services/contact_service';
-import type { Contact } from '../../types/contact_interface';
+import type { ContactFormValues } from './Form';
 
-const PAGE_TITLE = "Contacts"
-const PAGE_ICON = Users
+const NO_CLIENT = '__none';
 
-export default function View() {
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
+export default function Main() {
+  const contacts = contactHooks.useList();
+  const { data: clients = [] } = clientHooks.useList();
+  const createContact = contactHooks.useCreate();
 
-  const handleAddContact = async (contactData: Omit<Contact, 'id'>) => {
-    try {
-      setError(null);
-      await contactService.addContact(contactData);
-      setShowAddForm(false);
-      setRefreshTrigger(prev => prev + 1); // Trigger list refresh
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to add contact';
-      setError(message);
+  const [adding, setAdding] = useState(false);
+  const [showFilter, setShowFilter] = useState(false);
+  const [search, setSearch] = useState('');
+  const [clientFilter, setClientFilter] = useState('');
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  const clientNames = useMemo(() => new Map(clients.map((client) => [client.id, client.name])), [clients]);
+
+  const toggleFilter = () => {
+    // Closing the filter also clears it, so nothing stays hidden by accident
+    if (showFilter) {
+      setSearch('');
+      setClientFilter('');
     }
+    setShowFilter(!showFilter);
   };
 
-  if (error) {
-    return (
-      <div className={`${Theme.content.layout}`}>
-        <p className={`${Theme.system.error}`}>{error}</p>
-      </div>
-    );
+  const handleAdd = async (values: ContactFormValues) => {
+    try {
+      await createContact.mutateAsync(values);
+    } catch {
+      return; // The error message is shown automatically; keep the form open
+    }
+    toast.success(`${values.name} added`);
+    setAdding(false);
   };
+
+  const matchesClient = (clientId?: string | null) =>
+    !clientFilter || (clientFilter === NO_CLIENT ? !clientId : clientId === clientFilter);
 
   return (
-    <div className={`${Theme.view.page}`}>
-      <div className={`${Theme.view.header}`}>
-        <div className={`${Theme.header.layout}`}>
-          <div className={`${Theme.header.title}`}>
-            <PAGE_ICON className={`${Theme.icon.md}`} />
-            <h1>{PAGE_TITLE}</h1>
+    <Page
+      title="Contacts"
+      icon={ContactIcon}
+      actions={
+        <>
+          <IconButton icon={UserPlus} label="Add contact" active={adding} onClick={() => setAdding(!adding)} />
+          {!adding && <IconButton icon={Search} label="Search and filter" active={showFilter} onClick={toggleFilter} />}
+        </>
+      }
+    >
+      {adding && (
+        <Panel>
+          <div className="space-y-3">
+            <p className="text-lg font-bold text-white">New contact</p>
+            <Form
+              clients={clients}
+              onSubmit={handleAdd}
+              onCancel={() => setAdding(false)}
+              submitLabel="Add contact"
+              submitting={createContact.isPending}
+            />
           </div>
-          <button
-            onClick={() => setShowAddForm(!showAddForm)}
-            className={`${Theme.button.icon}`}
-          >
-            <UserPlus className={`${Theme.icon.md}`} />
-          </button>
-        </div>
-      </div>
-      
-      <div className={`${Theme.view.content}`}>
-        {showAddForm ? (
-          <div className={`${Theme.content.layout}`}>
-            <div className={`${Theme.card.layout}`}>
-              <div className={`${Theme.card.header}`}>
-                <div className={`${Theme.card.title_layout}`}>
-                  <div className={`${Theme.card.profile_layout}`}>
-                    <div className={`${Theme.card.profile_initial}`}>
-                      <p>N</p>
-                    </div>
-                    <div className={`${Theme.card.title_text}`}>
-                      <p>New Contact</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className={`${Theme.card.content}`}>
-                <Form
-                  onSubmit={handleAddContact}
-                  onCancel={() => setShowAddForm(false)}
-                  showOnlyNew={true}
-                />
-              </div>
-            </div>
-          </div>
-        ) : (
-          <List key={refreshTrigger} />
-        )}
-      </div>
-    </div>
+        </Panel>
+      )}
+
+      {/* While adding, only the form is shown */}
+      {!adding && showFilter && (
+        <Panel>
+          <FieldRow>
+            <Field label="Search">
+              <Input
+                type="search"
+                placeholder="Name, email or phone…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                autoFocus
+              />
+            </Field>
+            <Field label="Client">
+              <Select
+                placeholder="All clients"
+                options={[
+                  { value: NO_CLIENT, label: 'No client' },
+                  ...clients.map((client) => ({ value: client.id, label: client.name })),
+                ]}
+                value={clientFilter}
+                onChange={(e) => setClientFilter(e.target.value)}
+              />
+            </Field>
+          </FieldRow>
+        </Panel>
+      )}
+
+      {!adding && (
+        <DataList
+          query={contacts}
+          getKey={(contact) => contact.id}
+          filter={(contact) =>
+            matchesSearch(search, contact.name, contact.email, contact.phone, clientNames.get(contact.clientId ?? '')) &&
+            matchesClient(contact.clientId)
+          }
+          empty={<EmptyState icon={ContactIcon} title="No contacts yet" message="Add a contact with the button at the top." />}
+          noMatchMessage="No contacts match your search."
+          renderItem={(contact) => (
+            <Card
+              contact={contact}
+              clientName={contact.clientId ? clientNames.get(contact.clientId) : undefined}
+              expanded={expandedId === contact.id}
+              onToggle={() => setExpandedId((current) => (current === contact.id ? null : contact.id))}
+            />
+          )}
+        />
+      )}
+    </Page>
   );
 }

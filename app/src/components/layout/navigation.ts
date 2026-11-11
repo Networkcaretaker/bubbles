@@ -3,6 +3,7 @@ import {
   ClipboardList,
   Layers,
   Building2,
+  Briefcase,
   Contact,
   FileText,
   Receipt,
@@ -44,6 +45,7 @@ export const navigation: NavGroup[] = [
     title: 'Customers',
     items: [
       { name: 'Clients', href: '/clients', icon: Building2, pinned: true },
+      { name: 'Client Jobs', href: '/client-jobs', icon: Briefcase },
       { name: 'Contacts', href: '/contacts', icon: Contact },
     ],
   },

@@ -20,7 +20,7 @@ service cloud.firestore {
 
     match /{collection}/{docId} {
       allow read, write: if isStaff()
-        && collection in ['clients', 'contacts', 'items', 'jobs', 'services'];
+        && collection in ['clients', 'client-jobs', 'contacts', 'items', 'jobs', 'services'];
     }
   }
 }

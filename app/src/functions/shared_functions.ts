@@ -13,7 +13,7 @@ export const formatDate = (dateString?: string) => {
     });
 };
 
-export const formatAddress = (address: Address) => {
+export const formatAddress = (address?: Address) => {
     if (!address) return 'N/A';
     const parts = [
         address.street,

@@ -8,6 +8,7 @@ import type { DataExport as ExportResult } from '../../services/export_service';
 
 const LABELS: Record<string, string> = {
   clients: 'Clients',
+  'client-jobs': 'Client Jobs',
   contacts: 'Contacts',
   items: 'Items',
   jobs: 'Jobs',

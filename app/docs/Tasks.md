@@ -84,18 +84,51 @@ Old sections keep working on the old theme until they are rebuilt.
 - [ ] Existing users get their role claim the next time their role is changed (only matters once rules use claims)
 - [ ] Review what we learned and adjust the shared components before moving on
 
-## Phase 5 – Clients
-- [ ] Rebuild with shared components
-- [ ] Split the large client form into smaller forms (details, contact info, jobs, contacts)
-- [ ] Clean up old `ClientType` values (`'Yacht Maintainence'`, `'yacht-cleaning'`) in the database
-- [ ] Keep search and filter
+## Phase 5 – Clients and Contacts (built together)
+Decisions (2026-11-11): fresh start with the data (exported first); a contact belongs to one client;
+keep the name "Client Jobs".
 
-## Phase 6 – Contacts
-- [ ] Rebuild with shared components
-- [ ] Check the contact ↔ client link still updates both sides
+**Data**
+- [x] Contact: `name, email, phone, address, clientId?, role?` – the link and the role (primary, billing, captain…) live on the contact only
+- [x] Client: `name, email, phone, address, clientType, status, clientJobs[]` – drop `clientContacts` and old `contacts`
+- [x] Clean `ClientType` list (removed `'Yacht Maintainence'`; kept `'yacht-cleaning'` as a real type)
+- [x] Client page finds its contacts with "contacts where clientId = this client" (nothing to keep in sync)
+- [x] Deleting a client unlinks its contacts (contacts are kept)
+- [x] Services and hooks on `createCrudService` / `createCrudHooks`; keep `getAllClients`/`getClient` working for the Jobs section until it's rebuilt
+
+**Contacts screens**
+- [x] List with search and "client" filter; add contact (optionally choose client and role)
+- [x] Contact page: details, linked client (link/unlink, role), edit, delete
+
+**Clients screens**
+- [x] List with search, status and type filters; add client (name, type, status only)
+- [x] Client page with sections, each with its own small edit form:
+  - Details (name, type, status) · Contact info (phone, email, address) · Contacts (linked list; add existing or new contact; change role; unlink) · Client Jobs (linked list; add existing or new; unlink)
+
+**Client Jobs (own collection `client-jobs`)**
+- [x] Client Job: `name, jobType, status (active/inactive), clientId?, address, notes` – linked to a client the same way as contacts
+- [x] Client Jobs section (list with search and client/type/status filters; add; page with edit/delete)
+- [x] Client page lists its Client Jobs and can add new ones (no unlink/link existing: a job stays with its client)
+- [x] Client is required when creating a client job and can't be changed afterwards
+- [x] Deleting a client also deletes its Client Jobs (contacts are only unlinked)
+- [x] Old `clientJobs` list removed from clients; the Jobs "new job" form now picks from the client's active Client Jobs
+- [x] Added to Settings → Data export
+
+**Record and editing**
+- [x] `createdBy` (uid + name) saved automatically on every new record by `createCrudService`; shown in a shared Record section with added/last updated
+- [x] Contact page edited section by section like clients: Client (client + role) and Details (name, email, phone, address)
+- [x] Client Job page edited section by section: Details (name, type, status), Location, Notes. Client is shown but can't be changed after creation
+- [x] Deploy `firestore.rules` (adds `client-jobs`) – needed before Client Jobs can be read or saved
+
+**Finish**
+- [x] Automated checks with the Claude test accounts (create, link, unlink, delete): 28/28 pass, runs the app's real service code
+- [x] Old client/contact data cleared (exported first)
+- [ ] Check the Jobs section still loads with the new clients
+- [ ] Remove old client/contact views and the `theme.ts` styles they used
 
 ## Later
 - [ ] Services, Items, Jobs
+- [ ] Rename the current Jobs section and `jobs` collection to Work Orders (`work-orders`), booked against a Client Job
 - [ ] Batches, Invoices, Quotes (currently placeholders)
 - [ ] Dashboard
 - [ ] Remove `views/template/` once all sections are rebuilt

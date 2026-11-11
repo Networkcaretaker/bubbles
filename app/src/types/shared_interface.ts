@@ -23,6 +23,12 @@ export interface Address {
     country?: string;
 };
 
+// Who created a record. The name is copied at the time, so it still shows if the user is deleted later.
+export interface CreatedBy {
+    uid: string;
+    name: string;
+};
+
 export interface Timestamp {
     createdAt?: string;
     updatedAt?: string;

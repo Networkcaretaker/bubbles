@@ -1,4 +1,4 @@
-import type { Address, Timestamp } from './shared_interface';
+import type { Address, CreatedBy, Timestamp } from './shared_interface';
 
 export type ClientStatus =
   | 'active'
@@ -6,14 +6,13 @@ export type ClientStatus =
   | 'prospect'
   | 'suspended';
 
-export type ClientType = 
+export type ClientType =
   | 'residential'
   | 'individual'
   | 'private-yacht'
   | 'property-management'
   | 'yacht-charters'
-  | 'Yacht Maintainence' //old
-  | 'yacht-cleaning' //spelling
+  | 'yacht-cleaning'
   | 'yacht-maintenance'
   | 'sport-club'
   | 'hotel-resort'
@@ -21,17 +20,7 @@ export type ClientType =
   | 'corporate'
   | 'other';
 
-export type ContactType = 
-  | 'primary'
-  | 'billing'
-  | 'operations'
-  | 'captain'
-  | 'stewardess'
-  | 'property_manager'
-  | 'owner'
-  | 'other';
-
-export type JobType = 
+export type JobType =
   | 'residential'
   | 'mixed-apparel'
   | 'mens-apparel'
@@ -42,7 +31,7 @@ export type JobType =
   | 'tennis-club'
   | 'football-club'
   | 'hotel-resort'
-  | 'restaurant'
+  | 'restaurant';
 
 export const emojiMap: Record<JobType, string> = {
   'residential': '🏠',
@@ -58,18 +47,8 @@ export const emojiMap: Record<JobType, string> = {
   'restaurant': '🍴',
 };
 
-export interface ClientJob {
-  jobName: string;
-  jobType: JobType;
-  workOrderIds?: string[];
-}
-
-export interface ClientContact {
-  id: string;
-  name: string;
-  type: ContactType;
-}
-
+// A client's contacts and Client Jobs are separate collections linked by clientId
+// ("contacts where clientId = client.id", "client-jobs where clientId = client.id")
 export interface Client {
   id: string;
   name: string;
@@ -77,8 +56,7 @@ export interface Client {
   phone: string;
   address: Address;
   clientType: ClientType;
-  clientJobs?: ClientJob[];
-  clientContacts?: ClientContact[];
   timestamp?: Timestamp;
+  createdBy?: CreatedBy;
   status: ClientStatus;
-};
+}
