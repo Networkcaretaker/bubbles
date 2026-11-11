@@ -58,7 +58,9 @@ export default function Main() {
           {permissions?.canCreateUsers && (
             <IconButton icon={UserPlus} label="Add user" active={adding} onClick={() => setAdding(!adding)} />
           )}
-          <IconButton icon={Search} label="Search and filter" active={showFilter} onClick={toggleFilter} />
+          {!adding && (
+            <IconButton icon={Search} label="Search and filter" active={showFilter} onClick={toggleFilter} />
+          )}
         </>
       }
     >
@@ -71,7 +73,8 @@ export default function Main() {
         </Panel>
       )}
 
-      {showFilter && (
+      {/* While adding a user, only the form is shown */}
+      {!adding && showFilter && (
         <Panel>
           <FieldRow>
             <Field label="Search">
@@ -90,21 +93,23 @@ export default function Main() {
         </Panel>
       )}
 
-      <DataList
-        query={users}
-        getKey={(user) => user.id}
-        filter={(user) => matchesSearch(search, user.name, user.email, user.phone) && (!role || user.role === role)}
-        empty={<EmptyState icon={UserCog} title="No users yet" />}
-        noMatchMessage="No users match your search."
-        renderItem={(user) => (
-          <Card
-            user={user}
-            isMe={user.id === me?.id}
-            expanded={expandedId === user.id}
-            onToggle={() => toggleCard(user.id)}
-          />
-        )}
-      />
+      {!adding && (
+        <DataList
+          query={users}
+          getKey={(user) => user.id}
+          filter={(user) => matchesSearch(search, user.name, user.email, user.phone) && (!role || user.role === role)}
+          empty={<EmptyState icon={UserCog} title="No users yet" />}
+          noMatchMessage="No users match your search."
+          renderItem={(user) => (
+            <Card
+              user={user}
+              isMe={user.id === me?.id}
+              expanded={expandedId === user.id}
+              onToggle={() => toggleCard(user.id)}
+            />
+          )}
+        />
+      )}
     </Page>
   );
 }

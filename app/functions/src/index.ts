@@ -132,8 +132,8 @@ interface UpdateUserData {
   changes: { name?: string; email?: string; phone?: string; role?: UserRole };
 }
 
-// People who can edit users can change anything (within the owner rules).
-// Everyone else can change only their own name and phone.
+// People who can edit users can change name, phone and role (within the owner rules).
+// Everyone else can change only their own name and phone. Email never changes.
 export const updateUser = onCall<UpdateUserData>(async (request) => {
   const caller = await getCaller(request);
   const id = cleanText(request.data?.id);
@@ -145,10 +145,7 @@ export const updateUser = onCall<UpdateUserData>(async (request) => {
   if (!target) throw new HttpsError('not-found', "This user doesn't exist. They may have been deleted.");
 
   if (!caller.permissions.canEditUsers) {
-    const ownBasicDetails =
-      id === caller.uid &&
-      (changes.email === undefined || cleanEmail(changes.email) === target.email) &&
-      (changes.role === undefined || changes.role === target.role);
+    const ownBasicDetails = id === caller.uid && (changes.role === undefined || changes.role === target.role);
     if (!ownBasicDetails) {
       throw new HttpsError('permission-denied', "You don't have permission to do this.");
     }
@@ -161,7 +158,7 @@ export const updateUser = onCall<UpdateUserData>(async (request) => {
   }
 
   const update: Record<string, unknown> = {};
-  const loginUpdate: { email?: string; displayName?: string } = {};
+  const loginUpdate: { displayName?: string } = {};
 
   if (changes.name !== undefined) {
     const name = cleanText(changes.name);
@@ -172,13 +169,9 @@ export const updateUser = onCall<UpdateUserData>(async (request) => {
   if (changes.phone !== undefined) {
     update.phone = cleanText(changes.phone);
   }
-  if (changes.email !== undefined) {
-    const email = cleanEmail(changes.email);
-    if (!isEmail(email)) throw invalid('Enter a valid email address.');
-    if (email !== target.email) {
-      update.email = email;
-      loginUpdate.email = email;
-    }
+  // Email is the login, so it's fixed once the user is created
+  if (changes.email !== undefined && cleanEmail(changes.email) !== target.email) {
+    throw new HttpsError('failed-precondition', "Email can't be changed after a user is created.");
   }
   if (changes.role !== undefined && changes.role !== target.role) {
     if (!isRole(changes.role)) throw invalid('Choose a role.');

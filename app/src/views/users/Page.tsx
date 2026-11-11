@@ -58,9 +58,9 @@ export default function Page() {
     );
   }
 
-  const handleSave = async ({ name, email, phone, role }: UserFormValues) => {
+  const handleSave = async ({ name, phone, role }: UserFormValues) => {
     try {
-      await updateUser.mutateAsync({ id: user.id, changes: { name, email, phone, role } });
+      await updateUser.mutateAsync({ id: user.id, changes: { name, phone, role } });
     } catch {
       return; // The error message is shown automatically; keep the form open
     }
@@ -140,7 +140,6 @@ export default function Page() {
             onCancel={() => setEditing(false)}
             submitting={updateUser.isPending}
             roleLocked={isMe}
-            emailLocked={isMe && !permissions?.canEditUsers}
           />
         </Panel>
       ) : (

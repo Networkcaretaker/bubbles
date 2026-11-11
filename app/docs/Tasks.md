@@ -71,6 +71,9 @@ Old sections keep working on the old theme until they are rebuilt.
 - [x] User page (`/users/:id`) with Edit, Delete and Back in the header; list cards link to it
 - [x] My Profile (`/profile`) from the sidebar email and the mobile More menu
 - [x] Everyone can edit their own name and phone; email and role need user-edit permission (checked in `updateUser`)
+- [x] Email can't be changed after a user is created (form, app and `updateUser` all refuse it)
+- [x] Hide the users list while the "New user" form is open
+- [ ] Later: change password section on the user profile page
 - [ ] Later: activity log and personal settings on the user page
 - [ ] Later: who can see the Users list and other people's pages (role rules task)
 - [x] Deploy the functions: `firebase deploy --only functions` (from `app/`)
@@ -108,4 +111,5 @@ Old sections keep working on the old theme until they are rebuilt.
 ## Notes
 - **Users:** public sign-up is turned off. Users are added, edited and deleted only through the Cloud Functions in `functions/src/index.ts`, which check permissions first. The role/permission table is copied in `functions/src/permissions.ts` – keep it in step with `src/functions/user_functions.ts`.
 - **Admin/normal tokens:** each login token carries a `role` custom claim. The app and the Firestore rules can check it straight from the token, without reading the `users` collection.
+- **Deploying functions:** if it fails with "User code failed to load… Timeout after 10000", give it longer. PowerShell: `$env:FUNCTIONS_DISCOVERY_TIMEOUT=60; firebase deploy --only functions`
 - **Cloud Functions** need the Firebase Blaze (pay-as-you-go) plan. Usage at this size should stay within the free allowance.

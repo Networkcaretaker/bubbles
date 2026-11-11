@@ -36,8 +36,9 @@ export const userService = {
   },
 
   async update(id: string, changes: RecordChanges<AppUser>): Promise<AppUser> {
-    const { name, email, phone, role } = changes;
-    await callFunction('updateUser', { id, changes: { name, email, phone, role } });
+    // Email is the login, so it's never sent (it can't be changed after creation)
+    const { name, phone, role } = changes;
+    await callFunction('updateUser', { id, changes: { name, phone, role } });
     return base.getOne(id);
   },
 

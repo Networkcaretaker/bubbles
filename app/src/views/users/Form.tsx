@@ -19,7 +19,6 @@ interface FormProps {
   onCancel: () => void;
   submitting?: boolean;
   roleLocked?: boolean; // e.g. people can't change their own role
-  emailLocked?: boolean; // e.g. people without user-edit permission editing their own profile
 }
 
 type Errors = Partial<Record<keyof UserFormValues | 'confirmPassword', string>>;
@@ -31,7 +30,6 @@ export default function Form({
   onCancel,
   submitting = false,
   roleLocked = false,
-  emailLocked = false,
 }: FormProps) {
   const [values, setValues] = useState<UserFormValues>({
     name: initial?.name ?? '',
@@ -49,8 +47,8 @@ export default function Form({
   const validate = (): Errors => {
     const found: Errors = {};
     if (!values.name.trim()) found.name = 'Enter a name';
-    if (!/^\S+@\S+\.\S+$/.test(values.email.trim())) found.email = 'Enter a valid email address';
     if (mode === 'create') {
+      if (!/^\S+@\S+\.\S+$/.test(values.email.trim())) found.email = 'Enter a valid email address';
       if (values.password.length < 6) found.password = 'Use at least 6 characters';
       if (confirmPassword !== values.password) found.confirmPassword = "Passwords don't match";
     }
@@ -74,16 +72,16 @@ export default function Form({
       <FieldRow>
         <Field
           label="Email"
-          required
+          required={mode === 'create'}
           error={errors.email}
-          hint={emailLocked ? 'Ask a manager to change your email' : 'Also used to sign in'}
+          hint={mode === 'edit' ? 'Used to sign in, so it can’t be changed' : 'Used to sign in. It can’t be changed later.'}
         >
           <Input
             type="email"
             autoComplete="off"
             value={values.email}
             onChange={(e) => set('email')(e.target.value)}
-            disabled={emailLocked}
+            disabled={mode === 'edit'}
             aria-invalid={Boolean(errors.email)}
           />
         </Field>
