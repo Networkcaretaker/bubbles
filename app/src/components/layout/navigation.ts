@@ -11,7 +11,7 @@ import {
   Shirt,
   UserCog,
   Settings,
-  LayoutTemplate,
+  FileStack,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -37,7 +37,7 @@ export const navigation: NavGroup[] = [
   {
     title: 'Work',
     items: [
-      { name: 'Jobs', href: '/jobs', icon: ClipboardList, pinned: true },
+      { name: 'Work Orders', href: '/work-orders', icon: ClipboardList, pinned: true },
       { name: 'Batches', href: '/batches', icon: Layers },
     ],
   },
@@ -61,14 +61,11 @@ export const navigation: NavGroup[] = [
     items: [
       { name: 'Services', href: '/services', icon: WashingMachine },
       { name: 'Items', href: '/items', icon: Shirt },
+      { name: 'Templates', href: '/templates', icon: FileStack },
       { name: 'Users', href: '/users', icon: UserCog },
       { name: 'Settings', href: '/settings', icon: Settings },
     ],
   },
-  // Only shown when running locally (npm run dev)
-  ...(import.meta.env.DEV
-    ? [{ title: 'Developer', items: [{ name: 'Template', href: '/template', icon: LayoutTemplate }] }]
-    : []),
 ];
 
 export const navItems: NavItem[] = navigation.flatMap((group) => group.items);

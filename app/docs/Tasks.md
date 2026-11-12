@@ -155,12 +155,30 @@ convert the 19 existing services in place; delete and re-add the 2 items (Pillow
 - [x] Jobs section still loads services (`getAllServices` kept; category field renamed `service` → `category`)
 - [ ] Remove old service/item views and unused theme styles
 
+## Phase 7 – Work Orders and basic collections
+Decisions (2026-11-12): Jobs becomes Work Orders (`work-orders`) with the same data for now; Batches, Quotes,
+Invoices and Templates start as basic named documents. Dashboard and Settings come after testing.
+
+**Work Orders**
+- [x] `WorkOrder`: reference, clientId, clientJobId, status, dateRequired/Received/Complete, bags, items, serviceIds
+- [x] List with search, status and client filters; new work order (client → active client job → required date), reference made automatically
+- [x] Page: Status (progress bar, "Mark as next stage", Received/Completed record the time) · Client (fixed) · Dates · Quantities · Services · Record
+- [x] Old Jobs screens removed; `/jobs` links go to Work Orders (`views/orders` kept, with the old job service/types it uses)
+
+**Basic collections: Batches, Quotes, Invoices, Templates**
+- [x] One shared list page and detail page (`views/simple`), set up per section in `views/simple/sections.ts`
+- [x] Add, rename and delete; search; Record section
+- [x] Old placeholder pages and the old `views/template` starter removed; Templates added under Setup
+
+**Finish**
+- [x] Deploy `firestore.rules` (adds the five new collections; removes `jobs`)
+- [x] Automated checks with the test accounts: 16/16 pass
+- [ ] Dashboard and Settings views
+
 ## Later
 - [ ] Review everything built so far (after Phase 6)
-- [ ] Rename the current Jobs section and `jobs` collection to Work Orders (`work-orders`), booked against a Client Job
 - [ ] Batches, Invoices, Quotes (currently placeholders)
 - [ ] Dashboard
-- [ ] Remove `views/template/` once all sections are rebuilt
 - [ ] Write a proper README
 - [ ] Safe test setup so Claude can sign in and test without touching live data
   - Option A: Firebase Emulator Suite (Auth, Firestore, Functions) on this computer – needs Java

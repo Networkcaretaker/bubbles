@@ -2,7 +2,18 @@ import { collection, getDocs, Timestamp, GeoPoint, DocumentReference } from 'fir
 import { db } from './firebase/config';
 import { friendlyError } from './firebase/crud';
 
-export const EXPORTABLE_COLLECTIONS = ['clients', 'client-jobs', 'contacts', 'items', 'jobs', 'services'] as const;
+export const EXPORTABLE_COLLECTIONS = [
+  'clients',
+  'client-jobs',
+  'contacts',
+  'services',
+  'items',
+  'work-orders',
+  'batches',
+  'quotes',
+  'invoices',
+  'templates',
+] as const;
 export type ExportableCollection = (typeof EXPORTABLE_COLLECTIONS)[number];
 
 export interface DataExport {

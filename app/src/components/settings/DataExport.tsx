@@ -11,8 +11,12 @@ const LABELS: Record<string, string> = {
   'client-jobs': 'Client Jobs',
   contacts: 'Contacts',
   items: 'Items',
-  jobs: 'Jobs',
   services: 'Services',
+  'work-orders': 'Work Orders',
+  batches: 'Batches',
+  quotes: 'Quotes',
+  invoices: 'Invoices',
+  templates: 'Templates',
 };
 
 // Download a JSON backup of the chosen collections

@@ -22,14 +22,15 @@ import Services from './views/services/Main';
 import ServicePage from './views/services/Page';
 import Items from './views/items/Main';
 import ItemPage from './views/items/Page';
-import Jobs from './views/jobs/Main';
-import JobPage from './views/jobs/Page';
+import WorkOrders from './views/work-orders/Main';
+import WorkOrderPage from './views/work-orders/Page';
 import Settings from './views/Settings';
-import Template from './views/template/Main';
-import TemplatePage from './views/template/Page';
-import Batches from './views/Batches';
-import Invoices from './views/Invoices';
-import Quotes from './views/Quotes';
+import SimpleMain from './views/simple/Main';
+import SimplePage from './views/simple/Page';
+import { batchesSection, invoicesSection, quotesSection, templatesSection } from './views/simple/sections';
+
+// Basic named collections share one list page and one detail page
+const simpleSections = [batchesSection, quotesSection, invoicesSection, templatesSection];
 
 // ... ProtectedRoute component ...
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -85,14 +86,14 @@ function App() {
               <Route path="services/:id" element={<ServicePage />} />
               <Route path="items" element={<Items />} />
               <Route path="items/:id" element={<ItemPage />} />
-              <Route path="jobs" element={<Jobs />} />
-              <Route path="jobs/:id" element={<JobPage />} />
+              <Route path="work-orders" element={<WorkOrders />} />
+              <Route path="work-orders/:id" element={<WorkOrderPage />} />
+              <Route path="jobs/*" element={<Navigate to="/work-orders" replace />} />
               <Route path="settings" element={<Settings />} />
-              <Route path="template" element={<Template />} />
-              <Route path="template/:id" element={<TemplatePage />} />
-              <Route path="batches" element={<Batches />} />
-              <Route path="invoices" element={<Invoices />} />
-              <Route path="quotes" element={<Quotes />} />
+              {simpleSections.flatMap((section) => [
+                <Route key={section.path} path={section.path.slice(1)} element={<SimpleMain key={section.path} config={section} />} />,
+                <Route key={`${section.path}/:id`} path={`${section.path.slice(1)}/:id`} element={<SimplePage key={section.path} config={section} />} />,
+              ])}
               <Route path="settings/users" element={<h1 className="text-2xl font-bold text-accent-500">Users</h1>} />
             </Route>
             
