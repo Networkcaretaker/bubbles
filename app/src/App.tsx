@@ -1,11 +1,9 @@
-import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useAuthStore } from './stores/authStore';
+import { ProtectedRoute } from './components/ProtectedRoute';
 import BubbleAnimation from './components/Background';
 import { AppShell } from './components/layout/AppShell';
 import { Toaster } from './components/ui/Toaster';
 import { ConfirmDialog } from './components/ui/ConfirmDialog';
-import { Spinner } from './components/ui/States';
 // Import Views
 import Login from './views/Login';
 import Dashboard from './views/Dashboard';
@@ -32,24 +30,6 @@ import { batchesSection, invoicesSection, quotesSection, templatesSection } from
 // Basic named collections share one list page and one detail page
 const simpleSections = [batchesSection, quotesSection, invoicesSection, templatesSection];
 
-// ... ProtectedRoute component ...
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useAuthStore();
-
-  if (loading) {
-    return (
-      <div className="flex h-dvh items-center justify-center">
-        <Spinner className="h-12 w-12" />
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return <>{children}</>;
-};
 
 function App() {
   return (

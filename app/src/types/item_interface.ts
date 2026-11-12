@@ -46,6 +46,7 @@ export interface CatalogItem {
   status: ItemStatus;
   sizes: ItemSize[];
   prices: ItemServicePrice[];
+  serviceIds?: string[]; // The services in `prices`, kept up to date automatically so they can be searched
   timestamp?: Timestamp;
   createdBy?: CreatedBy;
 }

@@ -8,7 +8,7 @@ import { DataList } from '../../components/ui/DataList';
 import { EmptyState } from '../../components/ui/States';
 import { Field, FieldRow, Input, Select } from '../../components/ui/Form';
 import { matchesSearch } from '../../lib/search';
-import { WORK_ORDER_STATUS_OPTIONS, workOrderReference } from '../../functions/work_order_functions';
+import { WORK_ORDER_STATUS_OPTIONS, workOrderNumber, workOrderReference } from '../../functions/work_order_functions';
 import { workOrderHooks } from '../../hooks/workOrderHooks';
 import { clientHooks, clientJobHooks } from '../../hooks/clientHooks';
 import { toast } from '../../stores/toastStore';
@@ -61,7 +61,7 @@ export default function Main() {
     } catch {
       return; // The error message is shown automatically; keep the form open
     }
-    toast.success(`Work order ${created.reference} created`);
+    toast.success(`Work order ${workOrderNumber(created)} created`);
     navigate(`/work-orders/${created.id}`);
   };
 
@@ -92,7 +92,7 @@ export default function Main() {
             <Field label="Search">
               <Input
                 type="search"
-                placeholder="Reference, client or client job…"
+                placeholder="Number, reference, client or client job…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 autoFocus
@@ -120,7 +120,7 @@ export default function Main() {
           query={orders}
           getKey={(order) => order.id}
           filter={(order) =>
-            matchesSearch(search, order.reference, clientNames.get(order.clientId), jobById.get(order.clientJobId)?.name) &&
+            matchesSearch(search, workOrderNumber(order), order.reference, clientNames.get(order.clientId), jobById.get(order.clientJobId)?.name) &&
             (!status || order.status === status) &&
             (!clientFilter || order.clientId === clientFilter)
           }

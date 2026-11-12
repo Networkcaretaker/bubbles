@@ -10,7 +10,7 @@ import { RecordSection } from '../../components/ui/RecordSection';
 import type { WorkOrder, WorkOrderStatus } from '../../types/work_order_interface';
 import { formatDate, formatIcon } from '../../functions/shared_functions';
 import { serviceCategoryLabel } from '../../functions/catalog_functions';
-import { WORK_ORDER_STATUS_OPTIONS, WORK_ORDER_STATUS_TONES, workOrderStatusLabel } from '../../functions/work_order_functions';
+import { WORK_ORDER_STATUS_OPTIONS, WORK_ORDER_STATUS_TONES, workOrderNumber, workOrderStatusLabel } from '../../functions/work_order_functions';
 import { workOrderHooks } from '../../hooks/workOrderHooks';
 import { clientHooks, clientJobHooks } from '../../hooks/clientHooks';
 import { serviceHooks } from '../../hooks/catalogHooks';
@@ -78,7 +78,7 @@ export default function Page() {
 
   const handleDelete = async () => {
     const confirmed = await confirmDialog({
-      title: `Delete ${order.reference}?`,
+      title: `Delete ${workOrderNumber(order)}?`,
       message: 'This can’t be undone.',
       confirmLabel: 'Delete',
       danger: true,
@@ -89,7 +89,7 @@ export default function Page() {
     } catch {
       return;
     }
-    toast.success(`${order.reference} deleted`);
+    toast.success(`${workOrderNumber(order)} deleted`);
     navigate('/work-orders');
   };
 
@@ -107,7 +107,7 @@ export default function Page() {
 
   return (
     <BasePage
-      title={order.reference}
+      title={workOrderNumber(order)}
       icon={ClipboardList}
       actions={
         <>
@@ -122,7 +122,9 @@ export default function Page() {
           <JobIcon job={{ jobType: clientJob?.jobType ?? 'residential' }} />
           <div className="min-w-0 flex-1">
             <p className="truncate text-lg font-bold text-white">{clientJob?.name ?? 'Unknown client job'}</p>
-            <p className="truncate text-xs font-medium text-accent-300">{order.reference}</p>
+            <p className="truncate text-xs font-medium text-accent-300">
+              {workOrderNumber(order)} · {order.reference}
+            </p>
           </div>
           <Badge tone={WORK_ORDER_STATUS_TONES[order.status]}>{workOrderStatusLabel(order.status)}</Badge>
         </div>

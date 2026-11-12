@@ -11,6 +11,7 @@ export type WorkOrderStatus =
 // A laundry job booked against a Client Job. Stored in 'work-orders' (replaces the old 'jobs').
 export interface WorkOrder {
   id: string;
+  number?: number; // Sequential, shown as WO-0001. Set automatically when the work order is created
   reference: string; // e.g. "my-serenity-261112"
   clientId: string;
   clientJobId: string;

@@ -9,11 +9,4 @@ export const contactService = {
 
   // Contacts linked to one client, sorted by name
   getForClient: (clientId: string) => listWhere<Contact>('contacts', 'clientId', clientId, "load the client's contacts"),
-
-  // Older names, still used by the template section until it's rebuilt
-  getAllContacts: base.getAll,
-  getContact: base.getOne,
-  addContact: base.create,
-  updateContact: base.update,
-  deleteContact: base.remove,
 };

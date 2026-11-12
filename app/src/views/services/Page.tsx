@@ -60,13 +60,6 @@ export default function Page() {
   };
 
   const handleDelete = async () => {
-    // Items price this service, so it can't be removed while they do
-    if (usedBy.length > 0) {
-      toast.error(
-        `${service.name} can't be deleted: ${usedBy.length} item${usedBy.length === 1 ? ' has' : 's have'} prices for it. Remove those first, or set it to Inactive.`,
-      );
-      return;
-    }
     const confirmed = await confirmDialog({
       title: `Delete ${service.name}?`,
       message: 'This can’t be undone. To stop offering it but keep its history, set it to Inactive instead.',

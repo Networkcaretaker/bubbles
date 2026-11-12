@@ -13,7 +13,7 @@ export default defineConfig({
       manifest: false, 
       workbox: {
         // These are the file types we want to cache for offline use
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}']
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,ttf,woff2,json}']
       },
       devOptions: {
         enabled: true // Allows us to test PWA features in development

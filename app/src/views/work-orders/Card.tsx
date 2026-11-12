@@ -4,7 +4,7 @@ import type { ClientJob } from '../../types/client_job_interface';
 import { Card as BaseCard, CardAction, CardActions, CardSection, DetailRow } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { formatDate } from '../../functions/shared_functions';
-import { WORK_ORDER_STATUS_TONES, workOrderStatusLabel } from '../../functions/work_order_functions';
+import { WORK_ORDER_STATUS_TONES, workOrderNumber, workOrderStatusLabel } from '../../functions/work_order_functions';
 import { JobIcon } from '../client-jobs/Card';
 
 interface CardProps {
@@ -24,7 +24,7 @@ export default function Card({ order, clientName, clientJob, expanded, onToggle 
   return (
     <BaseCard
       title={clientJob?.name ?? 'Unknown client job'}
-      subtitle={`${order.reference} · ${clientName ?? 'Unknown client'}`}
+      subtitle={`${workOrderNumber(order)} · ${clientName ?? 'Unknown client'}`}
       avatar={<JobIcon job={{ jobType: clientJob?.jobType ?? 'residential' }} />}
       badge={<Badge tone={WORK_ORDER_STATUS_TONES[order.status]}>{workOrderStatusLabel(order.status)}</Badge>}
       expanded={expanded}
@@ -37,7 +37,7 @@ export default function Card({ order, clientName, clientJob, expanded, onToggle 
         {counts.length > 0 && <DetailRow icon={Package}>{counts.join(' · ')}</DetailRow>}
       </CardSection>
       <CardActions>
-        <CardAction icon={Info} label={`Open ${order.reference}`} to={`/work-orders/${order.id}`} />
+        <CardAction icon={Info} label={`Open ${workOrderNumber(order)}`} to={`/work-orders/${order.id}`} />
       </CardActions>
     </BaseCard>
   );

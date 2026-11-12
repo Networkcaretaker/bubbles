@@ -25,7 +25,7 @@ export interface BaseRecord {
 export type NewRecord<T extends BaseRecord> = Omit<T, 'id' | 'timestamp' | 'createdBy'>;
 
 // The signed-in person, with the name from their user record (falls back to their login details)
-async function currentUserStamp(): Promise<CreatedBy | undefined> {
+export async function currentUserStamp(): Promise<CreatedBy | undefined> {
   const user = auth.currentUser;
   if (!user) return undefined;
   let name = '';
@@ -55,20 +55,33 @@ interface CrudOptions {
 }
 
 // Turn Firebase errors into messages that make sense to the person using the app
-export function friendlyError(action: string, error: unknown): Error {
+// An Error that also says why it happened, e.g. 'permission-denied' or 'not-found'
+export class AppError extends Error {
+  code?: string;
+  constructor(message: string, code?: string) {
+    super(message);
+    this.code = code;
+  }
+}
+
+export const errorCode = (error: unknown) => (error instanceof AppError || error instanceof FirebaseError ? error.code : undefined);
+
+export function friendlyError(action: string, error: unknown): AppError {
   console.error(`Failed to ${action}:`, error);
+  if (error instanceof AppError) return error; // Already friendly
   if (error instanceof FirebaseError) {
     switch (error.code) {
       case 'permission-denied':
-        return new Error(`You don't have permission to ${action}.`);
+        return new AppError(`You don't have permission to ${action}.`, error.code);
       case 'unavailable':
-        return new Error(`Couldn't ${action}. Check your internet connection and try again.`);
+        return new AppError(`Couldn't ${action}. Check your internet connection and try again.`, error.code);
       case 'not-found':
-        return new Error(`Couldn't ${action}. It may have been deleted.`);
+        return new AppError(`Couldn't ${action}. It may have been deleted.`, error.code);
     }
+    return new AppError(`Couldn't ${action}: ${error.message}`, error.code);
   }
   const message = error instanceof Error ? error.message : 'Unknown error';
-  return new Error(`Couldn't ${action}: ${message}`);
+  return new AppError(`Couldn't ${action}: ${message}`);
 }
 
 // Standard get/create/update/delete for one Firestore collection.
@@ -98,7 +111,7 @@ export function createCrudService<T extends BaseRecord>(
         throw friendlyError(`load ${label}`, error);
       }
       if (!snap.exists()) {
-        throw new Error(`This ${label} doesn't exist. It may have been deleted.`);
+        throw new AppError(`This ${label} doesn't exist. It may have been deleted.`, 'not-found');
       }
       return { ...snap.data(), id: snap.id } as T;
     },

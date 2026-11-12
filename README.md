@@ -108,7 +108,9 @@ security rule. Give it its own folder when it needs more than a name.
 2. Screens in `src/views/<section>/` (copy the closest existing section).
 3. Routes in `src/App.tsx` and an item in `src/components/layout/navigation.ts`.
 4. Add the collection to the allowed list in `firestore.rules` and deploy the rules.
-5. Add it to `EXPORTABLE_COLLECTIONS` in `src/services/export_service.ts` (Settings → Data).
+5. If it points at other records (e.g. a `clientId`), add a line to `src/services/relationships.ts` so those records
+   can't be deleted while it uses them.
+6. Add it to `EXPORTABLE_COLLECTIONS` in `src/services/export_service.ts` (Settings → Data).
 
 ## Colours and styling
 
@@ -133,17 +135,28 @@ Dashboard charts use `accent-600` on a `brand-950` surface (checked for contrast
 | `contacts` | People at clients: name, email, phone, address, role | `clientId` (one client, optional) |
 | `client-jobs` | A client's yacht, property, club…: name, type, status, location, notes | `clientId` (required, can't change) |
 | `services` | What the laundry offers: name, category, status, default prices per unit | – |
-| `items` | Things that get laundered: name, category, status, sizes, prices | `prices[].serviceId` |
-| `work-orders` | Laundry booked in: reference, status, dates, bags, items | `clientId`, `clientJobId`, `serviceIds` |
+| `items` | Things that get laundered: name, category, status, sizes, prices | `prices[].serviceId` (also `serviceIds`, kept automatically) |
+| `work-orders` | Laundry booked in: number (WO-0001), reference, status, dates, bags, items | `clientId`, `clientJobId`, `serviceIds` |
+| `counters` | Last number used, e.g. `counters/work-orders → { last: 42 }` | – |
 | `batches`, `quotes`, `invoices`, `templates` | Name only, for now | – |
 
-Every record also has `timestamp` and `createdBy`. Deleting a client deletes its client jobs and unlinks its
-contacts. A service can't be deleted while items have prices for it (set it to Inactive instead).
+Every record also has `timestamp` and `createdBy`.
+
+**Deleting is protected.** `src/services/relationships.ts` lists what uses each kind of record; a record can't be
+deleted while anything listed there points at it (the message says what, e.g. "3 work orders use it"). Today: clients
+and client jobs are protected by work orders, and services by items and work orders. Deleting a client also deletes
+its client jobs and unlinks its contacts. Usually the answer is to set the record to Inactive instead.
+
+**Work order numbers** come from `counters/work-orders`, increased in the same transaction that creates the order,
+so two people never get the same number.
 
 ## Security
 
 - **Firestore rules** (`app/firestore.rules`): only signed-in staff (people with a record in `users`) can read or
   write, and only the listed collections. Nobody writes `users` directly.
+- **Login and record together:** users are only created by the `createUser` function (login + record, undone if
+  either fails) and removed by `deleteUser`. If someone signs in with a login that has no record (e.g. made in the
+  Firebase console), the app shows "Your account isn't set up" and nothing else.
 - **Users** are added, edited and deleted by Cloud Functions (`app/functions/src/index.ts`), which check the
   caller's permissions first. Only owners can add, change or delete owners; nobody can change their own role or
   delete themselves; emails can't be changed after creation; everyone can edit their own name and phone.

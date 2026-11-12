@@ -1,6 +1,8 @@
 import { collection, doc, getDocs, orderBy, query, where, writeBatch } from 'firebase/firestore';
 import { db } from './firebase/config';
 import { createCrudService, friendlyError } from './firebase/crud';
+import { assertNotInUse } from './firebase/usage';
+import { USED_BY } from './relationships';
 import type { Client } from '../types/client_interface';
 
 const base = createCrudService<Client>('clients', { label: 'client', sort: [orderBy('name')] });
@@ -9,7 +11,10 @@ export const clientService = {
   ...base,
 
   // Deletes the client and its Client Jobs, and unlinks its contacts (contacts are kept). All in one go.
+  // Refused while work orders use the client.
   async remove(id: string): Promise<void> {
+    const client = await base.getOne(id);
+    await assertNotInUse(client.name, USED_BY.clients, id, 'Set it to Inactive instead.');
     try {
       const [contacts, clientJobs] = await Promise.all([
         getDocs(query(collection(db, 'contacts'), where('clientId', '==', id))),
@@ -24,8 +29,4 @@ export const clientService = {
       throw friendlyError('delete client', error);
     }
   },
-
-  // Older names, still used by the Jobs section until it's rebuilt
-  getAllClients: base.getAll,
-  getClient: base.getOne,
 };

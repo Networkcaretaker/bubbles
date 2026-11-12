@@ -194,16 +194,20 @@ Invoices and Templates start as basic named documents. Dashboard and Settings co
 - [ ] Merge `rework` into `dev`, then `main` (James)
 
 ### Review findings (2026-11-12)
-- [ ] Deleting a client, client job or service doesn't check work orders: they're left showing "Unknown client job" / "Deleted service". Block the delete while work orders use it (as services already do for items)
-- [ ] Work order references can repeat: two orders for the same client job on the same day get the same reference. Add a suffix (-2, -3…)
-- [ ] Login page: inputs have no labels or placeholders, it doesn't use the shared form parts, a signed-in user can still see it, no "forgot password"
-- [ ] Someone with a login but no user record sees permission errors everywhere: show a clear "account not set up" screen
-- [ ] Delete/edit buttons show for every role, and the rules let any staff change any record (covered by the role rules task)
-- [ ] Speed: the whole app is one large JavaScript file (730 KB+). Load each section when it's opened (lazy routes) for a faster first load on phones
-- [ ] PWA: white launch screen and purple theme colour in `manifest.json`; only a 512px icon (add 192px); the Bubble3D font isn't cached for offline
-- [ ] Two permission tables to keep in step (app and Cloud Functions); consider one source later
+- [x] Delete protection: `services/relationships.ts` lists what uses each record; clients and client jobs can't be deleted while work orders use them, services while items or work orders do (checked in the service layer)
+- [x] Work order numbers (WO-0001…) from a counter, set in the same transaction as the order; the reference stays as a label
+- [x] Login page rebuilt: labels, show/hide password, plain-word errors, signed-in users go straight to the app (forgot password: Later)
+- [x] A login without a user record only sees "Your account isn't set up" (users are only created/deleted with both by the Cloud Functions)
+- [x] Rules deployed (adds `counters`), existing work order numbered WO-0001, `serviceIds` filled in on all 11 items, checks pass
+- [ ] Delete/edit buttons show for every role, and the rules let any staff change any record: next stage (roles and permissions)
+- [ ] Speed: moved to Later
+- [x] PWA: dark blue launch screen and theme colour, 192px + 512px icons, Apple home-screen icon, no white flash while loading, Bubble3D font cached for offline
+- [x] Two permission tables to keep in step (app and Cloud Functions): noted, consider one source later
 
 ## Later
+- [ ] Speed: load each section only when it's opened (lazy routes), so the first load on phones is faster (the app is one 730 KB+ file now)
+- [ ] Roles and permissions: who can see, edit and delete what, in the screens and in the security rules
+- [ ] Forgot password (needs email sending set up)
 - [ ] Batches, Invoices, Quotes and Templates: real fields and workflows (now basic named records)
 - [ ] Safe test setup so Claude can sign in and test without touching live data
   - Option A: Firebase Emulator Suite (Auth, Firestore, Functions) on this computer – needs Java

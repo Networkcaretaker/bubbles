@@ -43,3 +43,7 @@ export function toDateTimeInput(iso?: string | null): string {
 }
 
 export const fromDateTimeInput = (value: string): string | null => (value ? new Date(value).toISOString() : null);
+
+// "WO-0042" (older orders made before numbering show "WO-—")
+export const workOrderNumber = (order: { number?: number }) =>
+  order.number ? `WO-${String(order.number).padStart(4, '0')}` : 'WO-—';
