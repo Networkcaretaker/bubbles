@@ -176,7 +176,10 @@ Invoices and Templates start as basic named documents. Dashboard and Settings co
 - [x] Settings: new Page and tabs (General, Users, Data); `?tab=` kept in the address
   - General: Background animation on/off (saved per device, starts off)
   - Users: "User activity" placeholder (not functional yet)
-- [ ] Dashboard view
+- [x] Dashboard design with sample data (marked "Sample data"): greeting, headline "work orders in progress" with stages, 4 KPI tiles with sparklines, quick links, items processed chart, due soon, top clients, service mix, recent activity
+  - Charts: one colour (accent-600) + grey, validated on the brand-950 chart surface; hover/tap values; table view on each chart
+  - Overdue shown with icon + word, never colour alone
+- [ ] Connect each dashboard widget to real data as its section is finished (sample data lives in `views/dashboard/sampleData.ts`)
 - [ ] Later: real user activity log (who changed what, when)
 
 ## Later
