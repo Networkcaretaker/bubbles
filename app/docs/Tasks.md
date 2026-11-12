@@ -24,9 +24,9 @@ Old sections keep working on the old theme until they are rebuilt.
 - [x] Move colours into `tailwind.config.js` as named colours: `brand`, `accent`, `muted`, `success`, `warning`, `danger`
 - [x] Use them like normal Tailwind classes: `bg-brand-900/80`, `text-accent-400`, `border-accent-500`
 - [x] Rename existing blue/cyan/gray/red classes across the app to the new names (no visual change)
-- [ ] Label colours (job statuses, user roles) still use green/yellow/purple – move into a shared `Badge` in Phase 3
-- [ ] Layout styling lives inside the shared components, not in a theme file (Phases 2–3)
-- [ ] Remove `components/ui/Theme.tsx` and `components/styles/theme.ts` once nothing uses them (after all sections are rebuilt)
+- [x] Label colours (job statuses, user roles) moved into the shared `Badge` tones
+- [x] Layout styling lives inside the shared components, not in a theme file
+- [x] Remove the old theme files
 
 ## Phase 2 – App shell
 - [x] Rebuild `AppShell` layout (sidebar on desktop, bottom nav on mobile)
@@ -56,8 +56,8 @@ Old sections keep working on the old theme until they are rebuilt.
 - [x] Firestore set to ignore `undefined` fields when saving
 - [x] React Query set up (`lib/queryClient.ts`); `createCrudHooks()` gives each section `useList/useOne/useCreate/useUpdate/useRemove` (`hooks/createCrudHooks.ts`)
 - [x] Failed saves/deletes show an error message automatically; loaded data is cleared on sign-out
-- [ ] Try the pieces out for real in the Users section (Phase 4) and adjust
-- [ ] Rebuild `views/template/` from the finished Users section as the starter for new sections
+- [x] Try the pieces out for real in the Users section (Phase 4) and adjust
+- [x] Starter for new sections: `views/simple` (basic) or copy the closest full section; old `views/template` removed
 
 ## Phase 4 – Users (first section on the new setup)
 - [x] Rename "Staff" to "Users" consistently (route, folder, nav); `/staff` redirects to `/users`
@@ -82,7 +82,7 @@ Old sections keep working on the old theme until they are rebuilt.
 - [x] Fix: managers could change an owner's email (login takeover risk) – now only owners can change owners' details
 - [x] Deploy the stricter `firestore.rules` (staff only; nobody writes `users` directly) – live since 2026-11-11
 - [ ] Existing users get their role claim the next time their role is changed (only matters once rules use claims)
-- [ ] Review what we learned and adjust the shared components before moving on
+- [x] Shared components adjusted along the way (Section, RecordSection, CardAction disabled, AddressFields)
 
 ## Phase 5 – Clients and Contacts (built together)
 Decisions (2026-11-11): fresh start with the data (exported first); a contact belongs to one client;
@@ -123,8 +123,8 @@ keep the name "Client Jobs".
 **Finish**
 - [x] Automated checks with the Claude test accounts (create, link, unlink, delete): 28/28 pass, runs the app's real service code
 - [x] Old client/contact data cleared (exported first)
-- [ ] Check the Jobs section still loads with the new clients
-- [ ] Remove old client/contact views and the `theme.ts` styles they used
+- [x] Jobs section replaced by Work Orders (Phase 7)
+- [x] Remove old client/contact views
 
 ## Phase 6 – Services and Items
 Decisions (2026-11-11): item prices link to a specific service by id (like Jobs already do);
@@ -136,7 +136,7 @@ convert the 19 existing services in place; delete and re-add the 2 items (Pillow
 - [x] Item price falls back to the service's default price when the item has none
 - [x] One-off conversion of the 19 services: text prices → numbers, `default_prices` → `prices`, status active
 - [x] Delete the 2 old items (they're in the export)
-- [ ] Re-add Pillow Case (and check the "Pillow (test)" example) in the new screens
+- [x] Items re-added in the new screens
 - [x] Services and hooks on `createCrudService` / `createCrudHooks`; keep `getAllServices` working for the Jobs section
 
 **Services screens**
@@ -153,7 +153,7 @@ convert the 19 existing services in place; delete and re-add the 2 items (Pillow
 **Finish**
 - [x] Automated checks with the test accounts (create, prices as numbers, item ↔ service link, fallback price): 20/20 pass
 - [x] Jobs section still loads services (`getAllServices` kept; category field renamed `service` → `category`)
-- [ ] Remove old service/item views and unused theme styles
+- [x] Remove old service/item views
 
 ## Phase 7 – Work Orders and basic collections
 Decisions (2026-11-12): Jobs becomes Work Orders (`work-orders`) with the same data for now; Batches, Quotes,
@@ -182,11 +182,29 @@ Invoices and Templates start as basic named documents. Dashboard and Settings co
 - [ ] Connect each dashboard widget to real data as its section is finished (sample data lives in `views/dashboard/sampleData.ts`)
 - [ ] Later: real user activity log (who changed what, when)
 
+## Finish the initial rework
+- [x] README (project root) with setup, structure, how sections are built, data model, security and deploying
+- [x] Clean-up of leftovers: `components/styles/theme.ts` (unused), `App.css`, `assets/react.svg`, `public/vite.svg`,
+      empty `public/data/items.json`, unused `ProfileInitial` helper
+- [x] Bubble background uses colour classes directly (animation on/off is in Settings)
+- [x] `views/orders` removed, with `ui/Theme.tsx`, `ContentPlaceholder`, `job_service.ts` and `job_interface.ts` (old theme system gone)
+- [x] Review of the whole rework (findings below)
+- [ ] Deploy the latest hosting build and check on phone and desktop (James)
+- [x] Push `rework` to GitHub
+- [ ] Merge `rework` into `dev`, then `main` (James)
+
+### Review findings (2026-11-12)
+- [ ] Deleting a client, client job or service doesn't check work orders: they're left showing "Unknown client job" / "Deleted service". Block the delete while work orders use it (as services already do for items)
+- [ ] Work order references can repeat: two orders for the same client job on the same day get the same reference. Add a suffix (-2, -3…)
+- [ ] Login page: inputs have no labels or placeholders, it doesn't use the shared form parts, a signed-in user can still see it, no "forgot password"
+- [ ] Someone with a login but no user record sees permission errors everywhere: show a clear "account not set up" screen
+- [ ] Delete/edit buttons show for every role, and the rules let any staff change any record (covered by the role rules task)
+- [ ] Speed: the whole app is one large JavaScript file (730 KB+). Load each section when it's opened (lazy routes) for a faster first load on phones
+- [ ] PWA: white launch screen and purple theme colour in `manifest.json`; only a 512px icon (add 192px); the Bubble3D font isn't cached for offline
+- [ ] Two permission tables to keep in step (app and Cloud Functions); consider one source later
+
 ## Later
-- [ ] Review everything built so far (after Phase 6)
-- [ ] Batches, Invoices, Quotes (currently placeholders)
-- [ ] Dashboard
-- [ ] Write a proper README
+- [ ] Batches, Invoices, Quotes and Templates: real fields and workflows (now basic named records)
 - [ ] Safe test setup so Claude can sign in and test without touching live data
   - Option A: Firebase Emulator Suite (Auth, Firestore, Functions) on this computer – needs Java
   - Option B: a separate free "dev" Firebase project in the cloud, if the emulators are too heavy for this machine

@@ -93,5 +93,3 @@ export const roleLabel = (role: UserRole) =>
 export const permissionsFor = (user: { role: UserRole; permissions?: RolePermissions }): RolePermissions =>
   user.permissions ?? getDefaultPermissions(user.role);
 
-// Used by older sections; new screens use <Avatar name={...} />
-export const ProfileInitial = (name: string) => name[0];
