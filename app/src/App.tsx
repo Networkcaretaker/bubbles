@@ -94,7 +94,7 @@ function App() {
                 <Route key={section.path} path={section.path.slice(1)} element={<SimpleMain key={section.path} config={section} />} />,
                 <Route key={`${section.path}/:id`} path={`${section.path.slice(1)}/:id`} element={<SimplePage key={section.path} config={section} />} />,
               ])}
-              <Route path="settings/users" element={<h1 className="text-2xl font-bold text-accent-500">Users</h1>} />
+              <Route path="settings/users" element={<Navigate to="/settings?tab=users" replace />} />
             </Route>
             
             <Route path="*" element={<Navigate to="/" replace />} />

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { ReactElement } from 'react';
 import { Theme } from './ui/Theme'
+import { useSettingsStore } from '../stores/settingsStore';
 
 // Define interface for bubble properties
 interface Bubble {
@@ -57,13 +58,18 @@ const createInitialBubbles = (): Bubble[] => {
 
 export default function BubbleAnimation(): ReactElement {
   const [bubbles, setBubbles] = useState<Bubble[]>(createInitialBubbles);
+  // Turned on or off in Settings → General (saved per device)
+  const animationOn = useSettingsStore((state) => state.backgroundAnimation);
 
   useEffect(() => {
+    if (!animationOn) return; // Bubbles stay still while the animation is off
     // Animation frame handling with timestamp for smoother animation
     let animationFrameId: number;
     let lastTimestamp: number = 0;
 
     const animate = (timestamp: number): void => {
+      // First frame after switching on: start timing from here so bubbles don't jump
+      if (lastTimestamp === 0) lastTimestamp = timestamp;
       // Calculate time elapsed
       const elapsed: number = timestamp - lastTimestamp;
 
@@ -104,7 +110,7 @@ export default function BubbleAnimation(): ReactElement {
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [animationOn]);
 
   return (
     <div className={`${Theme.background.dark}`}>

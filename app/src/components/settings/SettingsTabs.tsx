@@ -1,84 +1,79 @@
-import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-//import { Settings } from 'lucide-react';
-import { CARD } from '../ui/Theme';
+import { Activity, Sparkles } from 'lucide-react';
+import { Section } from '../ui/Card';
+import { Toggle } from '../ui/Toggle';
+import { EmptyState } from '../ui/States';
+import { useSettingsStore } from '../../stores/settingsStore';
 import DataExport from './DataExport';
 
-const TABS = ['general', 'users', 'data'] as const;
-type TabId = (typeof TABS)[number];
+const TABS = [
+  { id: 'general', name: 'General' },
+  { id: 'users', name: 'Users' },
+  { id: 'data', name: 'Data' },
+] as const;
+type TabId = (typeof TABS)[number]['id'];
 
-//const PAGE_TITLE = "Settings"
-//const LAYOUT = PageLayout
-const STYLE = CARD
+function GeneralSettings() {
+  const backgroundAnimation = useSettingsStore((state) => state.backgroundAnimation);
+  const setBackgroundAnimation = useSettingsStore((state) => state.setBackgroundAnimation);
 
-// A placeholder for the future General settings component
-function GeneralSettingsPlaceholder() {
   return (
-    <div className={`${STYLE.card} space-y-4`}>
-      <h2 className={`${STYLE.selected_name}`}>General Settings</h2>
-      <p className={`${STYLE.name}`}>General application settings will be managed here in the future.</p>
-    </div>
+    <Section title="Appearance">
+      <Toggle
+        label="Background animation"
+        description="Moving bubbles behind the app. Turn off to save battery on slower devices. Saved on this device only."
+        checked={backgroundAnimation}
+        onChange={setBackgroundAnimation}
+      />
+      <p className="flex items-center gap-1 pt-1 text-muted-300">
+        <Sparkles className="h-3 w-3" /> More general settings will be added here.
+      </p>
+    </Section>
   );
 }
-function UserSettingsPlaceholder() {
+
+// Placeholder until activity logging is built
+function UserSettings() {
   return (
-    <div className={`${STYLE.card} space-y-4`}>
-      <h2 className={`${STYLE.selected_name}`}>User Settings</h2>
-      <p className={`${STYLE.name}`}>User settings will be managed here in the future.</p>
-    </div>
+    <Section title="User activity">
+      <EmptyState
+        icon={Activity}
+        title="User activity is coming soon"
+        message="This will show who added, changed or deleted records, and when, with filters by user and date."
+      />
+    </Section>
   );
 }
 
 export default function SettingsTabs() {
-  const [searchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab');
-    return TABS.includes(tab as TabId) ? (tab as TabId) : 'general';
-  });
-  //const [isDirty, setIsDirty] = useState(false);
-  //const [showUnsavedPopup, setShowUnsavedPopup] = useState(false);
-  //const [pendingTab, setPendingTab] = useState<'general' | 'users' | null>(null);
-
-  const tabs = [
-    { id: 'general', name: 'General' },
-    { id: 'users', name: 'Users' },
-    { id: 'data', name: 'Data' },
-  ];
-
-  const handleTabClick = (tabId: TabId) => {
-    if (activeTab === tabId) return;
-    setActiveTab(tabId);
-  };
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requested = searchParams.get('tab');
+  const activeTab: TabId = TABS.some((tab) => tab.id === requested) ? (requested as TabId) : 'general';
 
   return (
-    <div className="">
-      <div className="p-4">
-        <div className="border-b border-accent-200 mb-4">
-          <nav className="-mb-px flex" aria-label="Tabs">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => handleTabClick(tab.id as TabId)}
-                className={`${
-                  activeTab === tab.id
-                    ? 'border-accent-400 text-accent-400 bg-brand-700/20'
-                    : 'border-transparent text-accent-400 hover:text-accent-500 hover:border-accent-300 bg-brand-900/20'
-                }  py-3 px-6 border-b-2 font-medium text-sm transition-colors`}
-                aria-current={activeTab === tab.id ? 'page' : undefined}
-              >
-                {tab.name}
-              </button>
-            ))}
-          </nav>
-        </div>
+    <div className="space-y-2">
+      {/* Tabs (the chosen tab is kept in the address, e.g. /settings?tab=data) */}
+      <nav className="flex border-b border-accent-500/50" aria-label="Settings tabs">
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setSearchParams({ tab: tab.id }, { replace: true })}
+            aria-current={activeTab === tab.id ? 'page' : undefined}
+            className={`flex-1 border-b-2 px-4 py-3 text-sm font-medium transition-colors sm:flex-none ${
+              activeTab === tab.id
+                ? 'border-accent-400 bg-brand-700/30 text-accent-300'
+                : 'border-transparent text-accent-500 hover:border-accent-300 hover:text-accent-300'
+            }`}
+          >
+            {tab.name}
+          </button>
+        ))}
+      </nav>
 
-        {/* Tab Content */}
-        <div>
-          {activeTab === 'general' && <GeneralSettingsPlaceholder />}
-          {activeTab === 'users' && <UserSettingsPlaceholder />}
-          {activeTab === 'data' && <DataExport />}
-        </div>
-      </div>
+      {activeTab === 'general' && <GeneralSettings />}
+      {activeTab === 'users' && <UserSettings />}
+      {activeTab === 'data' && <DataExport />}
     </div>
   );
 }

@@ -173,7 +173,11 @@ Invoices and Templates start as basic named documents. Dashboard and Settings co
 **Finish**
 - [x] Deploy `firestore.rules` (adds the five new collections; removes `jobs`)
 - [x] Automated checks with the test accounts: 16/16 pass
-- [ ] Dashboard and Settings views
+- [x] Settings: new Page and tabs (General, Users, Data); `?tab=` kept in the address
+  - General: Background animation on/off (saved per device, starts off)
+  - Users: "User activity" placeholder (not functional yet)
+- [ ] Dashboard view
+- [ ] Later: real user activity log (who changed what, when)
 
 ## Later
 - [ ] Review everything built so far (after Phase 6)
